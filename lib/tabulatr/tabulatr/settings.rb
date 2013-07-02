@@ -41,7 +41,6 @@ class Tabulatr
     :reset_class => 'reset',                        # class for the reset button
     :control_div_class_before => 'table-controls',  # class of the upper div containing the paging and batch action controls
     :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
-    :paginator_div_class => 'paginator',            # class of the div containing the paging controls
     :batch_actions_div_class => 'batch-actions',    # class of the div containing the batch action controls
     :submit_class => 'submit-table',                # class of submit button
     :pagesize_select_class => 'pagesize_select',    # class of the pagesize select element
@@ -65,7 +64,7 @@ class Tabulatr
     :reset_label => 'Reset',                        # Text on the reset button
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:submit, :reset, :paginator, :batch_actions],
+    :before_table_controls => [:submit, :reset, :batch_actions],
     :after_table_controls => [],
 
     :image_path_prefix => (Rails::version.to_f >= 3.1 ? 'tabulatr/' : '/images/tabulatr/'),
@@ -84,7 +83,6 @@ class Tabulatr
     :header_html => false,             # a hash with html attributes for the header trs
     :filter_html => false,             # a hash with html attributes for the filter trs
     :filter => true,                   # false for no filter row at all
-    :paginate => true,                 # true to show paginator
     :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
     :reset => false,                   # true to render a reset button. Only reasonable in 'stateful' case
     :action => nil,                    # target action of the wrapping form if applicable

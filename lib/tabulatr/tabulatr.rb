@@ -126,7 +126,6 @@ class Tabulatr
 
   def render_element(element, &block)
     case element
-    when :paginator then render_paginator if @table_options[:paginate]
     when :hidden_submit then "IMPLEMENT ME!"
     when :submit then   make_tag(:input, :type => 'submit',
         :class => @table_options[:submit_class],
