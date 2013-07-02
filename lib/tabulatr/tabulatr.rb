@@ -151,7 +151,7 @@ class Tabulatr
     make_tag(:table, to) do
       make_tag(:thead) do
         render_table_header(&block)
-        render_table_filters(&block) if @table_options[:filter]
+        # render_table_filters(&block) if @table_options[:filter]
       end # </thead>
       make_tag(:tbody) do
         render_table_rows(&block)
