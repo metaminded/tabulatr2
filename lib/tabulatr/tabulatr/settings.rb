@@ -51,7 +51,6 @@ class Tabulatr
     :unselect_visible_class => 'select-btn',        # class of the unselect visible button
     :select_filtered_class => 'select-btn',         # class of the select filtered button
     :unselect_filtered_class => 'select-btn',       # class of the unselect filteredbutton
-    :info_text_class => 'info-text',                # class of the info text div
 
     :batch_actions_label => 'Batch Actions: ',      # Text to show in front of the batch action select
     :batch_actions_type => :select,                 # :select or :button depending on the kind of input you want
@@ -64,10 +63,9 @@ class Tabulatr
     :select_filtered_label => 'Select filtered',    # Text on the select filtered button
     :unselect_filtered_label => 'Unselect filtered',# Text on the unselect filtered button
     :reset_label => 'Reset',                        # Text on the reset button
-    :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:submit, :reset, :paginator, :batch_actions, :info_text],
+    :before_table_controls => [:submit, :reset, :paginator, :batch_actions],
     :after_table_controls => [],
 
     :image_path_prefix => (Rails::version.to_f >= 3.1 ? 'tabulatr/' : '/images/tabulatr/'),

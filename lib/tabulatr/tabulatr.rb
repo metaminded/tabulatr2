@@ -76,7 +76,6 @@ class Tabulatr
       @table_options.merge!(
         :paginate => false,                 # true to show paginator
         :sortable => false,                 # true to allow sorting (can be specified for every sortable column)
-        :info_text => nil,
         :filter => false
       )
       @store_data = []
@@ -137,11 +136,6 @@ class Tabulatr
         :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
         :value => t(@table_options[:reset_label])) if @stateful
     when :batch_actions then render_batch_actions if @table_options[:batch_actions]
-    when :info_text
-      make_tag(:div, :class => @table_options[:info_text_class]) do
-        concat(format(t(@table_options[:info_text]),
-          @records.count, @pagination[:total], @checked[:selected].length, @pagination[:count]))
-      end if @table_options[:info_text]
     when :table then render_table &block
     else
       if element.is_a?(String)
