@@ -43,7 +43,6 @@ class Tabulatr
     :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
     :paginator_div_class => 'paginator',            # class of the div containing the paging controls
     :batch_actions_div_class => 'batch-actions',    # class of the div containing the batch action controls
-    :select_controls_div_class => 'check-controls',  # class of the div containing the check controls
     :submit_class => 'submit-table',                # class of submit button
     :pagesize_select_class => 'pagesize_select',    # class of the pagesize select element
     :select_all_class => 'select-btn',              # class of the select all button
@@ -68,12 +67,8 @@ class Tabulatr
     :info_text => "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:submit, :reset, :paginator, :batch_actions, :select_controls, :info_text],
+    :before_table_controls => [:submit, :reset, :paginator, :batch_actions, :info_text],
     :after_table_controls => [],
-
-    # whih selecting controls to render in which order
-    :select_controls => [:select_all, :select_none, :select_visible, :unselect_visible,
-                      :select_filtered, :unselect_filtered],
 
     :image_path_prefix => (Rails::version.to_f >= 3.1 ? 'tabulatr/' : '/images/tabulatr/'),
     :pager_left_button => 'pager_arrow_left.gif',
@@ -93,7 +88,6 @@ class Tabulatr
     :filter => true,                   # false for no filter row at all
     :paginate => true,                 # true to show paginator
     :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
-    :selectable => true,               # true to render "select all", "select none" and the like
     :reset => false,                   # true to render a reset button. Only reasonable in 'stateful' case
     :action => nil,                    # target action of the wrapping form if applicable
     :batch_actions => false,           # :name => value hash of batch action stuff
@@ -215,7 +209,7 @@ class Tabulatr
     COLUMN_PRESETS
   end
   def column_presets(n=nil) self.class.column_presets(n) end
-  def column_preset_for(name)  
+  def column_preset_for(name)
     h = COLUMN_PRESETS[name.to_sym]
     return {} unless h
     return h if h.is_a? Hash

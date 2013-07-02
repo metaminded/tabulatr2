@@ -190,37 +190,21 @@ These options are to be specified at the form_for level and change the appearanc
   control_div_class_after: 'table-controls',    # class of the lower div containing the paging and batch action controls
   paginator_div_class: 'paginator',             # class of the div containing the paging controls
   batch_actions_div_class: 'batch-actions',     # class of the div containing the batch action controls
-  select_controls_div_class: 'check-controls',  # class of the div containing the check controls
   submit_class: 'submit-table',                 # class of submit button
   pagesize_select_class: 'pagesize_select',     # class of the pagesize select element
-  select_all_class: 'select-btn',               # class of the select all button
-  select_none_class: 'select-btn',              # class of the select none button
-  select_visible_class: 'select-btn',           # class of the select visible button
-  unselect_visible_class: 'select-btn',         # class of the unselect visible button
-  select_filtered_class: 'select-btn',          # class of the select filtered button
-  unselect_filtered_class: 'select-btn',        # class of the unselect filteredbutton
   info_text_class: 'info-text',                 # class of the info text div
 
   batch_actions_label: 'Batch Action: ',        # Text to show in front of the batch action select
   batch_actions_type: :select,                  # :select or :button depending on the kind of input you want
   batch_actions_class: 'batch-action-inputs',   # class to apply on the batch action input elements
   submit_label: 'Apply',                        # Text on the submit button
-  select_all_label: 'Select All',               # Text on the select all button
-  select_none_label: 'Select None',             # Text on the select none button
-  select_visible_label: 'Select visible',       # Text on the select visible button
-  unselect_visible_label: 'Unselect visible',   # Text on the unselect visible button
-  select_filtered_label: 'Select filtered',     # Text on the select filtered button
-  unselect_filtered_label: 'Unselect filtered', # Text on the unselect filtered button
   reset_label: 'Reset',                         # Text on the reset button
   info_text: "Showing %1$d, total %2$d, selected %3$d, matching %4$d",
 
   # which controls to be rendered above and below the tabel and in which order
-  before_table_controls: [:submit, :paginator, :batch_actions, :select_controls, :info_text],
+  before_table_controls: [:submit, :paginator, :batch_actions, :info_text],
   after_table_controls: [],
 
-  # whih selecting controls to render in which order
-  select_controls: [:select_all, :select_none, :select_visible, :unselect_visible,
-                    :select_filtered, :unselect_filtered],
 
   image_path_prefix: '/images/tabulatr/',
   pager_left_button: 'left.gif',
@@ -240,7 +224,6 @@ These options are to be specified at the form_for level and change the appearanc
   filter: true,                               # false for no filter row at all
   paginate: true,                             # true to show paginator
   sortable: true,                             # true to allow sorting (can be specified for every sortable column)
-  selectable: true,                           # true to render "select all", "select none" and the like
   action: nil,                                # target action of the wrapping form if applicable
   batch_actions: false,                       # name: value hash of batch action stuff
   translate: false,                           # call t() for all 'labels' and stuff, possible values are true/:translate or :localize

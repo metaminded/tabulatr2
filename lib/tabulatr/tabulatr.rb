@@ -76,7 +76,6 @@ class Tabulatr
       @table_options.merge!(
         :paginate => false,                 # true to show paginator
         :sortable => false,                 # true to allow sorting (can be specified for every sortable column)
-        :selectable => false,               # true to render "select all", "select none" and the like
         :info_text => nil,
         :filter => false
       )
@@ -138,7 +137,6 @@ class Tabulatr
         :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
         :value => t(@table_options[:reset_label])) if @stateful
     when :batch_actions then render_batch_actions if @table_options[:batch_actions]
-    when :select_controls then render_select_controls if @table_options[:selectable]
     when :info_text
       make_tag(:div, :class => @table_options[:info_text_class]) do
         concat(format(t(@table_options[:info_text]),
@@ -271,11 +269,11 @@ private
       make_tag(:img, :src => psrc)
     end
   end
-  
+
   def self.config(&block)
     yield(self)
   end
-  
+
 end
 
 Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|

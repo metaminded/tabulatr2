@@ -64,19 +64,6 @@ module Tabulatr::Finder
       yield(Invoker.new(batch_param, selected_ids))
     end
 
-    # then, we obey any "select" buttons if pushed
-    if checked_param[:select_all]
-      selected_ids = adapter.selected_ids(opts).to_a.map { |r| r.send(id) }
-    elsif checked_param[:select_none]
-      selected_ids = []
-    elsif checked_param[:select_visible]
-      visible_ids = uncompress_id_list(checked_param[:visible])
-      selected_ids = (selected_ids + visible_ids).sort.uniq
-    elsif checked_param[:unselect_visible]
-      visible_ids = uncompress_id_list(checked_param[:visible])
-      selected_ids = (selected_ids - visible_ids).sort.uniq
-    end
-
     # at this point, we've retrieved the filter settings, the sorting setting, the pagination settings and
     # the selected_ids.
     filter_param = (params[filter_name] || {})

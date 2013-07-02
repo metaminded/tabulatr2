@@ -30,8 +30,7 @@ describe "Tabulatrs" do
 
     it "contains buttons" do
       visit index_simple_products_path
-      [:submit_label, :select_all_label, :select_none_label, :select_visible_label,
-        :unselect_visible_label, :select_filtered_label, :unselect_filtered_label
+      [:submit_label
       ].each do |n|
         page.should have_button(Tabulatr::TABLE_OPTIONS[n])
       end
