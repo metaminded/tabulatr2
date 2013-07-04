@@ -34,6 +34,7 @@ class Tabulatr
     when :data   then data_column(name, opts, &block)
     when :header then header_column(name, opts, &block)
     when :filter then filter_column(name, opts, &block)
+    when :empty then empty_column(name, opts, &block)
     else raise "Wrong row mode '#{@row_mode}'"
     end # case
   end
@@ -94,6 +95,12 @@ private
   def filter_row_builder
     @record = nil
     @row_mode = :filter
+    self
+  end
+
+  def empty_row_builder
+    @record = nil
+    @row_mode = :empty
     self
   end
 

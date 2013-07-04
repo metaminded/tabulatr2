@@ -100,7 +100,7 @@ class Tabulatr
     make_tag(@table_options[:make_form] ? :form : nil,
         :method => :get,
         :class => @table_options[:form_class],
-        'data-remote' => (@table_options[:remote] ? "true" : nil)) do
+        'data-remote' => true) do
       # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
       make_tag(:div,  :class => @table_options[:control_div_class_before]) do
         @table_options[:before_table_controls].each do |element|
@@ -154,7 +154,7 @@ class Tabulatr
         # render_table_filters(&block) if @table_options[:filter]
       end # </thead>
       make_tag(:tbody) do
-        render_table_rows(&block)
+        render_empty_start_row(&block)
       end # </tbody>
       content_for(@table_options[:footer_content]) if @table_options[:footer_content]
     end # </table>
@@ -228,6 +228,12 @@ private
       make_tag(:tr, row_html.merge(:class => rc, :id => dom_id(record))) do
         yield(data_row_builder(record))
       end # </tr>
+    end
+  end
+
+  def render_empty_start_row(&block)
+    make_tag(:tr, @table_options[:row_html]) do
+      yield empty_row_builder
     end
   end
 
