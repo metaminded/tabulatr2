@@ -44,19 +44,21 @@ class Tabulatr
       concat(t(opts[:header] || @klaz.human_attribute_name(name).titlecase), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
         if @sorting and @sorting[:by].to_s == name.to_s
-          pname = "#{sortparam}[_resort][#{name}][#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}]"
-          bid = "#{bid}_#{name}_#{@sorting[:direction] == 'asc' ? 'desc' : 'asc'}"
+          pname = "#{sortparam}[_resort][#{name}]"
+          bid = "#{bid}_#{name}"
+          sort_dir = @sorting[:direction] == 'asc' ? 'desc' : 'asc'
           psrc = @table_options[@sorting[:direction] == 'desc' ?
             :sort_down_button : :sort_up_button]
           make_tag(:input, :type => :hidden,
             :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
             :value => "#{@sorting[:direction]}")
         else
-          pname = "#{sortparam}[_resort][#{name}][desc]"
-          bid = "#{bid}_#{name}_desc"
+          pname = "#{sortparam}[_resort][#{name}]"
+          bid = "#{bid}_#{name}"
+          sort_dir = 'desc'
           psrc = @table_options[:sort_down_button_inactive]
         end
-        make_image_button(psrc, :id => bid, :name => pname)
+        make_image_button(psrc, :id => bid, :name => pname, :'data-sort' => sort_dir)
       end
     end # </th>
   end

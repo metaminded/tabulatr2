@@ -145,8 +145,10 @@ module Tabulatr::Finder
     end
 
     # secondly, find the order_by stuff
-    order = adapter.order_for_query(sortparam, opts[:default_order])
-
+    #order = adapter.order_for_query(sortparam, opts[:default_order])
+    if params.has_key? :sort_by
+      order = adapter.order_for_query_new params[:sort_by], params[:orientation]
+    end
     # thirdly, get the pagination data
     paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
     pagesize = (pops[:pagesize] || opts[:default_pagesize] || paginate_options[:pagesize]).to_f

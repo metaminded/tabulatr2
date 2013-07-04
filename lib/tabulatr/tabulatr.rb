@@ -97,30 +97,24 @@ class Tabulatr
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
     @val = []
-    make_tag(@table_options[:make_form] ? :form : nil,
-        :method => :get,
-        :class => @table_options[:form_class],
-        'data-remote' => true) do
-      # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
-      make_tag(:div,  :class => @table_options[:control_div_class_before]) do
-        @table_options[:before_table_controls].each do |element|
-          render_element(element)
-        end
-      end if @table_options[:before_table_controls].present? # </div>
-
-      @store_data.each do |k,v|
-        make_tag(:input, :type => :hidden, :name => k, :value => h(v))
+    # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
+    make_tag(:div,  :class => @table_options[:control_div_class_before]) do
+      @table_options[:before_table_controls].each do |element|
+        render_element(element)
       end
+    end if @table_options[:before_table_controls].present? # </div>
 
-      render_element(:table, &block)
+    @store_data.each do |k,v|
+      make_tag(:input, :type => :hidden, :name => k, :value => h(v))
+    end
 
-      make_tag(:div,  :class => @table_options[:control_div_class_after]) do
-        @table_options[:after_table_controls].each do |element|
-          render_element(element)
-        end
-      end if @table_options[:after_table_controls].present? # </div>
+    render_element(:table, &block)
 
-    end # </form>
+    make_tag(:div,  :class => @table_options[:control_div_class_after]) do
+      @table_options[:after_table_controls].each do |element|
+        render_element(element)
+      end
+    end if @table_options[:after_table_controls].present? # </div>
     @val.join("").html_safe
   end
 
@@ -258,14 +252,14 @@ private
     inactive = options.delete(:inactive)
     psrc = @view.image_path File.join(@table_options[:image_path_prefix], iname)
     if !inactive
-      make_tag(:input,
+      make_tag(:img,
         options.merge(
-          :type => 'image',
-          :src => psrc
+          :src => psrc,
+          :class => 'tabulatr-sort'
         )
       )
     else
-      make_tag(:img, :src => psrc)
+      make_tag(:img, :src => psrc, :class => 'tabulatr-sort')
     end
   end
 

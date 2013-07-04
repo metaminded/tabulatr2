@@ -31,6 +31,10 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
     "#{context[:by]} #{context[:direction]}" if context
   end
 
+  def order_for_query_new(sort_by, orientation)
+    "#{sort_by} #{orientation}"
+  end
+
   def includes(inc)
     @relation.includes(inc)
   end
