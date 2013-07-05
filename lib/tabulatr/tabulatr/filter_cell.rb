@@ -40,11 +40,16 @@ class Tabulatr
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(name, opts)
     value = @filters[name]
-    make_tag(:td, opts[:filter_html]) do
-      of = opts[:filter]
-      iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
-      filter_tag(of, iname, value, opts)
-    end # </td>
+    of = opts[:filter]
+    iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
+    make_tag(:div, class: 'control-group') do
+      make_tag(:label, class: 'control-label', for: "tabulatr_form_#{name}") do
+        concat name.to_s.humanize.titlecase
+      end
+      make_tag(:div, class: 'controls') do
+        filter_tag(of, "tabulatr_form_#{name}", iname, value, opts)
+      end
+    end
   end
 
   # the method used to actually define the filters of the columns,
@@ -91,11 +96,12 @@ class Tabulatr
 
 private
 
-  def filter_tag(of, iname, value, opts)
+  def filter_tag(of, name, iname, value, opts)
     if !of
       ""
     elsif of.is_a?(Hash) or of.is_a?(Array) or of.is_a?(String)
-      make_tag(:select, :name => iname, :style => "width:#{opts[:filter_width]}") do
+      make_tag(:select, :style => "width:#{opts[:filter_width]}",
+        :id => name, name: iname) do
         if of.class.is_a?(String)
           concat(of)
         else
@@ -105,25 +111,37 @@ private
         end
       end # </select>
     elsif opts[:filter] == :range
-      make_tag(:input, :type => :text, :name => "#{iname}[from]",
+      make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
-        :value => value ? value[:from] : '')
+        :value => value ? value[:from] : '',
+        :'data-type' => "from",
+        :class => 'tabulatr_filter',
+        :name => iname)
       concat(t(opts[:range_filter_symbol]))
-      make_tag(:input, :type => :text, :name => "#{iname}[to]",
+      make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
-        :value => value ? value[:to] : '')
+        :value => value ? value[:to] : '',
+        :'data-type' => "to",
+        :class => 'tabulatr_filter',
+        :name => iname)
     elsif opts[:filter] == :checkbox
       checkbox_value = opts[:checkbox_value]
       checkbox_label = opts[:checkbox_label]
-      concat(check_box_tag(iname, checkbox_value, false, {}))
+      concat(check_box_tag(name, checkbox_value, false, {}))
       concat(checkbox_label)
     elsif opts[:filter] == :like
-      make_tag(:input, :type => :text, :name => "#{iname}[like]",
+      make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
-        :value => value ? value[:like] : '')
+        :value => value ? value[:like] : '',
+        :'data-type' => "like",
+        :class => 'tabulatr_filter',
+        :name => iname)
     else
-      make_tag(:input, :type => :text, :name => "#{iname}", :style => "width:#{opts[:filter_width]}",
-        :value => value)
+      make_tag(:input, :type => :text, :id => name, :style => "width:#{opts[:filter_width]}",
+        :'data-type' => 'normal',
+        :value => value,
+        :class => 'tabulatr_filter',
+        :name => iname)
     end # if
   end
 

@@ -98,6 +98,12 @@ private
     self
   end
 
+  def filter_form_builder
+    @record = nil
+    @row_mode = :filter
+    self
+  end
+
   def empty_row_builder
     @record = nil
     @row_mode = :empty

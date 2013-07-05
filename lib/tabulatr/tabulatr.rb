@@ -115,6 +115,24 @@ class Tabulatr
         render_element(element)
       end
     end if @table_options[:after_table_controls].present? # </div>
+
+    make_tag(:div, class: :modal, id: 'tabulatr_filter_dialog', style: "display:none ;") do
+      make_tag(:button, class: :close, :'data-dismiss' => :modal,
+        :'aria-hidden' => true) do
+        concat "&times"
+      end
+      make_tag(:h3) do
+        concat "Filter"
+      end
+      make_tag(:div, class: 'modal-body') do
+        render_filter_options &block
+      end
+      make_tag(:div, class: 'modal-footer') do
+        make_tag(:a, class: 'btn') do
+          concat 'close'
+        end
+      end
+    end
     @val.join("").html_safe
   end
 
@@ -145,7 +163,6 @@ class Tabulatr
     make_tag(:table, to) do
       make_tag(:thead) do
         render_table_header(&block)
-        render_table_filters(&block) if @table_options[:filter]
       end # </thead>
       make_tag(:tbody) do
         render_empty_start_row(&block)
@@ -199,11 +216,16 @@ private
     end # </tr>"
   end
 
-  # render the filter row
-  def render_table_filters(&block)
-    make_tag(:tr, @table_options[:filter_html]) do
-      yield(filter_row_builder)
-    end # </tr>
+
+  def render_filter_options(&block)
+    make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
+      yield(filter_form_builder)
+      make_tag(:input, :type => 'hidden', :name => 'sort_by')
+      make_tag(:input, :type => 'hidden', :name => 'orientation')
+      make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
+        :class => @table_options[:submit_class],
+        :value => t(@table_options[:submit_label]))
+    end
   end
 
   # render the table rows
