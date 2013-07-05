@@ -226,7 +226,9 @@ private
   end
 
   def render_empty_start_row(&block)
-    make_tag(:tr, @table_options[:row_html]) do
+    row_html = @table_options[:row_html] || {}
+    row_html[:class] = 'empty_row'
+    make_tag(:tr, row_html) do
       yield empty_row_builder
     end
   end

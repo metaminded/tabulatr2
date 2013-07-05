@@ -44,7 +44,7 @@ module Tabulatr::Finder
     filter_name     = "#{cname}#{form_options[:filter_postfix]}"
     batch_name      = "#{cname}#{form_options[:batch_postfix]}"
     check_name      = "#{cname}#{form_options[:checked_postfix]}"
-
+    append = params[:append].present? ? params[:append] : false
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
       merge(params[check_name] || {})
@@ -150,18 +150,21 @@ module Tabulatr::Finder
       order = adapter.order_for_query_new params[:sort_by], params[:orientation]
     end
     # thirdly, get the pagination data
-    paginate_options = Tabulatr.paginate_options.merge(opts).merge(pops)
-    pagesize = (pops[:pagesize] || opts[:default_pagesize] || paginate_options[:pagesize]).to_f
-    page = paginate_options[:page].to_i
-    page += 1 if paginate_options[:page_right]
-    page -= 1 if paginate_options[:page_left]
+
+    page = 1
+    if params.has_key? :page
+      page = params[:page].to_i
+    end
+    pagesize = 10
+    if params.has_key? :pagesize
+      pagesize = params[:pagesize].to_i
+    end
 
     c = adapter.includes(includes).count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
 
     pages = (c/pagesize).ceil
-    page = [1, [page, pages].min].max
 
     total = adapter.preconditions_scope(opts).count
     # here too
@@ -176,7 +179,7 @@ module Tabulatr::Finder
     found.define_singleton_method(:__classinfo) { [klaz, cname, id, id_type] }
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
-        :pagesizes => paginate_options[:pagesizes],
+        :pagesizes => {},#paginate_options[:pagesizes],
         :total => total }
     end
 
@@ -195,7 +198,7 @@ module Tabulatr::Finder
     found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
-    found
+    [append, found]
   end
 
 end
