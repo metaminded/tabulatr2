@@ -274,16 +274,20 @@ private
 
   def make_image_button(iname, options)
     inactive = options.delete(:inactive)
+    if(options['data-sort'] == 'desc')
+      icon_class = 'icon-arrow-down'
+    else
+      icon_class = 'icon-arrow-up'
+    end
     psrc = @view.image_path File.join(@table_options[:image_path_prefix], iname)
     if !inactive
-      make_tag(:img,
+      make_tag(:i,
         options.merge(
-          :src => psrc,
-          :class => 'tabulatr-sort'
+          :class => "tabulatr-sort #{icon_class}"
         )
       )
     else
-      make_tag(:img, :src => psrc, :class => 'tabulatr-sort')
+      make_tag(:i, :class => "tabulatr-sort #{icon_class}")
     end
   end
 

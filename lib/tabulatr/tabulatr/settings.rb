@@ -72,10 +72,6 @@ class Tabulatr
     :pager_left_button_inactive => 'pager_arrow_left_off.gif',
     :pager_right_button => 'pager_arrow_right.gif',
     :pager_right_button_inactive => 'pager_arrow_right_off.gif',
-    :sort_up_button => 'sort_arrow_up.gif',
-    :sort_up_button_inactive => 'sort_arrow_up_off.gif',
-    :sort_down_button => 'sort_arrow_down.gif',
-    :sort_down_button_inactive => 'sort_arrow_down_off.gif',
 
     :make_form => true,                # whether or not to wrap the whole table (incl. controls) in a form
     :table_html => false,              # a hash with html attributes for the table

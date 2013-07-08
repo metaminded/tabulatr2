@@ -116,18 +116,18 @@ private
         :value => value ? value[:from] : '',
         :'data-type' => "from",
         :class => 'tabulatr_filter',
-        :name => iname)
+        :name => "#{iname}[from]")
       concat(t(opts[:range_filter_symbol]))
       make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
         :value => value ? value[:to] : '',
         :'data-type' => "to",
         :class => 'tabulatr_filter',
-        :name => iname)
+        :name => "#{iname}[to]")
     elsif opts[:filter] == :checkbox
       checkbox_value = opts[:checkbox_value]
       checkbox_label = opts[:checkbox_label]
-      concat(check_box_tag(name, checkbox_value, false, {}))
+      concat(check_box_tag(iname, checkbox_value, false, {}))
       concat(checkbox_label)
     elsif opts[:filter] == :like
       make_tag(:input, :type => :text, :id => name,
@@ -135,7 +135,7 @@ private
         :value => value ? value[:like] : '',
         :'data-type' => "like",
         :class => 'tabulatr_filter',
-        :name => iname)
+        :name => "#{iname}[like]")
     else
       make_tag(:input, :type => :text, :id => name, :style => "width:#{opts[:filter_width]}",
         :'data-type' => 'normal',

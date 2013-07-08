@@ -47,8 +47,6 @@ class Tabulatr
           pname = "#{sortparam}[_resort][#{name}]"
           bid = "#{bid}_#{name}"
           sort_dir = @sorting[:direction] == 'asc' ? 'desc' : 'asc'
-          psrc = @table_options[@sorting[:direction] == 'desc' ?
-            :sort_down_button : :sort_up_button]
           make_tag(:input, :type => :hidden,
             :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
             :value => "#{@sorting[:direction]}")
@@ -56,7 +54,6 @@ class Tabulatr
           pname = "#{sortparam}[_resort][#{name}]"
           bid = "#{bid}_#{name}"
           sort_dir = 'desc'
-          psrc = @table_options[:sort_down_button_inactive]
         end
         make_image_button(psrc, :id => bid, :name => pname, :'data-sort' => sort_dir)
       end

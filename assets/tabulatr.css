@@ -93,6 +93,14 @@
     margin:3px;
   }
 
+  .tabulatr-sort{
+    opacity: 0.3;
+  }
+
+  i.sorted{
+    opacity: 1;
+  }
+
 
 
 </style>
