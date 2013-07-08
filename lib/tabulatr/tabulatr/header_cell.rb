@@ -55,7 +55,7 @@ class Tabulatr
           bid = "#{bid}_#{name}"
           sort_dir = 'desc'
         end
-        make_image_button(psrc, :id => bid, :name => pname, :'data-sort' => sort_dir)
+        make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
       end
     end # </th>
   end

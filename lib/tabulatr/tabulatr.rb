@@ -272,14 +272,13 @@ private
     nil
   end
 
-  def make_image_button(iname, options)
+  def make_image_button(options)
     inactive = options.delete(:inactive)
     if(options['data-sort'] == 'desc')
       icon_class = 'icon-arrow-down'
     else
       icon_class = 'icon-arrow-up'
     end
-    psrc = @view.image_path File.join(@table_options[:image_path_prefix], iname)
     if !inactive
       make_tag(:i,
         options.merge(
