@@ -75,6 +75,11 @@
     text-decoration: none;
   }
 
+  div.paginator {
+    display: inline-block;
+    margin-right: 40px;
+  }
+
   div.batch-actions {
     display: inline-block;
   }
