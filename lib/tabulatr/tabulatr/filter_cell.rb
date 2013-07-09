@@ -73,7 +73,7 @@ class Tabulatr
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
       iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
-      filter_tag(of, iname, value, opts)
+      filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, value, opts)
     end # </td>
   end
 

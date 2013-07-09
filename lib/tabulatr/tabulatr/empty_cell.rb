@@ -39,8 +39,13 @@ class Tabulatr
   def empty_column(name, opts={}, &block)
     raise "Not in empty mode!" if @row_mode != :empty
     opts = normalize_column_options(name, opts)
-    make_tag(:td, opts[:filter_html]) do
-    end # </td>
+    make_tag(:td, opts[:filter_html])
+  end
+
+  def empty_association(relation, name, opts={}, &block)
+    raise "Not in empty mode!" if @row_mode != :empty
+    opts = normalize_column_options(name, opts)
+    make_tag(:td, opts[:filter_html])
   end
 
 private

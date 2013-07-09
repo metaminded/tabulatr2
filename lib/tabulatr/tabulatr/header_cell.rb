@@ -38,8 +38,8 @@ class Tabulatr
     opts = normalize_column_options(name, opts)
     unless opts[:th_html]
       opts[:th_html] = {}
-      opts[:th_html]['data-tabulatr-column-name'] = name
     end
+      opts[:th_html]['data-tabulatr-column-name'] = name
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || @klaz.human_attribute_name(name).titlecase), :escape_html)
       if opts[:sortable] and @table_options[:sortable]

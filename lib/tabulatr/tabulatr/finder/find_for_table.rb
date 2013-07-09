@@ -52,6 +52,9 @@ module Tabulatr::Finder
     id = adapter.primary_key
     id_type = adapter.key_type
 
+
+    serializer = options[:serializer].presence
+
     # checkboxes
     checked_ids = uncompress_id_list(checked_param[:checked_ids])
     new_ids = checked_param[:current_page]
@@ -198,7 +201,9 @@ module Tabulatr::Finder
     found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
-    [append, found]
+
+
+    {append: append, count_total: total, count: found.count, data: found}
   end
 
 end

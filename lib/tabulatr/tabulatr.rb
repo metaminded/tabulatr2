@@ -116,6 +116,8 @@ class Tabulatr
       end
     end if @table_options[:after_table_controls].present? # </div>
 
+    make_tag(:div, id: 'tabulatr_count') {}
+
     make_tag(:div, class: :modal, id: 'tabulatr_filter_dialog', style: "display:none ;") do
       make_tag(:button, class: :close, :'data-dismiss' => :modal,
         :'aria-hidden' => true) do
