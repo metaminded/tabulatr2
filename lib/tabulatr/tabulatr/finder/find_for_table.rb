@@ -56,11 +56,13 @@ module Tabulatr::Finder
     serializer = options[:serializer].presence
 
     # checkboxes
-    checked_ids = uncompress_id_list(checked_param[:checked_ids])
-    new_ids = checked_param[:current_page]
-    new_ids.map!(&:to_i) if id_type==:integer
+    # checked_ids = uncompress_id_list(checked_param[:checked_ids])
+    checked_ids = checked_param[:checked_ids]
+    selected_ids = checked_ids.split(',')
+    # new_ids = checked_param[:current_page]
+    # new_ids.map!(&:to_i) if id_type==:integer
 
-    selected_ids = checked_ids + new_ids
+    # selected_ids = checked_ids + new_ids
     batch_param = params[batch_name]
     if batch_param.present? and block_given?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
@@ -203,7 +205,8 @@ module Tabulatr::Finder
 
 
 
-    {append: append, count_total: total, count: found.count, data: found}
+    {append: append, count_total: total, count: found.count, data: found,
+     num_pages: pages, page: page}
   end
 
 end

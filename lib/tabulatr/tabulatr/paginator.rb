@@ -32,46 +32,124 @@ class Tabulatr
     pages = pparams[:pages].to_i
     pagesize = pparams[:pagesize].to_i
     pagesizes = pparams[:pagesizes].map &:to_i
-    # render the 'wrapping' div
-    make_tag(:div, :class => @table_options[:paginator_div_class]) do
-      # << Page Left
-      make_image_button(@table_options[page > 1 ? :pager_left_button : :pager_left_button_inactive],
-        :class => @table_options[:page_left_class],
-        :id => "#{pagination_name}_page_left",
-        :name => "#{pagination_name}[page_left]",
-        :inactive => (page <= 1))
-      # current page number
-      concat(make_tag(:input,
-        :type => :hidden,
-        :name => "#{pagination_name}[current_page]",
-        :value => page))
-      concat(make_tag(:input,
-        :type => :text,
-        :size => pages.to_s.length,
-        :name => "#{pagination_name}[page]",
-        :value => page))
-      concat("/#{pages}")
-      # >> Page Right
-      make_image_button(@table_options[page < pages ? :pager_right_button : :pager_right_button_inactive],
-        :class => @table_options[:page_right_class],
-        :id => "#{pagination_name}_page_right",
-        :name => "#{pagination_name}[page_right]",
-        :inactive => (page >= pages))
-      if pagesizes.length > 1
-        make_tag(:select, :name => "#{pagination_name}[pagesize]", :class => @table_options[:pagesize_select_class]) do
-          pagesizes.each do |n|
-            make_tag(:option, (n.to_i==pagesize ? {:selected  => :selected} : {}).merge(:value => n)) do
-              concat(n.to_s)
-            end # </option>
-          end # each
-        end # </select>
-      else # just one pagesize
-        concat(make_tag(:input,
-          :type => :hidden,
-          :name => "#{pagination_name}[pagesize]",
-          :value => pagesizes.first))
-      end
-    end # </div>
+
+    if (@table_options[:paginate].is_a?(Fixnum) && @table_options[:paginate] < pages) ||
+      @table_options[:paginate] === true
+      # render the 'wrapping' div
+      make_tag(:div, :class => @table_options[:paginator_div_class]) do
+        make_tag(:ul, false) do
+          if pages < 13
+            (1..pages).each do |p|
+              make_tag(:li, class: (page == p ? 'active' : '')) do
+                make_tag(:a, href: '#', :'data-page' => p) do
+                  concat(p)
+                end
+              end
+            end
+          else
+            if page > 1
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => 1) do
+                  concat(1)
+                end
+              end
+            end
+
+            between = (1 + page) / 2
+
+            if between > 1 && between < page - 2
+              make_tag(:li) do
+                make_tag(:span) do
+                  concat('...')
+                end
+              end
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => between) do
+                  concat(between)
+                end
+              end
+            end
+
+            if page > 4
+              make_tag(:li) do
+                make_tag(:span) do
+                  concat('...')
+                end
+              end
+            end
+
+            if page > 3
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => page-2) do
+                  concat(page-2)
+                end
+              end
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => page-1) do
+                  concat(page-1)
+                end
+              end
+            end
+
+            make_tag(:li, class: 'active') do
+              make_tag(:a, href: '#', :'data-page' => page) do
+                concat(page)
+              end
+            end
+
+            if page < pages - 1
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => page+1) do
+                  concat(page+1)
+                end
+              end
+            end
+            if page < pages - 2
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => page+2) do
+                  concat(page+2)
+                end
+              end
+            end
+
+            if page < pages - 3
+              make_tag(:li) do
+                make_tag(:span) do
+                  concat('...')
+                end
+              end
+            end
+
+            between = (page + pages) / 2
+
+            if between > page + 3 && between < pages - 1
+
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => between) do
+                  concat(between)
+                end
+              end
+
+              make_tag(:li) do
+                make_tag(:span) do
+                  concat('...')
+                end
+              end
+            end
+
+
+            if page < pages
+              make_tag(:li) do
+                make_tag(:a, href: '#', :'data-page' => pages) do
+                  concat(pages)
+                end
+              end
+            end
+          end
+        end
+
+      end # </div>
+    end
   end
 
 end

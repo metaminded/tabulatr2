@@ -60,6 +60,7 @@ class Tabulatr
     when :data   then data_checkbox(opts, &block)
     when :header then header_checkbox(opts, &block)
     when :filter then filter_checkbox(opts, &block)
+    when :empty then nil
     else raise "Wrong row mode '#{@row_mode}'"
     end # case
   end
@@ -70,6 +71,7 @@ class Tabulatr
     when :data   then data_action(opts, &block)
     when :header then header_action(opts, &block)
     when :filter then filter_action(opts, &block)
+    when :empty then nil
     else raise "Wrong row mode '#{@row_mode}'"
     end # case
   end

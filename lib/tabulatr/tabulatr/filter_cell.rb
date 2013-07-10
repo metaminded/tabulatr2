@@ -81,7 +81,7 @@ class Tabulatr
     raise "Whatever that's for!" if block_given?
     make_tag(:td, opts[:filter_html]) do
       iname = "#{@classname}#{@table_form_options[:checked_postfix]}"
-      make_tag(:input, :type => 'hidden', :name => "#{iname}[checked_ids]", :value => @checked[:checked_ids])
+      make_tag(:span, :class => "tabulatr_checked_ids hide", :name => "#{iname}[checked_ids]")
       make_tag(:input, :type => 'hidden', :name => "#{iname}[visible]", :value => @checked[:visible])
     end
   end

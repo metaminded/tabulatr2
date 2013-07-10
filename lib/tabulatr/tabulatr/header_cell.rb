@@ -39,7 +39,7 @@ class Tabulatr
     unless opts[:th_html]
       opts[:th_html] = {}
     end
-      opts[:th_html]['data-tabulatr-column-name'] = name
+    opts[:th_html]['data-tabulatr-column-name'] = name
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || @klaz.human_attribute_name(name).titlecase), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
@@ -80,6 +80,12 @@ class Tabulatr
 
   def header_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
+    opts = normalize_column_options(:checkbox_column, opts)
+    # opts[:th_html]['data-tabulatr-column-type'] = :checkbox
+    unless opts[:th_html]
+      opts[:th_html] = {}
+    end
+    opts[:th_html]['data-tabulatr-column-type'] = :checkbox
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || ""), :escape_html)
     end
@@ -87,6 +93,11 @@ class Tabulatr
 
   def header_action(opts={}, &block)
     opts = normalize_column_options(:action_column, opts)
+    # opts[:th_html]['data-tabulatr-column-type'] = :action
+    unless opts[:th_html]
+      opts[:th_html] = {}
+    end
+    opts[:th_html]['data-tabulatr-column-type'] = :action
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || ""), :escape_html)
     end

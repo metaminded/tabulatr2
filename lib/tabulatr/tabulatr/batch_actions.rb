@@ -40,13 +40,15 @@ class Tabulatr
         end # </select>
       when :buttons
         @table_options[:batch_actions].each do |n,v|
-          make_tag(:input, :type => 'submit', :value => v, 
+          make_tag(:a, :value => v,
             :name => "#{iname}[#{n}]",
-            :class => @table_options[:batch_actions_class])
+            :class => "#{@table_options[:batch_actions_class]} btn") do
+            concat(v)
+          end
         end # each
       else raise "Use either :select or :buttons for :batch_actions_type"
       end # case
     end # </div>
   end
-  
+
 end
