@@ -142,9 +142,6 @@ class Tabulatr
     case element
     when :paginator then render_paginator if @table_options[:paginate]
     when :hidden_submit then "IMPLEMENT ME!"
-    when :submit then   make_tag(:input, :type => 'submit',
-        :class => @table_options[:submit_class],
-        :value => t(@table_options[:submit_label])) if @records.respond_to?(:__classinfo)
     when :reset then   make_tag(:input, :type => 'submit',
         :class => @table_options[:reset_class],
         :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
@@ -225,9 +222,6 @@ private
       yield(filter_form_builder)
       make_tag(:input, :type => 'hidden', :name => 'sort_by')
       make_tag(:input, :type => 'hidden', :name => 'orientation')
-      make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
-        :class => @table_options[:submit_class],
-        :value => t(@table_options[:submit_label]))
     end
   end
 

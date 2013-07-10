@@ -43,7 +43,6 @@ class Tabulatr
     :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
     :paginator_div_class => 'paginator',            # class of the div containing the paging controls
     :batch_actions_div_class => 'batch-actions',    # class of the div containing the batch action controls
-    :submit_class => 'submit-table',                # class of submit button
     :pagesize_select_class => 'pagesize_select',    # class of the pagesize select element
     :select_all_class => 'select-btn',              # class of the select all button
     :select_none_class => 'select-btn',             # class of the select none button
@@ -55,7 +54,6 @@ class Tabulatr
     :batch_actions_label => 'Batch Actions: ',      # Text to show in front of the batch action select
     :batch_actions_type => :select,                 # :select or :button depending on the kind of input you want
     :batch_actions_class => 'batch-action-inputs',  # class to apply on the batch action input elements
-    :submit_label => 'Apply',                       # Text on the submit button
     :select_all_label => 'Select All',              # Text on the select all button
     :select_none_label => 'Select None',            # Text on the select none button
     :select_visible_label => 'Select visible',      # Text on the select visible button
@@ -65,7 +63,7 @@ class Tabulatr
     :reset_label => 'Reset',                        # Text on the reset button
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:submit, :reset, :paginator, :batch_actions],
+    :before_table_controls => [:reset, :paginator, :batch_actions],
     :after_table_controls => [],
 
     :image_path_prefix => (Rails::version.to_f >= 3.1 ? 'tabulatr/' : '/images/tabulatr/'),
