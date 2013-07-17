@@ -47,7 +47,7 @@ class Tabulatr
         concat name.to_s.humanize.titlecase
       end
       make_tag(:div, class: 'controls') do
-        filter_tag(of, "tabulatr_form_#{name}", iname, value, opts)
+        filter_tag(of, "tabulatr_form_#{name}", iname, value, name, opts)
       end
     end
   end
@@ -73,7 +73,7 @@ class Tabulatr
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
       iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
-      filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, value, opts)
+      filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, value, name, opts)
     end # </td>
   end
 
@@ -81,7 +81,6 @@ class Tabulatr
     raise "Whatever that's for!" if block_given?
     make_tag(:td, opts[:filter_html]) do
       iname = "#{@classname}#{@table_form_options[:checked_postfix]}"
-      make_tag(:span, :class => "tabulatr_checked_ids hide", :name => "#{iname}[checked_ids]")
       make_tag(:input, :type => 'hidden', :name => "#{iname}[visible]", :value => @checked[:visible])
     end
   end
@@ -96,7 +95,7 @@ class Tabulatr
 
 private
 
-  def filter_tag(of, name, iname, value, opts)
+  def filter_tag(of, name, iname, value, attr_name, opts)
     if !of
       ""
     elsif of.is_a?(Hash) or of.is_a?(Array) or of.is_a?(String)
@@ -115,6 +114,7 @@ private
         :style => "width:#{opts[:filter_width]}",
         :value => value ? value[:from] : '',
         :'data-type' => "from",
+        :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
         :name => "#{iname}[from]")
       concat(t(opts[:range_filter_symbol]))
@@ -122,6 +122,7 @@ private
         :style => "width:#{opts[:filter_width]}",
         :value => value ? value[:to] : '',
         :'data-type' => "to",
+        :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
         :name => "#{iname}[to]")
     elsif opts[:filter] == :checkbox
@@ -134,12 +135,14 @@ private
         :style => "width:#{opts[:filter_width]}",
         :value => value ? value[:like] : '',
         :'data-type' => "like",
+        :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
         :name => "#{iname}[like]")
     else
       make_tag(:input, :type => :text, :id => name, :style => "width:#{opts[:filter_width]}",
         :'data-type' => 'normal',
         :value => value,
+        :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
         :name => iname)
     end # if
