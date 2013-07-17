@@ -45,6 +45,12 @@ module Tabulatr::Finder
     batch_name      = "#{cname}#{form_options[:batch_postfix]}"
     check_name      = "#{cname}#{form_options[:checked_postfix]}"
     append = params[:append].present? ? params[:append] : false
+
+    if append == 'true'
+      append = true
+    elsif append == 'false'
+      append = false
+    end
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
       merge(params[check_name] || {})
@@ -203,10 +209,9 @@ module Tabulatr::Finder
     found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
+    found.define_singleton_method(:__append){ append }
 
-
-    {append: append, count_total: total, count: found.count, data: found,
-     num_pages: pages, page: page}
+    found
   end
 
 end
