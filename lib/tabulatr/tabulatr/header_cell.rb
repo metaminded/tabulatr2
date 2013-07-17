@@ -87,7 +87,7 @@ class Tabulatr
     end
     opts[:th_html]['data-tabulatr-column-type'] = :checkbox
     make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || ""), :escape_html)
+      make_tag(:input, type: 'checkbox', id: 'tabulatr_mark_all'){}
     end
   end
 

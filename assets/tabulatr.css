@@ -106,6 +106,10 @@
     opacity: 1;
   }
 
+  .tabulatr_filtered_column{
+    text-decoration: underline;
+  }
+
 
 
 </style>
