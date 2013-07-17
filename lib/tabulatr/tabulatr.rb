@@ -126,12 +126,13 @@ class Tabulatr
       make_tag(:h3) do
         concat "Filter"
       end
-      make_tag(:div, class: 'modal-body') do
-        render_filter_options &block
-      end
-      make_tag(:div, class: 'modal-footer') do
-        make_tag(:a, class: 'btn') do
-          concat 'close'
+      make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
+        make_tag(:div, class: 'modal-body') do
+          render_filter_options &block
+        end
+        make_tag(:div, class: 'modal-footer') do
+          make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
+            :class => 'submit-table btn btn-primary', :value => 'Apply')
         end
       end
     end
@@ -218,11 +219,9 @@ private
 
 
   def render_filter_options(&block)
-    make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
       yield(filter_form_builder)
       make_tag(:input, :type => 'hidden', :name => 'sort_by')
       make_tag(:input, :type => 'hidden', :name => 'orientation')
-    end
   end
 
   # render the table rows
