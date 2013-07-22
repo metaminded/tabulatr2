@@ -25,30 +25,21 @@ class Tabulatr
 
   # render the select tag or the buttons for batch actions
   def render_batch_actions
-    make_tag(:div, :class => @table_options[:batch_actions_div_class]) do
-      concat(t(@table_options[:batch_actions_label])) if @table_options[:batch_actions_label]
-      iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
-      case @table_options[:batch_actions_type]
-      when :select
-        make_tag(:select, :name => iname, :class => @table_options[:batch_actions_class]) do
-          concat("<option></option>")
-          @table_options[:batch_actions].each do |n,v|
-            make_tag(:option, :value => n) do
-              concat(v)
-            end # </option>
-          end # each
-        end # </select>
-      when :buttons
+    iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
+    make_tag(:span, :class => 'dropdown') do
+      make_tag(:i, :id => 'tabulatr-wrench', :class => 'icon-wrench hide',  :'data-toggle' => "dropdown"){}
+      make_tag(:ul, class: 'dropdown-menu', role: 'menu', :'aria-labelledby' => 'dLabel') do
         @table_options[:batch_actions].each do |n,v|
-          make_tag(:a, :value => v,
-            :name => "#{iname}[#{n}]",
-            :class => "#{@table_options[:batch_actions_class]} btn") do
-            concat(v)
+          make_tag(:li) do
+            make_tag(:a, :value => v,
+              :name => "#{iname}[#{n}]",
+              :class => "#{@table_options[:batch_actions_class]} btn") do
+              concat(v)
+            end
           end
-        end # each
-      else raise "Use either :select or :buttons for :batch_actions_type"
-      end # case
-    end # </div>
+        end
+      end
+    end
   end
 
 end

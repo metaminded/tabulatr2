@@ -147,7 +147,6 @@ class Tabulatr
         :class => @table_options[:reset_class],
         :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
         :value => t(@table_options[:reset_label])) if @stateful
-    when :batch_actions then render_batch_actions if @table_options[:batch_actions]
     when :table then render_table &block
     else
       if element.is_a?(String)

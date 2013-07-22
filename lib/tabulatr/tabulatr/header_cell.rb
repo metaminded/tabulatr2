@@ -90,6 +90,7 @@ class Tabulatr
     opts[:th_html]['data-tabulatr-column-type'] = :checkbox
     make_tag(:th, opts[:th_html]) do
       make_tag(:input, type: 'checkbox', id: 'tabulatr_mark_all'){}
+      render_batch_actions if @table_options[:batch_actions]
     end
   end
 
