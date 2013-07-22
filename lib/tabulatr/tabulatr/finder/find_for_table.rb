@@ -181,6 +181,9 @@ module Tabulatr::Finder
     # here too
     total = total.count unless total.class == Fixnum
 
+    if page > pages
+      page = 1
+    end
 
     # Now, actually find the stuff
     found = adapter.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
