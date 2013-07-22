@@ -191,7 +191,8 @@ module Tabulatr::Finder
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => {},#paginate_options[:pagesizes],
-        :total => total }
+        :total => total,
+        :append => append }
     end
 
     found.define_singleton_method(:__sorting) { adapter.order(sortparam, opts[:default_order])  }
@@ -208,8 +209,6 @@ module Tabulatr::Finder
 
     found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
-
-    found.define_singleton_method(:__append){ append }
 
     found
   end
