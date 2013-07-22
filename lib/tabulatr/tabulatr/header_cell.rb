@@ -35,11 +35,13 @@ class Tabulatr
     raise "Not in header mode!" if @row_mode != :header
     sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
     bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
+    filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
     opts = normalize_column_options(name, opts)
     unless opts[:th_html]
       opts[:th_html] = {}
     end
     opts[:th_html]['data-tabulatr-column-name'] = name
+    opts[:th_html]['data-tabulatr-form-name'] = filter_name
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || @klaz.human_attribute_name(name).titlecase), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
