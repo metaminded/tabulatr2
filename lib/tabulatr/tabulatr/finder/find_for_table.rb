@@ -213,6 +213,17 @@ module Tabulatr::Finder
     found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
+    found.define_singleton_method(:to_tabulatr_json) do |klass=nil|
+      if klass
+        ActiveModel::ArraySerializer.new(found,
+          { root: "data", meta: found.__pagination,
+            each_serializer: klass
+          }).as_json
+      else
+        { data: found, meta: found.__pagination }
+      end
+    end
+
     found
   end
 
