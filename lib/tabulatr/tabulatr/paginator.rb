@@ -37,7 +37,7 @@ class Tabulatr
       @table_options[:paginate] === true
       # render the 'wrapping' div
       make_tag(:div, :class => @table_options[:paginator_div_class]) do
-        make_tag(:ul, false) do
+        make_tag(:ul) do
           if pages < 13
             (1..pages).each do |p|
               make_tag(:li, class: (page == p ? 'active' : '')) do
