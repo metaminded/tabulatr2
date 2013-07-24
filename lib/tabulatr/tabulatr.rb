@@ -141,6 +141,7 @@ class Tabulatr
 
   def render_element(element, &block)
     case element
+    when :filter then render_filter_icon
     when :paginator then render_paginator
     when :hidden_submit then "IMPLEMENT ME!"
     when :reset then   make_tag(:input, :type => 'submit',

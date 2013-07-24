@@ -63,7 +63,7 @@ class Tabulatr
     :reset_label => 'Reset',                        # Text on the reset button
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:paginator],
+    :before_table_controls => [:filter, :paginator],
     :after_table_controls => [],
 
     :image_path_prefix => (Rails::version.to_f >= 3.1 ? 'tabulatr/' : '/images/tabulatr/'),
