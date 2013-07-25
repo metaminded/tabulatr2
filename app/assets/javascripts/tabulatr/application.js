@@ -347,7 +347,9 @@ $(document).on('ready page:load', function(){
     }
   });
 
-  Tabulatr.updateTable({});
+  if($('.tabulatr_table').length > 0){
+    Tabulatr.updateTable({});
+  }
 });
 
 $(document).on('click', '.pagination a', function(){
