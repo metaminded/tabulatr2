@@ -39,7 +39,6 @@ class Tabulatr
   def filter_column(name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(name, opts)
-    value = @filters[name]
     of = opts[:filter]
     iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
     make_tag(:div, class: 'control-group') do
@@ -47,7 +46,7 @@ class Tabulatr
         concat name.to_s.humanize.titlecase
       end
       make_tag(:div, class: 'controls') do
-        filter_tag(of, "tabulatr_form_#{name}", iname, value, name, opts)
+        filter_tag(of, "tabulatr_form_#{name}", iname, name, opts)
       end
     end
   end
@@ -68,21 +67,16 @@ class Tabulatr
   def filter_association(relation, name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(name, opts)
-    filters = (@filters[@table_form_options[:associations_filter]] || {})
-    value = filters["#{relation}.#{name}"]
     make_tag(:td, opts[:filter_html]) do
       of = opts[:filter]
       iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
-      filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, value, name, opts)
+      filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, name, opts)
     end # </td>
   end
 
   def filter_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
-    make_tag(:td, opts[:filter_html]) do
-      iname = "#{@classname}#{@table_form_options[:checked_postfix]}"
-      make_tag(:input, :type => 'hidden', :name => "#{iname}[visible]", :value => @checked[:visible])
-    end
+    make_tag(:td, opts[:filter_html]) {}
   end
 
   def filter_action(opts={}, &block)
@@ -95,7 +89,7 @@ class Tabulatr
 
 private
 
-  def filter_tag(of, name, iname, value, attr_name, opts)
+  def filter_tag(of, name, iname, attr_name, opts)
     if !of
       ""
     elsif of.is_a?(Hash) or of.is_a?(Array) or of.is_a?(String)
@@ -106,13 +100,13 @@ private
         else
           concat("<option></option>")
           t = options_for_select(of)
-          concat(t.sub("value=\"#{value}\"", "value=\"#{value}\" selected=\"selected\""))
+          concat(t.sub("value=\"\"", "value=\"\" selected=\"selected\""))
         end
       end # </select>
     elsif opts[:filter] == :range
       make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
-        :value => value ? value[:from] : '',
+        :value => '',
         :'data-type' => "from",
         :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
@@ -120,7 +114,7 @@ private
       concat(t(opts[:range_filter_symbol]))
       make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
-        :value => value ? value[:to] : '',
+        :value => '',
         :'data-type' => "to",
         :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
@@ -133,7 +127,7 @@ private
     elsif opts[:filter] == :like
       make_tag(:input, :type => :text, :id => name,
         :style => "width:#{opts[:filter_width]}",
-        :value => value ? value[:like] : '',
+        :value => '',
         :'data-type' => "like",
         :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
@@ -141,7 +135,7 @@ private
     else
       make_tag(:input, :type => :text, :id => name, :style => "width:#{opts[:filter_width]}",
         :'data-type' => 'normal',
-        :value => value,
+        :value => '',
         :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
         :name => iname)

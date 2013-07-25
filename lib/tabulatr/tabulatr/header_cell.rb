@@ -43,7 +43,7 @@ class Tabulatr
     opts[:th_html]['data-tabulatr-column-name'] = name
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
     make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || @klaz.human_attribute_name(name).titlecase), :escape_html)
+      concat(t(opts[:header] || @klass.human_attribute_name(name).titlecase), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
         if @sorting and @sorting[:by].to_s == name.to_s
           pname = "#{sortparam}[_resort][#{name}]"

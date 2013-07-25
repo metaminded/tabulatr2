@@ -48,39 +48,18 @@ class Tabulatr
   # Constructor of Tabulatr
   #
   # Parameters:
-  # <tt>records</tt>:: the 'row' data of the table
+  # <tt>klass</tt>:: the klass of the data for the table
   # <tt>view</tt>:: the current instance of ActionView
   # <tt>opts</tt>:: a hash of options specific for this table
-  def initialize(records, view=nil, toptions={})
-    @records = records
+  def initialize(klass, view=nil, toptions={})
+    @klass = klass
     @view = view
     @table_options = TABLE_OPTIONS.merge(toptions)
     @table_form_options = TABLE_FORM_OPTIONS
     @val = []
     @record = nil
     @row_mode = false
-    if @records.respond_to? :__classinfo
-      @klaz, @classname, @id, @id_type = @records.__classinfo
-      @pagination = @records.__pagination
-      @filters = @records.__filters
-      @sorting = @records.__sorting
-      @checked = @records.__checked
-      @store_data = @records.__store_data
-      @stateful = @records.__stateful
-      @should_translate = @table_options[:translate]
-    else
-      @classname, @id, @id_type = nil
-      @klaz = @records.first.class
-      @pagination = { :page => 1, :pagesize => records.count, :count => records.count, :pages => 1,
-        :pagesizes => records.count, :total => records.count }
-      @table_options.merge!(
-        :paginate => false,                 # true to show paginator
-        :sortable => false,                 # true to allow sorting (can be specified for every sortable column)
-        :filter => false
-      )
-      @store_data = []
-      @should_translate = @table_options[:translate]
-    end
+    @classname = klass.to_s.downcase.gsub("/","_")
   end
 
   # the actual table definition method. It takes an Array of records, a hash of
@@ -103,10 +82,6 @@ class Tabulatr
         render_element(element)
       end
     end if @table_options[:before_table_controls].present? # </div>
-
-    @store_data.each do |k,v|
-      make_tag(:input, :type => :hidden, :name => k, :value => h(v))
-    end
 
     render_element(:table, &block)
 

@@ -27,127 +27,12 @@ class Tabulatr
   def render_paginator
     # get the current pagination state
     pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
-    pparams = @records.__pagination
-    page = pparams[:page].to_i
-    pages = pparams[:pages].to_i
-    pagesize = pparams[:pagesize].to_i
-    pagesizes = pparams[:pagesizes].map &:to_i
 
-    if (@table_options[:paginate].is_a?(Fixnum) && @table_options[:paginate] < pages) ||
+    if (@table_options[:paginate].is_a?(Fixnum)) ||
       @table_options[:paginate] === true
       # render the 'wrapping' div
       make_tag(:div, :class => @table_options[:paginator_div_class]) do
-        make_tag(:ul) do
-          if pages < 13
-            (1..pages).each do |p|
-              make_tag(:li, class: (page == p ? 'active' : '')) do
-                make_tag(:a, href: '#', :'data-page' => p) do
-                  concat(p)
-                end
-              end
-            end
-          else
-            if page > 1
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => 1) do
-                  concat(1)
-                end
-              end
-            end
-
-            between = (1 + page) / 2
-
-            if between > 1 && between < page - 2
-              make_tag(:li) do
-                make_tag(:span) do
-                  concat('...')
-                end
-              end
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => between) do
-                  concat(between)
-                end
-              end
-            end
-
-            if page > 4
-              make_tag(:li) do
-                make_tag(:span) do
-                  concat('...')
-                end
-              end
-            end
-
-            if page > 3
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => page-2) do
-                  concat(page-2)
-                end
-              end
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => page-1) do
-                  concat(page-1)
-                end
-              end
-            end
-
-            make_tag(:li, class: 'active') do
-              make_tag(:a, href: '#', :'data-page' => page) do
-                concat(page)
-              end
-            end
-
-            if page < pages - 1
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => page+1) do
-                  concat(page+1)
-                end
-              end
-            end
-            if page < pages - 2
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => page+2) do
-                  concat(page+2)
-                end
-              end
-            end
-
-            if page < pages - 3
-              make_tag(:li) do
-                make_tag(:span) do
-                  concat('...')
-                end
-              end
-            end
-
-            between = (page + pages) / 2
-
-            if between > page + 3 && between < pages - 1
-
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => between) do
-                  concat(between)
-                end
-              end
-
-              make_tag(:li) do
-                make_tag(:span) do
-                  concat('...')
-                end
-              end
-            end
-
-
-            if page < pages
-              make_tag(:li) do
-                make_tag(:a, href: '#', :'data-page' => pages) do
-                  concat(pages)
-                end
-              end
-            end
-          end
-        end
-
+        make_tag(:ul){}
       end # </div>
     end
   end
