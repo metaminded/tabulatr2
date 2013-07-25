@@ -125,7 +125,7 @@ $(document).on('ready page:load', function(){
           var column_name = $(el).data('tabulatr-column-name');
           var association = $(el).data('tabulatr-association');
           var column_type = $(el).data('tabulatr-column-type');
-          var callback_method = $(el).data('tabulatr-data-format');
+          var callback_method = $(el).data('tabulatr-format-method');
           columns.push({ name: column_name,
                          method: callback_method,
                          type: column_type,

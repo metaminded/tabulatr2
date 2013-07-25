@@ -37,9 +37,7 @@ class Tabulatr
     bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
     filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
     opts = normalize_column_options(name, opts)
-    unless opts[:th_html]
-      opts[:th_html] = {}
-    end
+    opts = normalize_header_column_options opts
     opts[:th_html]['data-tabulatr-column-name'] = name
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
     make_tag(:th, opts[:th_html]) do
@@ -75,6 +73,9 @@ class Tabulatr
     if opts[:sortable] and @table_options[:sortable]
       # change classes accordingly
     end
+    if opts[:format_method]
+      opts[:th_html]['data-tabulatr-format-method'] = opts[:format_method]
+    end
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"), :escape_html)
     end # </th>
@@ -83,11 +84,7 @@ class Tabulatr
   def header_checkbox(opts={}, &block)
     raise "Whatever that's for!" if block_given?
     opts = normalize_column_options(:checkbox_column, opts)
-    # opts[:th_html]['data-tabulatr-column-type'] = :checkbox
-    unless opts[:th_html]
-      opts[:th_html] = {}
-    end
-    opts[:th_html]['data-tabulatr-column-type'] = :checkbox
+    opts = normalize_header_column_options opts, :checkbox
     make_tag(:th, opts[:th_html]) do
       make_tag(:input, type: 'checkbox', id: 'tabulatr_mark_all'){}
       render_batch_actions if @table_options[:batch_actions]
@@ -96,14 +93,23 @@ class Tabulatr
 
   def header_action(opts={}, &block)
     opts = normalize_column_options(:action_column, opts)
-    # opts[:th_html]['data-tabulatr-column-type'] = :action
-    unless opts[:th_html]
-      opts[:th_html] = {}
-    end
-    opts[:th_html]['data-tabulatr-column-type'] = :action
+    opts = normalize_header_column_options opts, :action
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || ""), :escape_html)
     end
+  end
+
+  private
+
+  def normalize_header_column_options opts, type=nil
+    unless opts[:th_html]
+      opts[:th_html] = {}
+    end
+    opts[:th_html]['data-tabulatr-column-type'] = type if type
+    if opts[:format_method]
+      opts[:th_html]['data-tabulatr-format-method'] = opts[:format_method]
+    end
+    opts
   end
 
 end
