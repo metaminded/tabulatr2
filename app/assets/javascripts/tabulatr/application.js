@@ -345,7 +345,6 @@ $(document).on('ready page:load', function(){
         }
       }
     }
-    return false;
   });
 
   Tabulatr.updateTable({});
