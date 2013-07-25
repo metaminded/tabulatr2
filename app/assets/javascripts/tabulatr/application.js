@@ -125,11 +125,13 @@ $(document).on('ready page:load', function(){
           var column_name = $(el).data('tabulatr-column-name');
           var association = $(el).data('tabulatr-association');
           var column_type = $(el).data('tabulatr-column-type');
+          var action = $(el).data('tabulatr-action');
           var callback_method = $(el).data('tabulatr-format-method');
           columns.push({ name: column_name,
                          method: callback_method,
                          type: column_type,
-                         association: association });
+                         association: association,
+                         action: action });
         });
         $('.empty_row').remove();
 
@@ -162,7 +164,7 @@ $(document).on('ready page:load', function(){
             if(column.type == 'checkbox'){
               $td.html(Tabulatr.makeCheckboxFor(response.data[i]));
             }else if(column.type == 'action'){
-              $td.html(Tabulatr.makeActionFor(response.data[i]));
+              $td.html(Tabulatr.makeAction(column.action, response.data[i]));
             }else{
               if(value === false){
                 value = "false"; // because false won't be displayed
@@ -192,8 +194,8 @@ $(document).on('ready page:load', function(){
       "' class='tabulatr-checkbox' />";
     },
 
-    makeActionFor: function(data){
-
+    makeAction: function(action, data){
+      return action.replace('%ID%', data.id);
     },
 
     createParameterString: function(hash){

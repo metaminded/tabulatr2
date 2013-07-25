@@ -92,8 +92,10 @@ class Tabulatr
   end
 
   def header_action(opts={}, &block)
+    raise "Please specify a block" unless block_given?
     opts = normalize_column_options(:action_column, opts)
     opts = normalize_header_column_options opts, :action
+    opts[:th_html]['data-tabulatr-action'] = yield('%ID%').gsub!(/"/, "")
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || ""), :escape_html)
     end
