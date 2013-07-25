@@ -82,14 +82,6 @@ private
     self
   end
 
-  # returns self, sets record to nil and row_mode as required for a
-  # filter row
-  def filter_row_builder
-    @record = nil
-    @row_mode = :filter
-    self
-  end
-
   def filter_form_builder
     @record = nil
     @row_mode = :filter
