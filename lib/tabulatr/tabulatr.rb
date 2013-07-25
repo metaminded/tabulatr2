@@ -130,7 +130,8 @@ class Tabulatr
 
   def render_table(&block)
     to = @table_options[:table_html]
-    to = (to || {}).merge(:class => "#{@table_options[:table_class]} table") if @table_options[:table_class]
+    to = (to || {}).merge(:class => "#{@table_options[:table_class]} table",
+      :'data-path' => @table_options[:path]) if @table_options[:table_class]
     make_tag(:table, to) do
       make_tag(:thead) do
         render_table_header(&block)

@@ -87,7 +87,7 @@ $(document).on('ready page:load', function(){
       }else{
         Tabulatr.storePage = false;
       }
-      jQuery.get(window.location + '.json',
+      jQuery.get($('.tabulatr_table').data('path') + '.json',
           Tabulatr.createParameterString(hash),
           Tabulatr.handleResponse
         );
