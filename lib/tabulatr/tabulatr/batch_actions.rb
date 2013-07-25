@@ -33,7 +33,7 @@ class Tabulatr
           make_tag(:li) do
             make_tag(:a, :value => v,
               :name => "#{iname}[#{n}]",
-              :class => "#{@table_options[:batch_actions_class]} btn") do
+              :class => "btn") do
               concat(v)
             end
           end

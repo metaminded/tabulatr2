@@ -113,8 +113,6 @@ To add a select-popup with batch-actions (i.e., actions that are to be performed
   end %>
 </pre>
 
-If you prefer individual buttons for the batch actions over a select input, give the option <tt>:batch_actions_type => :button</tt> to the <tt>table_for</tt> call.
-
 To handle the actual batch action, we have to add a block to the <tt>find_for_table</tt> call in the controller:
 
 <pre>
@@ -192,9 +190,6 @@ These options are to be specified at the form_for level and change the appearanc
   batch_actions_div_class: 'batch-actions',     # class of the div containing the batch action controls
   pagesize_select_class: 'pagesize_select',     # class of the pagesize select element
 
-  batch_actions_label: 'Batch Action: ',        # Text to show in front of the batch action select
-  batch_actions_type: :select,                  # :select or :button depending on the kind of input you want
-  batch_actions_class: 'batch-action-inputs',   # class to apply on the batch action input elements
   reset_label: 'Reset',                         # Text on the reset button
 
   # which controls to be rendered above and below the tabel and in which order
