@@ -118,11 +118,6 @@ class Tabulatr
     case element
     when :filter then render_filter_icon
     when :paginator then render_paginator
-    when :hidden_submit then "IMPLEMENT ME!"
-    when :reset then   make_tag(:input, :type => 'submit',
-        :class => @table_options[:reset_class],
-        :name => "#{@classname}#{TABLE_FORM_OPTIONS[:reset_state_postfix]}",
-        :value => t(@table_options[:reset_label])) if @stateful
     when :table then render_table &block
     else
       if element.is_a?(String)
@@ -197,25 +192,6 @@ private
       yield(filter_form_builder)
       make_tag(:input, :type => 'hidden', :name => 'sort_by')
       make_tag(:input, :type => 'hidden', :name => 'orientation')
-  end
-
-  # render the table rows
-  def render_table_rows(&block)
-    row_classes = @table_options[:row_classes] || []
-    row_html = @table_options[:row_html] || {}
-    row_class = row_html[:class] || ""
-    @records.each_with_index do |record, i|
-      #concat("<!-- Row #{i} -->")
-      if row_classes.present?
-        rc = row_class.present? ? row_class + " " : ''
-        rc += row_classes[i % row_classes.length]
-      else
-        rc = nil
-      end
-      make_tag(:tr, row_html.merge(:class => rc, :id => dom_id(record))) do
-        yield(data_row_builder(record))
-      end # </tr>
-    end
   end
 
   def render_empty_start_row(&block)
