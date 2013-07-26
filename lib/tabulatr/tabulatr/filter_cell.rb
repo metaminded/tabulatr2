@@ -67,11 +67,17 @@ class Tabulatr
   def filter_association(relation, name, opts={}, &block)
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(name, opts)
-    make_tag(:td, opts[:filter_html]) do
+
+    make_tag(:div, class: 'control-group') do
+      make_tag(:label, class: 'control-label', for: "tabulatr_form_#{relation}_#{name}") do
+        concat "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"
+      end
       of = opts[:filter]
       iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
-      filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, name, opts)
-    end # </td>
+      make_tag(:div, class: 'controls') do
+        filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, name, opts)
+      end
+    end
   end
 
   def filter_checkbox(opts={}, &block)
