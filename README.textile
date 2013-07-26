@@ -142,28 +142,10 @@ Installation is pretty straightforward. Just include a line
 
 in your applications <tt>Gemfile</tt>, then run <tt>bundle install</tt>.
 
-If you want to use a predefined stylesheet and the images for sorting and paging, just issue
+Lastly, run
 
 <pre>
   $ rails g tabulatr:install
-       create  public/stylesheets/tabulatr.css
-       create  public/images/tabulatr/buttons_lite_background.png
-       create  public/images/tabulatr/pager_arrow_left.gif
-       create  public/images/tabulatr/pager_arrow_left_off.gif
-       create  public/images/tabulatr/pager_arrow_right.gif
-       create  public/images/tabulatr/pager_arrow_right_off.gif
-       create  public/images/tabulatr/sort_arrow_down.gif
-       create  public/images/tabulatr/sort_arrow_down_off.gif
-       create  public/images/tabulatr/sort_arrow_up.gif
-       create  public/images/tabulatr/sort_arrow_up_off.gif
-  -------------------------------------------------------
-  Please note: We have copied a sample stylesheet to
-    public/stylesheets/tabulatr.css
-  to actually use it in your application, please include
-  it in your layout file. You may use s/th like
-    <%= stylesheet_link_tag :tabulatr %>
-  for that.
-  -------------------------------------------------------
 </pre>
 
 h2. Options
