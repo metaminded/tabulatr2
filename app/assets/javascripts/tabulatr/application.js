@@ -8,7 +8,7 @@ $(document).on('ready page:load', function(){
     },
 
     updatePagination: function(currentPage, numPages){
-      var ul = $('div.pagination ul');
+      var ul = $('div.pagination > ul');
       ul.html('');
       if(numPages < 13){
         for(var i = 1; i <= numPages; i++){
@@ -73,8 +73,8 @@ $(document).on('ready page:load', function(){
 
     },
 
-    updateTable: function(hash) {
-      if(hash.page !== undefined){
+    updateTable: function(hash, forceReload) {
+      if(hash.page !== undefined && !forceReload){
         //old page should be stored
         Tabulatr.storePage = true;
         // check if this page was already loaded
@@ -116,7 +116,7 @@ $(document).on('ready page:load', function(){
         Tabulatr.moreResults = false;
         $('#new_article_link').unbind('inview');
       }else{
-        if(response.data.length < 10){
+        if(response.data.length < response.meta.pagesize){
           Tabulatr.moreResults = false;
           $('#new_article_link').unbind('inview');
         }else{
@@ -218,13 +218,14 @@ $(document).on('ready page:load', function(){
           hash.orientation = 'asc';
         }
       }
-      if(hash.page === undefined){
-        hash.page = Math.floor($('tbody tr').length/10) + 1;
-        // if(hash.page < 1){
-        //   hash.page = 1;
-        // }
+      var pagesize = $('.tabulatr-per-page a.active').data('items-per-page');
+      if(pagesize == null){
+        pagesize = 10;
       }
-      hash.pagesize = 10;
+      if(hash.page === undefined){
+        hash.page = Math.floor($('tbody tr').length/pagesize) + 1;
+      }
+      hash.pagesize = pagesize;
       hash.arguments = $.map($('.tabulatr_table th'), function(n){ return $(n).data('tabulatr-column-name') }).join();
       hash.hash = $('#tabulatr_security').data('hash');
       hash.salt = $('#tabulatr_security').data('salt');
@@ -357,6 +358,13 @@ $(document).on('ready page:load', function(){
         }
       }
     }
+  });
+
+  $('.tabulatr-per-page a').click(function(){
+    if($(this).hasClass('active')){ return false; }
+    $('.tabulatr-per-page a').removeClass('active');
+    $(this).addClass('active');
+    Tabulatr.updateTable({page: 1}, true);
   });
 
   if($('.tabulatr_table').length > 0){

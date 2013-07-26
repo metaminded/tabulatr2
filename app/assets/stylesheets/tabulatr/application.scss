@@ -17,3 +17,7 @@ i.tabulatr_remove_filter:hover{
 .tabulatr_filtered_column{
   text-decoration: underline;
 }
+
+.tabulatr-per-page a.active{
+  background-color: red;
+}

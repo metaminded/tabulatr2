@@ -171,6 +171,7 @@ module Tabulatr::Finder
     pagesize = 10
     if params.has_key? :pagesize
       pagesize = params[:pagesize].to_i
+      pagesize = 10 if pagesize == 0
     end
 
     c = adapter.includes(includes).count
