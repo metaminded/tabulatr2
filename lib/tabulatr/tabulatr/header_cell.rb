@@ -70,12 +70,14 @@ class Tabulatr
   def header_association(relation, name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
     opts = normalize_column_options(name, opts)
+    opts = normalize_header_column_options(opts)
     if opts[:sortable] and @table_options[:sortable]
       # change classes accordingly
     end
     if opts[:format_method]
       opts[:th_html]['data-tabulatr-format-method'] = opts[:format_method]
     end
+    opts[:th_html]['data-tabulatr-column-name'] = "#{relation}:#{name}"
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"), :escape_html)
     end # </th>

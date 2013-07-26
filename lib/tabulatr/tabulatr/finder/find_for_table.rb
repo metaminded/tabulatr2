@@ -188,7 +188,7 @@ module Tabulatr::Finder
     end
 
     # Now, actually find the stuff
-    found = adapter.limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
+    found = adapter.includes(includes).limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(:__filters) { filter_param }
@@ -222,7 +222,32 @@ module Tabulatr::Finder
             each_serializer: klass
           }).as_json
       else
-        { data: found, meta: found.__pagination }
+        attrs = []
+        params[:arguments].split(',').each do |par|
+          if par.include? ':'
+            relation, action = par.split(':')
+            attrs << {action: action, relation: relation}
+          else
+            attrs << {action: par}
+          end
+        end
+        result = []
+        found.each do |f|
+          r = {}
+          attrs.each do |at|
+            if !at.has_key? :relation
+              r[at[:action]] = f.send at[:action]
+            else
+              if f.class.reflect_on_association(at[:relation].to_sym).collection?
+                r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
+              else
+                r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
+              end
+            end
+          end
+          result << r
+        end
+        { data: result, meta: found.__pagination }
       end
     end
 
