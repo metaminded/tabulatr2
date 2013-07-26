@@ -2,6 +2,7 @@ $(document).on('ready page:load', function(){
   Tabulatr = {
     moreResults: true,
     storePage: false,
+    currentData: null,
     foo: function(v, td, tr){
       td.html(v.toUpperCase());
     },
@@ -194,8 +195,14 @@ $(document).on('ready page:load', function(){
       "' class='tabulatr-checkbox' />";
     },
 
+    replacer: function(match, attribute, offset, string){
+      return Tabulatr.currentData[attribute];
+    },
+
+
     makeAction: function(action, data){
-      return action.replace('%ID%', data.id);
+      Tabulatr.currentData = data;
+      return unescape(action).replace(/{{(\w+)}}/g, Tabulatr.replacer);
     },
 
     createParameterString: function(hash){
