@@ -365,8 +365,6 @@ $(document).on('ready page:load', function(){
 });
 
 $(document).on('click', '.pagination a', function(){
-  console.log($(this));
-  console.log('update pagination');
   var a = $(this);
   if(a.parent().hasClass('active') ||
      a.parent().hasClass('disabled')){
