@@ -218,6 +218,9 @@ $(document).on('ready page:load', function(){
         // }
       }
       hash.pagesize = 10;
+      hash.arguments = $.map($('.tabulatr_table th'), function(n){ return $(n).data('tabulatr-column-name') }).join();
+      hash.hash = $('#tabulatr_security').data('hash');
+      hash.salt = $('#tabulatr_security').data('salt');
       var form_array = $('#tabulatr_filter_form').serializeArray();
       for(var i = 0; i < form_array.length; i++){
         hash[form_array[i].name] = form_array[i].value;

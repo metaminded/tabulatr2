@@ -35,6 +35,8 @@ module Tabulatr::Finder
       else raise("Don't know how to deal with class '#{klaz}'")
     end
 
+    Tabulatr::Security.validate!("#{params[:arguments]}-#{params[:salt]}-#{params[:hash]}")
+
     form_options    = Tabulatr.table_form_options
     opts            = Tabulatr.finder_options.merge(options)
     params          ||= {} # just to be sure

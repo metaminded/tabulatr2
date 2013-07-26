@@ -23,30 +23,11 @@
 class Tabulatr
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      desc "Copy Tabulatr default files"
-      @@rootpath = File.expand_path('../../../../assets/', __FILE__)
-      source_root @@rootpath
+      desc "Create initializer"
+      source_root File.expand_path('../templates', __FILE__)
 
-      def copy_stylesheet
-        copy_file 'tabulatr.css', 'public/stylesheets/tabulatr.css'
-      end
-
-      def copy_images
-        Dir[@@rootpath+"/images/*"].each do |fname|
-          f = File.basename(fname)
-          copy_file "images/#{f}", "public/images/tabulatr/#{f}"
-        end
-      end  
-      
-      def print_info
-        puts %q{--------------------------------------------------------
-Please note: We have copied a sample stylesheet to 
-  public/stylesheets/tabulatr.css
-to actually use it in your application, please include 
-it in your layout file. You may use s/th like
-  <%= stylesheet_link_tag :tabulatr %>
-for that.
---------------------------------------------------------}
+      def copy_initializer_file
+        copy_file "tabulatr.rb", "config/initializers/tabulatr.rb"
       end
     end
   end

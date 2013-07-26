@@ -31,7 +31,9 @@ class Tabulatr
   def column(name, opts={}, &block)
     #puts "column: '#{name}'"
     case @row_mode
-    when :header then header_column(name, opts, &block)
+    when :header then
+      @attributes << name.to_s
+      header_column(name, opts, &block)
     when :filter then filter_column(name, opts, &block)
     when :empty then empty_column(name, opts, &block)
     else raise "Wrong row mode '#{@row_mode}'"
@@ -43,7 +45,9 @@ class Tabulatr
   def association(relation, name, opts={}, &block)
     #puts "assoc: '#{relation}.#{name}'"
     case @row_mode
-    when :header then header_association(relation, name, opts, &block)
+    when :header then
+      @attributes << "#{relation}:name"
+      header_association(relation, name, opts, &block)
     when :filter then filter_association(relation, name, opts, &block)
     when :empty then empty_association(relation, name, opts, &block)
     else raise "Wrong row mode '#{@row_mode}'"

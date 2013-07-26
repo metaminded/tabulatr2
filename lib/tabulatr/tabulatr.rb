@@ -60,6 +60,19 @@ class Tabulatr
     @record = nil
     @row_mode = false
     @classname = klass.to_s.downcase.gsub("/","_")
+    @attributes = []
+  end
+
+  def self.config &block
+    yield
+  end
+
+  def self.secret_tokens=(secret_tokens)
+    @@secret_tokens = secret_tokens
+  end
+
+  def self.secret_tokens
+    @@secret_tokens ||= []
   end
 
   # the actual table definition method. It takes an Array of records, a hash of
@@ -111,6 +124,8 @@ class Tabulatr
         end
       end
     end
+    sec_hash = Tabulatr::Security.sign(@attributes.join(','))
+    make_tag(:span, :id => 'tabulatr_security', :'data-salt' => sec_hash.split('-')[1], :'data-hash' => sec_hash.split('-')[2]){}
     @val.join("").html_safe
   end
 
@@ -127,6 +142,7 @@ class Tabulatr
       end
     end
   end
+
 
   def render_table(&block)
     to = @table_options[:table_html]
