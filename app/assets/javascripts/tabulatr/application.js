@@ -286,6 +286,7 @@ $(document).on('ready page:load', function(){
     params[$(this).attr('name')] = $(this).val();
     params['tabulatr_checked'] = {checked_ids: jQuery.map($('.tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     $('#tabulatr_mark_all').prop('indeterminate', false).prop('checked', false);
+    $('#tabulatr-wrench').addClass('disabled');
     Tabulatr.updateTable(params, true);
   });
 
