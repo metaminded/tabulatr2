@@ -104,7 +104,7 @@ class Tabulatr
       end
     end if @table_options[:after_table_controls].present? # </div>
 
-    make_tag(:div, id: 'tabulatr_count') {}
+    make_tag(:div, id: 'tabulatr_count', :'data-format-string' => I18n.t('tabulatr.count')){}
 
     make_tag(:div, class: :modal, id: 'tabulatr_filter_dialog', style: "display:none ;") do
       make_tag(:button, class: :close, :'data-dismiss' => :modal,
@@ -112,7 +112,7 @@ class Tabulatr
         concat "&times"
       end
       make_tag(:h3) do
-        concat "Filter"
+        concat I18n.t('tabulatr.filter')
       end
       make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
         make_tag(:div, class: 'modal-body') do

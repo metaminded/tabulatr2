@@ -185,8 +185,12 @@ $(document).on('ready page:load', function(){
           $('.tabulatr_table tbody').append($tr);
         }
       }
-      var tab_count = "Showing "+ response.meta.count +", total: "+ response.meta.total;
-      $('#tabulatr_count').html(tab_count);
+      var count_string = $('#tabulatr_count').data('format-string');
+      count_string = count_string.replace(/%\{current\}/, response.meta.count);
+      count_string = count_string.replace(/%\{total\}/, response.meta.total);
+      count_string = count_string.replace(/%\{per_page\}/,
+        response.meta.pagesize);
+      $('#tabulatr_count').html(count_string);
 
     },
 
