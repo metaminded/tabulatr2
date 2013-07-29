@@ -28,39 +28,39 @@ class Tabulatr
     # get the current pagination state
     pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
 
-    if (@table_options[:paginate].is_a?(Fixnum)) ||
+    if (@table_options[:paginate].is_a?(Fixnum)) && @klass.count > @table_options[:paginate] ||
       @table_options[:paginate] === true
       # render the 'wrapping' div
       make_tag(:div, :class => @table_options[:paginator_div_class]) do
         make_tag(:ul){}
       end # </div>
-      make_tag(:div, :class => 'btn-group tabulatr-per-page') do
-        make_tag(:button, :class => 'btn') do
-          concat('No. of rows per page:')
+    end
+    make_tag(:div, :class => 'btn-group tabulatr-per-page') do
+      make_tag(:button, :class => 'btn') do
+        concat('No. of rows per page:')
+      end
+      make_tag(:button, :class => 'btn dropdown-toggle', :'data-toggle' => 'dropdown') do
+        make_tag(:span, :class => 'caret'){}
+      end
+      make_tag(:ul, :class => 'dropdown-menu') do
+        make_tag(:li) do
+          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 10) do
+            concat('10')
+          end
         end
-        make_tag(:button, :class => 'btn dropdown-toggle', :'data-toggle' => 'dropdown') do
-          make_tag(:span, :class => 'caret'){}
+        make_tag(:li) do
+          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 25) do
+            concat('25')
+          end
         end
-        make_tag(:ul, :class => 'dropdown-menu') do
-          make_tag(:li) do
-            make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 10) do
-              concat('10')
-            end
+        make_tag(:li) do
+          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 50) do
+            concat('50')
           end
-          make_tag(:li) do
-            make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 25) do
-              concat('25')
-            end
-          end
-          make_tag(:li) do
-            make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 50) do
-              concat('50')
-            end
-          end
-          make_tag(:li) do
-            make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 100) do
-              concat('100')
-            end
+        end
+        make_tag(:li) do
+          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 100) do
+            concat('100')
           end
         end
       end

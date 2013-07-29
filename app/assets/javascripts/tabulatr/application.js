@@ -114,11 +114,11 @@ $(document).on('ready page:load', function(){
       }
       if(response.data.length == 0){
         Tabulatr.moreResults = false;
-        $('#new_article_link').unbind('inview');
+        $('#tabulatr_count').unbind('inview');
       }else{
         if(response.data.length < response.meta.pagesize){
           Tabulatr.moreResults = false;
-          $('#new_article_link').unbind('inview');
+          $('#tabulatr_count').unbind('inview');
         }else{
           Tabulatr.moreResults = true;
         }
@@ -253,7 +253,9 @@ $(document).on('ready page:load', function(){
     }
     if(!Tabulatr.moreResults){
       Tabulatr.moreResults = true;
-      // $('#new_article_link').bind('inview', cbfn);
+      if($('div.pagination').length == 0){
+        $('#tabulatr_count').bind('inview', cbfn);
+      }
     }
 
     $('#tabulatr_mark_all').prop('checked', false).prop('indeterminate', false);
@@ -270,12 +272,12 @@ $(document).on('ready page:load', function(){
       } else {
         Tabulatr.updateTable({append: true});
       }
-    } else {
-
     }
   };
 
-  // $('#new_article_link').bind('inview', cbfn);
+  if($('div.pagination').length == 0){
+    $('#tabulatr_count').bind('inview', cbfn);
+  }
 
   $('.batch-action-inputs').click(function(){
     params = {};
