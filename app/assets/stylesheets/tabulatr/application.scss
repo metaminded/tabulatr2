@@ -18,6 +18,23 @@ i.tabulatr_remove_filter:hover{
   text-decoration: underline;
 }
 
-.tabulatr-per-page a.active{
-  background-color: red;
+.tabulatr-per-page {
+  margin: 20px 10px;
+  a.active{
+    background-color: red;
+  }
+}
+
+.table-controls div{
+  margin: 20px 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.table-controls i, .tabulatr_table i{
+  margin-right: 5px;
+}
+
+#tabulatr-wrench{
+  margin-left: 10px;
 }
