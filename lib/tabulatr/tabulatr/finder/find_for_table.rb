@@ -45,7 +45,7 @@ module Tabulatr::Finder
     sort_name       = "#{cname}#{form_options[:sort_postfix]}"
     filter_name     = "#{cname}#{form_options[:filter_postfix]}"
     batch_name      = "#{cname}#{form_options[:batch_postfix]}"
-    check_name      = "#{cname}#{form_options[:checked_postfix]}"
+    check_name      = "tabulatr_checked"
     append = params[:append].present? ? params[:append] : false
 
     if append == 'true'
@@ -147,15 +147,6 @@ module Tabulatr::Finder
       end
     end
 
-
-    # more button handling
-    if checked_param[:select_filtered]
-      all = adapter.all
-      selected_ids = (selected_ids + all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
-    elsif checked_param[:unselect_filtered]
-      all = adapter.dup.all
-      selected_ids = (selected_ids - all.map { |r| i=r.send(id); i.is_a?(Fixnum) ? i : i.to_s }).sort.uniq
-    end
 
     # secondly, find the order_by stuff
     #order = adapter.order_for_query(sortparam, opts[:default_order])

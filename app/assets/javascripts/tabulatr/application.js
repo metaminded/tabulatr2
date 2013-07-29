@@ -282,11 +282,11 @@ $(document).on('ready page:load', function(){
   }
 
   $('.batch-action-inputs').click(function(){
-    params = {};
+    params = {page: 1};
     params[$(this).attr('name')] = $(this).val();
-    params[$('.tabulatr_checked_ids').attr('name')] = jQuery.map($('.tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',');
+    params['tabulatr_checked'] = {checked_ids: jQuery.map($('.tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     $('#tabulatr_mark_all').prop('indeterminate', false).prop('checked', false);
-    Tabulatr.updateTable(params);
+    Tabulatr.updateTable(params, true);
   });
 
   $('form#tabulatr_filter_form').submit(function(ev){
@@ -328,13 +328,13 @@ $(document).on('ready page:load', function(){
   $('#tabulatr_mark_all').click(function(){
     if($(this).is(':checked')){
       $('tr[data-page]:visible input[type=checkbox]').prop('checked', true);
-      $('#tabulatr-wrench').show();
+      $('#tabulatr-wrench').removeClass('disabled');
     }else{
       $('tr[data-page]:visible input[type=checkbox]').prop('checked', false);
       if(Tabulatr.checkIfCheckboxesAreMarked()){
-        $('#tabulatr-wrench').show();
+        $('#tabulatr-wrench').removeClass('disabled');
       }else{
-        $('#tabulatr-wrench').hide();
+        $('#tabulatr-wrench').addClass('disabled');
       }
     }
   });
@@ -347,18 +347,18 @@ $(document).on('ready page:load', function(){
         $('#tabulatr_mark_all').prop('indeterminate', false);
         $('#tabulatr_mark_all').prop('checked', true);
       }
-      $('#tabulatr-wrench').show();
+      $('#tabulatr-wrench').removeClass('disabled');
     }else{
       if($('tr[data-page]:visible input[type=checkbox]:checked').length > 0){
         $('#tabulatr_mark_all').prop('indeterminate', true);
-        $('#tabulatr-wrench').show();
+        $('#tabulatr-wrench').removeClass('disabled');
       }else{
         $('#tabulatr_mark_all').prop('indeterminate', false);
         $('#tabulatr_mark_all').prop('checked', false);
         if(Tabulatr.checkIfCheckboxesAreMarked()){
-          $('#tabulatr-wrench').show();
+          $('#tabulatr-wrench').removeClass('disabled');
         }else{
-          $('#tabulatr-wrench').hide();
+          $('#tabulatr-wrench').addClass('disabled');
         }
       }
     }
