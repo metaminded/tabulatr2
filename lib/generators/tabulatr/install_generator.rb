@@ -23,11 +23,15 @@
 class Tabulatr
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      desc "Create initializer"
+      desc "initialize tabulatr"
       source_root File.expand_path('../templates', __FILE__)
 
       def copy_initializer_file
         copy_file "tabulatr.rb", "config/initializers/tabulatr.rb"
+      end
+
+      def copy_translation_file
+        copy_file "tabulatr.yml", "config/locales/tabulatr.yml"
       end
     end
   end

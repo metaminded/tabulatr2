@@ -1,0 +1,10 @@
+en:
+  tabulatr:
+    rows_per_page: 'No. of rows per page:'
+    filter: 'Filter'
+    batch_actions: 'Batch actions'
+de:
+  tabulatr:
+    rows_per_page: 'Ergebnisse pro Seite'
+    filter: 'Filter'
+    batch_actions: 'Batch-Aktionen'

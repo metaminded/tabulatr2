@@ -37,7 +37,7 @@ class Tabulatr
     end
     make_tag(:div, :class => 'btn-group tabulatr-per-page') do
       make_tag(:button, :class => 'btn') do
-        concat('No. of rows per page:')
+        concat(I18n.t('tabulatr.rows_per_page'))
       end
       make_tag(:button, :class => 'btn dropdown-toggle', :'data-toggle' => 'dropdown') do
         make_tag(:span, :class => 'caret'){}
