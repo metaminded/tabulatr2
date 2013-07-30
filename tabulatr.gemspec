@@ -3,15 +3,20 @@ $:.push File.expand_path("../lib", __FILE__)
 require "tabulatr/version"
 
 Gem::Specification.new do |s|
-  s.name        = "tabulatr"
+  s.name        = "tabulatr2"
   s.version     = Tabulatr::VERSION.dup
   s.platform    = Gem::Platform::RUBY
-  s.summary     = "A tight DSL to build tables of ActiveRecord or Mongoid models with sorting, pagination, finding/filtering, selecting and batch actions."
+  s.summary     = "A tight DSL to build tables of ActiveRecord or Mongoid "+
+                  "models with sorting, pagination, finding/filtering, "+
+                  "selecting and batch actions."
   s.email       = "info@provideal.net"
-  s.homepage    = "http://github.com/provideal/tabulatr"
-  s.description = "A tight DSL to build tables of ActiveRecord or Mongoid models with sorting, pagination, finding/filtering, selecting and batch actions. " +
-                  "Tries to do for tables what formtastic and simple_form did for forms."
-  s.authors     = ['Peter Horn', 'René Sprotte']
+  s.homepage    = "http://github.com/provideal/tabulatr2"
+  s.description = "A tight DSL to build tables of ActiveRecord or Mongoid "+
+                  "models with sorting, pagination, finding/filtering, "+
+                  "selecting and batch actions. " +
+                  "Tries to do for tables what formtastic and simple_form did "+
+                  "for forms."
+  s.authors     = ['Peter Horn', 'René Sprotte', 'Florian Thomas']
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
