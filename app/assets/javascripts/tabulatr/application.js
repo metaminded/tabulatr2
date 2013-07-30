@@ -301,9 +301,10 @@ $(document).on('ready page:load', function(){
     $('i.icon-remove-sign').remove();
     for(var i = 0; i < ary.length; i++){
       if(ary[i].value != ""){
-        var name = ary[i].name.replace(/(:|\.|\[|\])/g,'\\$1');
+        var name = ary[i].name.replace(/\[(like|checkbox|from|to)\]/, '');
+        name = name.replace(/(:|\.|\[|\])/g,'\\$1');
         // var attr = $(this).find("input[name="+ name +"]").data('tabulatr-attribute');
-        var $col = $('th[data-tabulatr-form-name='+ name +']');
+        var $col = $('th[data-tabulatr-form-name^='+ name +']');
         if($col.length > 0){
           $col.addClass('tabulatr_filtered_column');
           // icon-remove-sign
@@ -318,12 +319,14 @@ $(document).on('ready page:load', function(){
 
   $('.tabulatr_table').on('click', 'i.tabulatr_remove_filter', function(){
     var $th = $(this).closest('th');
-    var name = $th.data('tabulatr-form-name').replace(/(:|\.|\[|\])/g,'\\$1');
+    var name = $th.data('tabulatr-form-name').
+                  replace(/\[(like|checkbox|from|to)\]/, '');
+    name = name.replace(/(:|\.|\[|\])/g,'\\$1');
     $th.removeClass('tabulatr_filtered_column');
-    if($('[name='+ name +']').is(':checkbox')){
-      $('[name='+ name +']').prop('checked', false);
+    if($('[name^='+ name +']').is(':checkbox')){
+      $('[name^='+ name +']').prop('checked', false);
     }else{
-      $('[name='+ name +']').val('');
+      $('[name^='+ name +']').val('');
     }
     $(this).remove();
     Tabulatr.updateTable({});
