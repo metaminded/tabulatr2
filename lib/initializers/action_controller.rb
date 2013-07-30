@@ -6,7 +6,7 @@ class ActionController::Base
         render json: records.to_tabulatr_json(serializer)
       }
       format.html {
-        render action: 'index'
+        render action: options[:action] || 'index'
       }
     end
   end
