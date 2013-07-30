@@ -150,9 +150,11 @@ module Tabulatr::Finder
 
     # secondly, find the order_by stuff
     #order = adapter.order_for_query(sortparam, opts[:default_order])
-    if params.has_key? :sort_by
+    if params[:sort_by].present?
       s_by = maps[params[:sort_by]] ? maps[params[:sort_by]] : params[:sort_by]
       order = adapter.order_for_query_new s_by, params[:orientation]
+    else
+      order = opts[:default_order]
     end
     # thirdly, get the pagination data
 
