@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.rdoc_options  = ['--charset=UTF-8']
 
 
-  s.add_runtime_dependency('rails', '>= 3.0.0')
+  s.add_runtime_dependency('rails', '>= 4.0.0')
   s.add_dependency('whiny_hash', '>= 0.0.2')
-  s.add_dependency('id_stuffer', '>= 0.0.1')
 end

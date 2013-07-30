@@ -31,8 +31,6 @@ module Tabulatr::Finder
   def self.compress_id_list(list)
     if list.length == 0
       ""
-    elsif list.first.is_a?(Fixnum)
-      IdStuffer.stuff(list)
     else
       "GzB" + Base64.encode64(
         Zlib::Deflate.deflate(
@@ -47,8 +45,6 @@ module Tabulatr::Finder
     elsif str.starts_with?("GzB")
       Zlib::Inflate.inflate(Base64.decode64(str[3..-1])).split(
       Tabulatr.table_form_options[:checked_separator])
-    else
-      IdStuffer.unstuff(str)
     end
   end
 
