@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gemspec
 
+gem 'tabulatr2', path: './', require: 'tabulatr'
+
 group :development, :test do
   gem 'sqlite3', :require => 'sqlite3'
   gem 'rspec'
