@@ -1,7 +1,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 
-require File.expand_path('../dummy_app/config/environment', __FILE__)
-ActiveRecord::Migrator.migrate File.expand_path("../dummy_app/db/migrate/", __FILE__)
+require File.expand_path('../dummy/config/environment', __FILE__)
+ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
 
 require 'rspec/rails'
 require 'capybara/rspec'
