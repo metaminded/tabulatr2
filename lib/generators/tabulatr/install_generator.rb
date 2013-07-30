@@ -33,6 +33,10 @@ class Tabulatr
       def copy_translation_file
         copy_file "tabulatr.yml", "config/locales/tabulatr.yml"
       end
+
+      def copy_inview
+        copy_file "jquery.inview.min.js", "app/assets/javascripts/inview.min.js"
+      end
     end
   end
 end
