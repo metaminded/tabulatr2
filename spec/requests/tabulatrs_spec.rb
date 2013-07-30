@@ -34,7 +34,6 @@ describe "Tabulatrs" do
       ].each do |n|
         page.should have_button(Tabulatr::TABLE_OPTIONS[n])
       end
-      page.should_not have_button(Tabulatr::TABLE_OPTIONS[:reset_label])
     end
 
     it "contains column headers" do
