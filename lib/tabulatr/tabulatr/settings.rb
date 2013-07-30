@@ -29,7 +29,6 @@ class Tabulatr
   # table_for call
   TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
     :table_class => 'tabulatr_table',               # class for the actual data table
-    :reset_class => 'reset',                        # class for the reset button
     :control_div_class_before => 'table-controls',  # class of the upper div containing the paging and batch action controls
     :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
     :paginator_div_class => 'pagination',            # class of the div containing the paging controls
