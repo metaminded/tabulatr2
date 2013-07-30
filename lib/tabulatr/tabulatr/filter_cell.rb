@@ -41,12 +41,14 @@ class Tabulatr
     opts = normalize_column_options(name, opts)
     of = opts[:filter]
     iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
-    make_tag(:div, class: 'control-group') do
-      make_tag(:label, class: 'control-label', for: "tabulatr_form_#{name}") do
-        concat name.to_s.humanize.titlecase
-      end
-      make_tag(:div, class: 'controls') do
-        filter_tag(of, "tabulatr_form_#{name}", iname, name, opts)
+    if of
+      make_tag(:div, class: 'control-group') do
+        make_tag(:label, class: 'control-label', for: "tabulatr_form_#{name}") do
+          concat name.to_s.humanize.titlecase
+        end
+        make_tag(:div, class: 'controls') do
+          filter_tag(of, "tabulatr_form_#{name}", iname, name, opts)
+        end
       end
     end
   end

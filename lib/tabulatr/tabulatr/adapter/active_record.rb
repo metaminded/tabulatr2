@@ -46,7 +46,7 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
   def add_conditions_from(n,v)
     like ||= Tabulatr.sql_options[:like]
     if v.is_a?(String)
-      @relation = @relation.where(n => v) unless v.blank?
+      @relation = @relation.where("#{n} = ?", v) unless v.blank?
     elsif v.is_a?(Hash)
       if v[:like].present?
         @relation = @relation.where("#{n} #{like} ?", "%#{v[:like]}%")
