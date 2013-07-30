@@ -47,7 +47,7 @@ class Tabulatr
     :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
     :batch_actions => false,           # :name => value hash of batch action stuff
     :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
-    :path => '#'
+    :path => '#'                       # where to send the AJAX-requests to
   })
 
   # these settings are considered constant for the whole application, can not be overridden
@@ -92,7 +92,7 @@ class Tabulatr
     :filter_width => '97%',             # width of the filter <input>
     :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
     :sortable => true,                  # if set, sorting-stuff is added to the header cell
-    :format_method => nil
+    :format_method => nil               # javascript method to execute on this column
   })
 
   # defaults for the find_for_table
