@@ -101,7 +101,8 @@ class Tabulatr
     :precondition => false,
     :store_data => false,
     :stateful => false,
-    :name_mapping => nil
+    :name_mapping => nil,
+    :action => nil
   })
 
   # Stupid hack
