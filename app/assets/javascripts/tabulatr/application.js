@@ -1,247 +1,246 @@
-$(document).on('ready page:load', function(){
-  Tabulatr = {
-    moreResults: true,
-    storePage: false,
-    currentData: null,
-    foo: function(v, td, tr){
-      td.html(v.toUpperCase());
-    },
+Tabulatr = {
+  moreResults: true,
+  storePage: false,
+  currentData: null,
+  foo: function(v, td, tr){
+    td.html(v.toUpperCase());
+  },
 
-    updatePagination: function(currentPage, numPages){
-      var ul = $('div.pagination > ul');
-      ul.html('');
-      if(numPages < 13){
-        for(var i = 1; i <= numPages; i++){
-          var cls = '';
-          if(i == currentPage){
-            cls = 'active';
-          }
-          ul.append('<li class="'+ cls +'"><a href="#" data-page="'+ i+'">'+
-            i +'</a></li>');
+  updatePagination: function(currentPage, numPages){
+    var ul = $('div.pagination > ul');
+    ul.html('');
+    if(numPages < 13){
+      for(var i = 1; i <= numPages; i++){
+        var cls = '';
+        if(i == currentPage){
+          cls = 'active';
         }
+        ul.append('<li class="'+ cls +'"><a href="#" data-page="'+ i+'">'+
+          i +'</a></li>');
+      }
+    }else{
+      if(currentPage > 1){
+        ul.append('<li><a href="#" data-page="1">1</a></li>');
+      }
+
+      var between = Math.floor((1 + currentPage) / 2);
+      if(between > 1 && between < currentPage - 2){
+        ul.append('<li><span>...</span></li>');
+        ul.append('<li><a href="#" data-page="'+ between +'">'+ between +'</a></li');
+      }
+
+      if(currentPage > 4){
+        ul.append('<li><span>...</span></li>');
+      }
+
+      if(currentPage > 3){
+        ul.append('<li><a href="#" data-page="'+ (currentPage - 2) +'">'+
+          (currentPage-2) +'</a></li>');
+        ul.append('<li><a href="#" data-page="'+ (currentPage - 1) +'">'+
+          (currentPage-1) +'</a></li>');
+      }
+
+      ul.append('<li class="active"><a href="#" data-page="'+ currentPage +'">'+
+        currentPage +'</a></li>');
+
+      if(currentPage < numPages - 1){
+        ul.append('<li><a href="#" data-page="'+ (currentPage+1) +'">'+
+          (currentPage+1) +'</a></li>');
+      }
+
+      if(currentPage < numPages - 2){
+        ul.append('<li><a href="#" data-page="'+ (currentPage+2) +'">'+
+          (currentPage+2) +'</a></li>');
+      }
+
+      if(currentPage < numPages - 3){
+        ul.append('<li><span>...</span></li>');
+      }
+
+      between = Math.floor((currentPage + numPages) / 2);
+
+      if(between > currentPage + 3 && between < numPages - 1){
+        ul.append('<li><a href="#" data-page="'+ between +'">'+
+          between +'</a></li>');
+        ul.append('<li><span>...</span></li>');
+      }
+      if(currentPage < numPages){
+        ul.append('<li><a href="#" data-page="'+ numPages +'">'+
+          numPages +'</a></li>');
+      }
+    }
+
+  },
+
+  updateTable: function(hash, forceReload) {
+    if(hash.page !== undefined && !forceReload){
+      //old page should be stored
+      Tabulatr.storePage = true;
+      // check if this page was already loaded
+      if($('.tabulatr_table tbody tr[data-page='+ hash.page +']').length > 0){
+        $('.tabulatr_table tbody tr').hide();
+        $('.tabulatr_table tbody tr[data-page='+ hash.page +']').show();
+
+        Tabulatr.updatePagination(hash.page, $('div.pagination a:last').data('page'));
+        return;
+      }
+    }else{
+      Tabulatr.storePage = false;
+    }
+    jQuery.get($('.tabulatr_table').data('path') + '.json',
+        Tabulatr.createParameterString(hash),
+        Tabulatr.handleResponse
+      );
+  },
+
+  checkIfCheckboxesAreMarked: function(){
+    return $('tr[data-page] input[type=checkbox]:checked').length > 0;
+  },
+
+  handleResponse: function(response) {
+    Tabulatr.insertTabulatrData(response);
+    Tabulatr.updatePagination(response.meta.page, response.meta.pages);
+  },
+
+  insertTabulatrData: function(response){
+    columns = [];
+    if(!response.meta.append){
+      if(Tabulatr.storePage){
+        $('.tabulatr_table tbody tr').hide();
       }else{
-        if(currentPage > 1){
-          ul.append('<li><a href="#" data-page="1">1</a></li>');
-        }
-
-        var between = Math.floor((1 + currentPage) / 2);
-        if(between > 1 && between < currentPage - 2){
-          ul.append('<li><span>...</span></li>');
-          ul.append('<li><a href="#" data-page="'+ between +'">'+ between +'</a></li');
-        }
-
-        if(currentPage > 4){
-          ul.append('<li><span>...</span></li>');
-        }
-
-        if(currentPage > 3){
-          ul.append('<li><a href="#" data-page="'+ (currentPage - 2) +'">'+
-            (currentPage-2) +'</a></li>');
-          ul.append('<li><a href="#" data-page="'+ (currentPage - 1) +'">'+
-            (currentPage-1) +'</a></li>');
-        }
-
-        ul.append('<li class="active"><a href="#" data-page="'+ currentPage +'">'+
-          currentPage +'</a></li>');
-
-        if(currentPage < numPages - 1){
-          ul.append('<li><a href="#" data-page="'+ (currentPage+1) +'">'+
-            (currentPage+1) +'</a></li>');
-        }
-
-        if(currentPage < numPages - 2){
-          ul.append('<li><a href="#" data-page="'+ (currentPage+2) +'">'+
-            (currentPage+2) +'</a></li>');
-        }
-
-        if(currentPage < numPages - 3){
-          ul.append('<li><span>...</span></li>');
-        }
-
-        between = Math.floor((currentPage + numPages) / 2);
-
-        if(between > currentPage + 3 && between < numPages - 1){
-          ul.append('<li><a href="#" data-page="'+ between +'">'+
-            between +'</a></li>');
-          ul.append('<li><span>...</span></li>');
-        }
-        if(currentPage < numPages){
-          ul.append('<li><a href="#" data-page="'+ numPages +'">'+
-            numPages +'</a></li>');
-        }
+        $('.tabulatr_table tbody').html('');
       }
-
-    },
-
-    updateTable: function(hash, forceReload) {
-      if(hash.page !== undefined && !forceReload){
-        //old page should be stored
-        Tabulatr.storePage = true;
-        // check if this page was already loaded
-        if($('.tabulatr_table tbody tr[data-page='+ hash.page +']').length > 0){
-          $('.tabulatr_table tbody tr').hide();
-          $('.tabulatr_table tbody tr[data-page='+ hash.page +']').show();
-
-          Tabulatr.updatePagination(hash.page, $('div.pagination a:last').data('page'));
-          return;
-        }
-      }else{
-        Tabulatr.storePage = false;
-      }
-      jQuery.get($('.tabulatr_table').data('path') + '.json',
-          Tabulatr.createParameterString(hash),
-          Tabulatr.handleResponse
-        );
-    },
-
-    checkIfCheckboxesAreMarked: function(){
-      return $('tr[data-page] input[type=checkbox]:checked').length > 0;
-    },
-
-    handleResponse: function(response) {
-      Tabulatr.insertTabulatrData(response);
-      Tabulatr.updatePagination(response.meta.page, response.meta.pages);
-    },
-
-    insertTabulatrData: function(response){
-      columns = [];
-      if(!response.meta.append){
-        if(Tabulatr.storePage){
-          $('.tabulatr_table tbody tr').hide();
-        }else{
-          $('.tabulatr_table tbody').html('');
-        }
-      }
-      if(response.data.length == 0){
+    }
+    if(response.data.length == 0){
+      Tabulatr.moreResults = false;
+      $('#tabulatr_count').unbind('inview');
+    }else{
+      if(response.data.length < response.meta.pagesize){
         Tabulatr.moreResults = false;
         $('#tabulatr_count').unbind('inview');
       }else{
-        if(response.data.length < response.meta.pagesize){
-          Tabulatr.moreResults = false;
-          $('#tabulatr_count').unbind('inview');
-        }else{
-          Tabulatr.moreResults = true;
-        }
-        $('.tabulatr_table th').each(function(ix,el){
-          var column_name = $(el).data('tabulatr-column-name');
-          var association = $(el).data('tabulatr-association');
-          var column_type = $(el).data('tabulatr-column-type');
-          var action = $(el).data('tabulatr-action');
-          var callback_method = $(el).data('tabulatr-format-method');
-          columns.push({ name: column_name,
-                         method: callback_method,
-                         type: column_type,
-                         association: association,
-                         action: action });
-        });
-        $('.empty_row').remove();
+        Tabulatr.moreResults = true;
+      }
+      $('.tabulatr_table th').each(function(ix,el){
+        var column_name = $(el).data('tabulatr-column-name');
+        var association = $(el).data('tabulatr-association');
+        var column_type = $(el).data('tabulatr-column-type');
+        var action = $(el).data('tabulatr-action');
+        var callback_method = $(el).data('tabulatr-format-method');
+        columns.push({ name: column_name,
+                       method: callback_method,
+                       type: column_type,
+                       association: association,
+                       action: action });
+      });
+      $('.empty_row').remove();
 
 
-        for(var i = 0; i < response.data.length; i++){
-          $tr = $('<tr data-page="'+ response.meta.page +'"></tr>');
-          var td = '';
-          for(var c = 0; c < columns.length; c++){
-            var column = columns[c];
-            if(column.association === undefined){
-              var value = response.data[i][column.name];
-            }else{
-              try{
-                var assoc = response.data[i][column.association];
-                if(Array.isArray(assoc)){
-                  var arry = [];
-                  for(var j = 0; j < assoc.length; j++){
-                    arry.push(assoc[j][column.name]);
-                  }
-                  var value = arry.join(', ');
-                }else{
-                  var value = response.data[i][column.association][column.name];
+      for(var i = 0; i < response.data.length; i++){
+        $tr = $('<tr data-page="'+ response.meta.page +'"></tr>');
+        var td = '';
+        for(var c = 0; c < columns.length; c++){
+          var column = columns[c];
+          if(column.association === undefined){
+            var value = response.data[i][column.name];
+          }else{
+            try{
+              var assoc = response.data[i][column.association];
+              if(Array.isArray(assoc)){
+                var arry = [];
+                for(var j = 0; j < assoc.length; j++){
+                  arry.push(assoc[j][column.name]);
                 }
-              }catch(e){
-                var value = '';
+                var value = arry.join(', ');
+              }else{
+                var value = response.data[i][column.association][column.name];
               }
+            }catch(e){
+              var value = '';
             }
-            var fn = Tabulatr[column.method];
-            $td = $('<td></td>');
-            if(column.type == 'checkbox'){
-              $td.html(Tabulatr.makeCheckboxFor(response.data[i]));
-            }else if(column.type == 'action'){
-              $td.html(Tabulatr.makeAction(column.action, response.data[i]));
-            }else{
-              if(value === false){
-                value = "false"; // because false won't be displayed
-              }
-              $td.html(value);
-              if(typeof fn === 'function'){
-                try{
-                  fn(value, $td, $tr);
-                }catch(e){
-                  $td.html('<span class="error">#ERROR</span>');
-                }
-              }
-            }
-            td += $td[0].outerHTML;
           }
-          $tr.append(td);
-          $('.tabulatr_table tbody').append($tr);
+          var fn = Tabulatr[column.method];
+          $td = $('<td></td>');
+          if(column.type == 'checkbox'){
+            $td.html(Tabulatr.makeCheckboxFor(response.data[i]));
+          }else if(column.type == 'action'){
+            $td.html(Tabulatr.makeAction(column.action, response.data[i]));
+          }else{
+            if(value === false){
+              value = "false"; // because false won't be displayed
+            }
+            $td.html(value);
+            if(typeof fn === 'function'){
+              try{
+                fn(value, $td, $tr);
+              }catch(e){
+                $td.html('<span class="error">#ERROR</span>');
+              }
+            }
+          }
+          td += $td[0].outerHTML;
         }
+        $tr.append(td);
+        $('.tabulatr_table tbody').append($tr);
       }
-      var count_string = $('#tabulatr_count').data('format-string');
-      count_string = count_string.replace(/%\{current\}/, response.meta.count);
-      count_string = count_string.replace(/%\{total\}/, response.meta.total);
-      count_string = count_string.replace(/%\{per_page\}/,
-        response.meta.pagesize);
-      $('#tabulatr_count').html(count_string);
-
-    },
-
-    makeCheckboxFor: function(data){
-      return "<input type='checkbox' value='"+ data.id +
-      "' class='tabulatr-checkbox' />";
-    },
-
-    replacer: function(match, attribute, offset, string){
-      return Tabulatr.currentData[attribute];
-    },
-
-
-    makeAction: function(action, data){
-      Tabulatr.currentData = data;
-      return unescape(action).replace(/{{(\w+)}}/g, Tabulatr.replacer);
-    },
-
-    createParameterString: function(hash){
-      if(hash === undefined){
-        hash = {};
-        hash.append = false;
-      }
-      if($('img.sorted').length == 1){
-        hash.sort_by = $('img.sorted').closest('th').data('tabulatr-column-name');
-        if($('img.sorted').data('sort') == 'asc'){
-          hash.orientation = 'desc';
-        }else{
-          hash.orientation = 'asc';
-        }
-      }
-      if(hash.pagesize === undefined){
-        var pagesize = $('.tabulatr-per-page a.active').data('items-per-page');
-        if(pagesize == null){
-          pagesize = 10;
-        }
-      }
-      if(hash.page === undefined){
-        hash.page = Math.floor($('tbody tr').length/pagesize) + 1;
-      }
-      hash.pagesize = pagesize;
-      hash.arguments = $.map($('.tabulatr_table th'), function(n){ return $(n).data('tabulatr-column-name') }).join();
-      hash.hash = $('#tabulatr_security').data('hash');
-      hash.salt = $('#tabulatr_security').data('salt');
-      var form_array = $('#tabulatr_filter_form').serializeArray();
-      for(var i = 0; i < form_array.length; i++){
-        hash[form_array[i].name] = form_array[i].value;
-      }
-      return hash;
     }
+    var count_string = $('#tabulatr_count').data('format-string');
+    count_string = count_string.replace(/%\{current\}/, response.meta.count);
+    count_string = count_string.replace(/%\{total\}/, response.meta.total);
+    count_string = count_string.replace(/%\{per_page\}/,
+      response.meta.pagesize);
+    $('#tabulatr_count').html(count_string);
+
+  },
+
+  makeCheckboxFor: function(data){
+    return "<input type='checkbox' value='"+ data.id +
+    "' class='tabulatr-checkbox' />";
+  },
+
+  replacer: function(match, attribute, offset, string){
+    return Tabulatr.currentData[attribute];
+  },
+
+
+  makeAction: function(action, data){
+    Tabulatr.currentData = data;
+    return unescape(action).replace(/{{(\w+)}}/g, Tabulatr.replacer);
+  },
+
+  createParameterString: function(hash){
+    if(hash === undefined){
+      hash = {};
+      hash.append = false;
+    }
+    if($('img.sorted').length == 1){
+      hash.sort_by = $('img.sorted').closest('th').data('tabulatr-column-name');
+      if($('img.sorted').data('sort') == 'asc'){
+        hash.orientation = 'desc';
+      }else{
+        hash.orientation = 'asc';
+      }
+    }
+    if(hash.pagesize === undefined){
+      var pagesize = $('.tabulatr-per-page a.active').data('items-per-page');
+      hash.page = 1;
+    }
+    if(hash.page === undefined){
+      hash.page = Math.floor($('tbody tr').length/pagesize) + 1;
+    }
+    hash.pagesize = pagesize;
+    hash.arguments = $.map($('.tabulatr_table th'), function(n){ return $(n).data('tabulatr-column-name') }).join();
+    hash.hash = $('#tabulatr_security').data('hash');
+    hash.salt = $('#tabulatr_security').data('salt');
+    var form_array = $('#tabulatr_filter_form').serializeArray();
+    for(var i = 0; i < form_array.length; i++){
+      hash[form_array[i].name] = form_array[i].value;
+    }
+    return hash;
   }
+}
+
+$(document).on('ready page:load', function(){
 
   $('.tabulatr-sort').click(function(){
     orientation = $(this).data('sort');
