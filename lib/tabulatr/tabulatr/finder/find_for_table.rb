@@ -48,6 +48,8 @@ module Tabulatr::Finder
     check_name      = "tabulatr_checked"
     append = params[:append].present? ? params[:append] : false
 
+    opts[:default_pagesize] ||= 10
+
     if append == 'true'
       append = true
     elsif append == 'false'
@@ -159,11 +161,11 @@ module Tabulatr::Finder
     # thirdly, get the pagination data
 
     page = 1
-    if params.has_key? :page
+    if params[:page].present?
       page = params[:page].to_i
     end
-    pagesize = 10
-    if params.has_key? :pagesize
+    pagesize = opts[:default_pagesize]
+    if params[:pagesize].present?
       pagesize = params[:pagesize].to_i
       pagesize = 10 if pagesize == 0
     end
