@@ -46,7 +46,7 @@ class Tabulatr
     #puts "assoc: '#{relation}.#{name}'"
     case @row_mode
     when :header then
-      @attributes << "#{relation}:name"
+      @attributes << "#{relation}:#{name}"
       header_association(relation, name, opts, &block)
     when :filter then filter_association(relation, name, opts, &block)
     when :empty then empty_association(relation, name, opts, &block)
