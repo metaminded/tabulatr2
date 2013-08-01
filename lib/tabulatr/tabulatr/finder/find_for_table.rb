@@ -217,14 +217,17 @@ module Tabulatr::Finder
           }).as_json
       else
         attrs = []
+        id_included = false
         params[:arguments].split(',').each do |par|
           if par.include? ':'
             relation, action = par.split(':')
             attrs << {action: action, relation: relation}
           else
+            id_included = true if par == id
             attrs << {action: par}
           end
         end
+        attrs << {action: id} unless id_included
         result = []
         found.each do |f|
           r = {}
