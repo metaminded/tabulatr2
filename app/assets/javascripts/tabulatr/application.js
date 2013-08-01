@@ -226,7 +226,7 @@ Tabulatr = {
     }
     if(hash.page === undefined){
       hash.page = Math.floor($('tbody tr').length/pagesize) + 1;
-      if(isNaN(hash.page)){
+      if(!isFinite(hash.page)){
         hash.page = 1;
       }
     }
