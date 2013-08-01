@@ -31,7 +31,6 @@ module Tabulatr::Finder
   #
   def self.find_for_table(klaz, params, options={}, &block)
     adapter = if klaz.respond_to?(:descends_from_active_record?) then ::Tabulatr::Adapter::ActiveRecordAdapter.new(klaz)
-      elsif klaz.include?(Mongoid::Document) then ::Tabulatr::Adapter::MongoidAdapter.new(klaz)
       else raise("Don't know how to deal with class '#{klaz}'")
     end
 
