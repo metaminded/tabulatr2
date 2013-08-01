@@ -138,7 +138,7 @@ module Tabulatr::Finder
       pagesize = 10 if pagesize == 0
     end
 
-    c = adapter.includes(includes).count
+    c = adapter.includes(includes).references(includes).count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
 
@@ -150,7 +150,9 @@ module Tabulatr::Finder
 
 
     # Now, actually find the stuff
-    found = adapter.includes(includes).limit(pagesize.to_i).offset(((page-1)*pagesize).to_i).order(order).to_a
+    found = adapter.includes(includes).references(includes)
+            .limit(pagesize.to_i).offset(((page-1)*pagesize).to_i)
+            .order(order).to_a
 
     # finally, inject methods to retrieve the current 'settings'
     found.define_singleton_method(:__filters) { filter_param }
