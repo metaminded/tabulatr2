@@ -2,7 +2,7 @@ Tabulatr = {
   moreResults: true,
   storePage: false,
   currentData: null,
-  foo: function(v, td, tr){
+  foo: function(v, td, tr, obj){
     td.html(v.toUpperCase());
   },
 
@@ -172,7 +172,7 @@ Tabulatr = {
             $td.html(value);
             if(typeof fn === 'function'){
               try{
-                fn(value, $td, $tr);
+                fn(value, $td, $tr, response.data[i]);
               }catch(e){
                 $td.html('<span class="error">#ERROR</span>');
               }
