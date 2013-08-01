@@ -223,10 +223,12 @@ Tabulatr = {
     }
     if(hash.pagesize === undefined){
       var pagesize = $('.tabulatr-per-page a.active').data('items-per-page');
-      hash.page = 1;
     }
     if(hash.page === undefined){
       hash.page = Math.floor($('tbody tr').length/pagesize) + 1;
+      if(isNaN(hash.page)){
+        hash.page = 1;
+      }
     }
     hash.pagesize = pagesize;
     hash.arguments = $.map($('.tabulatr_table th'), function(n){ return $(n).data('tabulatr-column-name') }).join();
