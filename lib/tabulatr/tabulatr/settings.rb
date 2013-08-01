@@ -100,7 +100,6 @@ class Tabulatr
     :default_pagesize => false,
     :precondition => false,
     :store_data => false,
-    :stateful => false,
     :name_mapping => nil,
     :action => nil
   })

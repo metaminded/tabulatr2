@@ -84,37 +84,6 @@ module Tabulatr::Finder
     sortparam = params[sort_name]
     pops = params[pagination_name] || {}
 
-    # store the state if appropriate
-    if opts[:stateful]
-      session = options[:stateful]
-      sname = "#{cname}#{form_options[:state_session_postfix]}"
-      raise "give the session as the :stateful parameter in find_for_table, not a '#{session.class}'" \
-        unless session.respond_to? :[]
-      session[sname] ||= {}
-
-      if params["#{cname}#{form_options[:reset_state_postfix]}"]
-        # clicked reset button, reset all and clear session
-        selected_ids = []
-        filter_param = {}
-        sortparam = nil
-        pops = {}
-        session.delete sname
-      elsif !pops.present? && !selected_ids.present? && !sortparam.present? && !filter_param.present?
-        # we're supposed to retrieve the state from the session if applicable
-        state = session[sname]
-        selected_ids = state[:selected_ids] || []
-        filter_param = state[:filter_param] || {}
-        sortparam    = state[:sortparam]
-        pops         = state[:paging_param] || {}
-      else
-        # store the current settings into the session to be stateful ;)
-        session[sname][:selected_ids] = selected_ids
-        session[sname][:filter_param] = filter_param
-        session[sname][:sortparam]    = sortparam
-        session[sname][:paging_param] = pops
-      end
-    end
-
     # firstly, get the conditions from the filters
     includes = []
     maps = opts[:name_mapping] || {}
@@ -129,7 +98,7 @@ module Tabulatr::Finder
           raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
           t
         end
-        # puts ">>>>>1>> #{n} -> #{nn}"
+        # puts ">>>>>1>> #{v} -> #{nn}"
         adapter.add_conditions_from(nn, v)
       else
         v.each do |t|
@@ -195,17 +164,6 @@ module Tabulatr::Finder
 
     found.define_singleton_method(:__sorting) { adapter.order(sortparam, opts[:default_order])  }
 
-    visible_ids = (found.map { |r| r.send(id) })
-    checked_ids = compress_id_list(selected_ids - visible_ids)
-    visible_ids = compress_id_list(visible_ids)
-    found.define_singleton_method(:__checked) do
-      { :selected => selected_ids,
-        :checked_ids => checked_ids,
-        :visible => visible_ids
-      }
-    end
-
-    found.define_singleton_method(:__stateful) { (opts[:stateful] ? true : false) }
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
     found.define_singleton_method(:to_tabulatr_json) do |klass=nil|
