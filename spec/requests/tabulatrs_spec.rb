@@ -1,10 +1,7 @@
 require 'spec_helper'
 
 describe "Tabulatrs" do
-
-  Mongoid.master.collections.select do |collection|
-    collection.name !~ /system/
-  end.each(&:drop)
+  before { pending }
 
   names = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
   "adipisicing", "elit", "sed", "eiusmod", "tempor", "incididunt", "labore",
@@ -15,177 +12,125 @@ describe "Tabulatrs" do
   "occaecat", "cupidatat", "non", "proident", "sunt", "culpa", "qui",
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
-  vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
-  vendor2 = Vendor.create!(:name => 'producer', :active => true)
-  tag1 = Tag.create!(:title => 'foo')
-  tag2 = Tag.create!(:title => 'bar')
-  tag3 = Tag.create!(:title => 'fubar')
+  before(:each) do
+    @vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
+    @vendor2 = Vendor.create!(:name => 'producer', :active => true)
+    @tag1 = Tag.create!(:title => 'foo')
+    @tag2 = Tag.create!(:title => 'bar')
+    @tag3 = Tag.create!(:title => 'fubar')
+  end
   ids = []
 
-  describe "General data" do
+  describe "General data", type: :feature do
     it "works in general" do
-      get index_simple_products_path
+      get simple_index_products_path
       response.status.should be(200)
     end
 
     it "contains buttons" do
-      visit index_simple_products_path
-      [:submit_label
-      ].each do |n|
-        page.should have_button(Tabulatr::TABLE_OPTIONS[n])
-      end
-    end
-
-    it "contains column headers" do
-      visit index_simple_products_path
-      ['Id','Title','Price','Active','Created At','Vendor Created At','Vendor Name','Tags Title','Tags Count'].each do |n|
+      visit simple_index_products_path
+      ['Filter'].each do |n|
         page.should have_content(n)
       end
     end
 
-    it "contains other elements" do
-      visit index_simple_products_path
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, 0, 0, 0))
+    it "contains column headers" do
+      visit simple_index_products_path
+      ['Title','Price','Active','Updated At'].each do |n|
+        find('.tabulatr_table thead').should have_content(n)
+      end
     end
 
-    it "contains the actual data" do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0, :description => 'blah blah')
-      visit index_simple_products_path
-      page.should have_content(names[0])
+    # it "contains other elements" do
+    #   visit simple_index_products_path
+    #   page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, 0, 0, 0))
+    # end
+
+    it "contains the actual data", type: :feature, js: true do
+      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      product.vendor = @vendor1
+      product.save!
+      visit simple_index_products_path
       page.should have_content("true")
       page.should have_content("10.0")
-      page.should have_content("--0--")
-      #save_and_open_page
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, 1, 0, 1))
-      product.vendor = vendor1
-      product.save!
-      ids << product.id
-      visit index_simple_products_path
-      page.should have_content("ven d'or")
+      product.vendor.name.should eq("ven d'or")
+      find('.tabulatr_table tbody').should have_content(names[0])
+      find('.tabulatr_table tbody').should have_content("ven d'or")
     end
 
-    it "correctly contains the association data" do
-      product = Product.first
-      [tag1, tag2, tag3].each_with_index do |tag, i|
+    it "correctly contains the association data", js: true do
+      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      [@tag1, @tag2, @tag3].each_with_index do |tag, i|
         product.tags << tag
-        visit index_simple_products_path
+        product.save
+        visit simple_index_products_path
         page.should have_content tag.title
-        page.should have_content(sprintf("--%d--", i+1))
       end
     end
 
-    it "contains the actual data multiple" do
+    it "contains the actual data multiple", js: true do
       9.times do |i|
-        product = Product.create!(:title => names[i+1], :active => i.even?, :price => 11.0+i,
-          :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
-        ids << product.id
-        visit index_simple_products_path
+        product = Product.create!(:title => names[i], :active => i.even?, :price => 11.0+i,
+          :vendor => i.even? ? @vendor1 : @vendor2)
+        visit simple_index_products_path
         page.should have_content(names[i])
         page.should have_content((11.0+i).to_s)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], i+2, i+2, 0, i+2))
       end
     end
 
-    it "contains row identifiers" do
-      visit index_simple_products_path
-      Product.all.each do |product|
-        page.should have_css("#product_#{product.id}")
-      end
-    end
+    # it "contains row identifiers" do
+    #   visit simple_index_products_path
+    #   Product.all.each do |product|
+    #     page.should have_css("#product_#{product.id}")
+    #   end
+    # end
 
     it "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
         product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
-          :description => "blah blah #{i}", :vendor => i.even? ? vendor1 : vendor2)
-        ids << product.id
-        visit index_simple_products_path
+          :vendor => i.even? ? @vendor1 : @vendor2)
+        visit simple_index_products_path
         page.should_not have_content(n)
         page.should_not have_content((30.0+i).to_s)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, i+11, 0, i+11))
       end
     end
   end
 
-  describe "Pagination" do
-    it "pages up and down" do
-      visit index_simple_products_path
-      k = 1+names.length/10
-      k.times do |i|
-        ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
-          page.should have_content(names[j])
+  describe "Pagination", type: :feature do
+
+
+    context 'pagination setting is true' do
+      it 'has pages', js: true do
+        5.times do |i|
+          Product.create!(:title => "test #{i}")
         end
-        if i==0
-          page.should have_no_button('product_pagination_page_left')
-        else
-          page.should have_button('product_pagination_page_left')
-        end
-        if i==k-1
-          page.should have_no_button('product_pagination_page_right')
-        else
-          page.should have_button('product_pagination_page_right')
-          click_button('product_pagination_page_right')
-        end
+        visit one_item_per_page_with_pagination_products_path
+        page.all('.pagination ul a').count.should eq 5
       end
-      # ...and down
-      k.times do |ii|
-        i = k-ii-1
-        ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
-          page.should have_content(names[j])
+
+      it 'shows some pages when there are 20', js: true do
+        20.times do |i|
+          Product.create!
         end
-        if i==k-1
-          page.should have_no_button('product_pagination_page_right')
-        else
-          page.should have_button('product_pagination_page_right')
-        end
-        if i==0
-          page.should have_no_button('product_pagination_page_left')
-        else
-          page.should have_button('product_pagination_page_left')
-          click_button('product_pagination_page_left')
-        end
+        visit one_item_per_page_with_pagination_products_path
+        pages = page.all('.pagination ul a').map{|a| a['data-page'].to_i}
+        pages.should eq [1,2,3,10,20]
       end
     end
-
-    it "jumps to the correct page" do
-      visit index_simple_products_path
-      k = 1+names.length/10
-      l = (1..k).entries.shuffle
-      l.each do |ii|
-        i = ii-1
-        fill_in("product_pagination[page]", :with => ii.to_s)
-        click_button("Apply")
-        ((i*10)...[names.length, ((i+1)*10)].min).each do |j|
-          page.should have_content(names[j])
+    context 'pagination setting is false' do
+      it 'has no pages', js: true do
+        5.times do |i|
+          Product.create!
         end
-        if i==0
-          page.should have_no_button('product_pagination_page_left')
-        else
-          page.should have_button('product_pagination_page_left')
-        end
-        if i==k-1
-          page.should have_no_button('product_pagination_page_right')
-        else
-          page.should have_button('product_pagination_page_right')
-        end
-      end
-    end
-
-    it "changes the page size" do
-      visit index_simple_products_path
-      [50,20,10].each do |s|
-        select s.to_s, :from => "product_pagination[pagesize]"
-        click_button "Apply"
-        s.times do |i|
-          page.should have_content(names[i])
-        end
-        page.should_not have_content(names[s])
+        visit one_item_per_page_without_pagination_products_path
+        page.all('.pagination ul a').count.should be 0
       end
     end
   end
 
   describe "Filters" do
     it "filters" do
-      visit index_simple_products_path
+      visit simple_index_products_path
       #save_and_open_page
       fill_in("product_filter[title]", :with => "lorem")
       click_button("Apply")
