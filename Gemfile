@@ -4,6 +4,10 @@ gemspec
 
 gem 'tabulatr2', path: './', require: 'tabulatr'
 
+gem 'jquery-rails'
+
+
+
 group :development, :test do
   gem 'sqlite3', :require => 'sqlite3'
   gem 'rspec'
@@ -11,4 +15,6 @@ group :development, :test do
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner'
+  gem 'poltergeist'
+  gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 end
