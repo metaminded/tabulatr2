@@ -91,7 +91,7 @@ class Tabulatr
     :filter_width => '97%',             # width of the filter <input>
     :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
     :sortable => true,                  # if set, sorting-stuff is added to the header cell
-    :format_method => nil               # javascript method to execute on this column
+    :format_methods => []               # javascript methods to execute on this column
   })
 
   # defaults for the find_for_table

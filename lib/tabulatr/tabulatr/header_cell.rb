@@ -73,8 +73,8 @@ class Tabulatr
     opts = normalize_header_column_options(opts)
 
     filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation.to_s}.#{name.to_s}]"
-    if opts[:format_method]
-      opts[:th_html]['data-tabulatr-format-method'] = opts[:format_method]
+    if opts[:format_methods]
+      opts[:th_html]['data-tabulatr-methods'] = opts[:format_methods].join(',')
     end
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
     opts[:th_html]['data-tabulatr-column-name'] = "#{relation}:#{name}"
@@ -110,8 +110,8 @@ class Tabulatr
       opts[:th_html] = {}
     end
     opts[:th_html]['data-tabulatr-column-type'] = type if type
-    if opts[:format_method]
-      opts[:th_html]['data-tabulatr-format-method'] = opts[:format_method]
+    if opts[:format_methods]
+      opts[:th_html]['data-tabulatr-methods'] = opts[:format_methods].join(',')
     end
     opts
   end

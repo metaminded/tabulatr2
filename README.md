@@ -163,7 +163,7 @@ These options are to be specified at the `table_for` level and change the appear
   :filter_width => '97%',             # width of the filter <input>
   :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
   :sortable => true,                  # if set, sorting-stuff is added to the header cell
-  :format_method => nil               # javascript method to execute on this column
+  :format_methods => []               # javascript method to execute on this column
 ```
 
 
@@ -176,13 +176,13 @@ We use [whiny_hash](http://github.com/provideal/whiny_hash) to handle the option
 ### Request-URI Too Large error
 
 This is a problem particulary when using WEBrick, because WEBricks URIs must not exceed 2048 characters.
-And this limit is hard-coded IIRC. So – If you run into this limitation – 
-please consider using another server. 
+And this limit is hard-coded IIRC. So – If you run into this limitation –
+please consider using another server.
 (Thanks to [stepheneb](https://github.com/stepheneb) for calling my attention back to this.)
 
 ## Other, new bugs
 
-There are roughly another 997 bugs in Tabulatr2, although we do some testing. 
+There are roughly another 997 bugs in Tabulatr2, although we do some testing.
 If you hunt them, please file an issue.
 
 ## Contributing

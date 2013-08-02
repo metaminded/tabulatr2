@@ -2,9 +2,6 @@ Tabulatr = {
   moreResults: true,
   storePage: false,
   currentData: null,
-  foo: function(v, td, tr, obj){
-    td.html(v.toUpperCase());
-  },
 
   updatePagination: function(currentPage, numPages){
     var ul = $('div.pagination > ul');
@@ -126,9 +123,9 @@ Tabulatr = {
         var association = $(el).data('tabulatr-association');
         var column_type = $(el).data('tabulatr-column-type');
         var action = $(el).data('tabulatr-action');
-        var callback_method = $(el).data('tabulatr-format-method');
+        var callback_methods = $(el).data('tabulatr-methods').split(',');
         columns.push({ name: column_name,
-                       method: callback_method,
+                       methods: callback_methods,
                        type: column_type,
                        association: association,
                        action: action });
@@ -159,7 +156,7 @@ Tabulatr = {
               var value = '';
             }
           }
-          var fn = Tabulatr[column.method];
+          var formatters = column.methods;
           $td = $('<td></td>');
           if(column.type == 'checkbox'){
             $td.html(Tabulatr.makeCheckboxFor(response.data[i]));
@@ -170,11 +167,18 @@ Tabulatr = {
               value = "false"; // because false won't be displayed
             }
             $td.html(value);
-            if(typeof fn === 'function'){
-              try{
-                fn(value, $td, $tr, response.data[i]);
-              }catch(e){
-                $td.html('<span class="error">#ERROR</span>');
+            for(var j = 0; j < formatters.length; j++){
+              var fn = Tabulatr[formatters[j]];
+              if(typeof fn === 'function'){
+                try{
+                  var result = fn(value, $td, $tr, response.data[i]);
+                  if(result != null && result !== undefined){
+                    $td.html(result);
+                    value = result;
+                  }
+                }catch(e){
+                  $td.html('<span class="error">#ERROR</span>');
+                }
               }
             }
           }
