@@ -150,7 +150,6 @@ These options are to be specified at the `table_for` level and change the appear
   :valign => false,                   # vertical alignment
   :wrap => true,                      # wraps
   :type => :string,                   # :integer, :date
-  :td_html => false,                  # a hash with html attributes for the cells
   :th_html => false,                  # a hash with html attributes for the header cell
   :filter_html => false,              # a hash with html attributes for the filter cell
   :filter => true,                    # false for no filter field,

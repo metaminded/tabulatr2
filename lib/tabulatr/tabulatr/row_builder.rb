@@ -104,7 +104,7 @@ private
     opts = Tabulatr::COLUMN_OPTIONS.merge(preset).merge(opts)
     {:width => 'width', :align => 'text-align', :valign => 'vertical-align'}.each do |key,css|
       if opts[key]
-        [:th_html, :filter_html, :td_html].each do |set|
+        [:th_html, :filter_html].each do |set|
           opts[set] ||= {}
           opts[set][:style] = (opts[set][:style] ? opts[set][:style] << "; " : "") << "#{css}: #{opts[key]}"
         end # each
