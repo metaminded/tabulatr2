@@ -14,7 +14,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'capybara'
   gem 'launchy'
-  gem 'database_cleaner'
+  gem 'database_cleaner', '< 1.1.0'
   gem 'poltergeist'
   gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git'
 end
