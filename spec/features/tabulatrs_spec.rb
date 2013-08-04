@@ -21,7 +21,7 @@ describe "Tabulatrs" do
   end
   ids = []
 
-  describe "General data", type: :feature do
+  describe "General data" do
     it "works in general" do
       get simple_index_products_path
       response.status.should be(200)
@@ -46,7 +46,7 @@ describe "Tabulatrs" do
     #   page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, 0, 0, 0))
     # end
 
-    it "contains the actual data", type: :feature, js: true do
+    it "contains the actual data", js: true do
       product = Product.create!(:title => names[0], :active => true, :price => 10.0)
       product.vendor = @vendor1
       product.save!
@@ -96,7 +96,7 @@ describe "Tabulatrs" do
     end
   end
 
-  describe "Pagination", type: :feature do
+  describe "Pagination" do
 
 
     context 'pagination setting is true' do
