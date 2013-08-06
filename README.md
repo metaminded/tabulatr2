@@ -68,7 +68,7 @@ we add an option to the table_for:
   end %>
 ```
 
-To handle the actual batch action, we have to add a block to the <tt>find_for_table</tt> call in the controller:
+To handle the actual batch action, we have to add a block to the `find_for_table` call in the controller:
 
 ```ruby
   tabulatr_for Product do |batch_actions|
