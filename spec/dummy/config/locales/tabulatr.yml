@@ -1,0 +1,14 @@
+en:
+  tabulatr:
+    rows_per_page: 'No. of rows per page:'
+    filter: 'Filter'
+    batch_actions: 'Batch actions'
+    count: 'Showing: %{current} of total %{total}. %{per_page} items per page.'
+    apply_filters: 'Apply'
+de:
+  tabulatr:
+    rows_per_page: 'Ergebnisse pro Seite'
+    filter: 'Filter'
+    batch_actions: 'Batch-Aktionen'
+    count: 'Zeige %{current} von insgesamt %{total}. %{per_page} pro Seite.'
+    apply_filters: 'Anwenden'
