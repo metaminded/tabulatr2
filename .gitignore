@@ -6,3 +6,4 @@ spec/dummy/tmp/*
 tags
 log
 .DS_Store
+.rake_tasks~
