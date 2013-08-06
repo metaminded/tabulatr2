@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Tabulatrs" do
-  before { pending }
+  # before { pending }
 
   names = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
   "adipisicing", "elit", "sed", "eiusmod", "tempor", "incididunt", "labore",
@@ -22,10 +22,6 @@ describe "Tabulatrs" do
   ids = []
 
   describe "General data" do
-    it "works in general" do
-      get simple_index_products_path
-      response.status.should be(200)
-    end
 
     it "contains buttons" do
       visit simple_index_products_path
@@ -128,10 +124,9 @@ describe "Tabulatrs" do
     end
   end
 
-  describe "Filters" do
+  describe "Filters", pending: true do
     it "filters" do
       visit simple_index_products_path
-      #save_and_open_page
       fill_in("product_filter[title]", :with => "lorem")
       click_button("Apply")
       page.should have_content("lorem")
@@ -149,7 +144,6 @@ describe "Tabulatrs" do
         click_button("Apply")
         page.should have_content(str)
         tot = (names.select do |s| s.match Regexp.new(str) end).length
-        #save_and_open_page
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, names.length, 0, tot))
       end
     end
@@ -162,13 +156,11 @@ describe "Tabulatrs" do
         fill_in("product_filter[price][to]", :with => "")
         click_button("Apply")
         tot = n-i
-        #save_and_open_page
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
         fill_in("product_filter[price][to]", :with => (10+i).to_s)
         fill_in("product_filter[price][from]", :with => "")
         click_button("Apply")
         tot = i+1
-        #save_and_open_page
         page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
         fill_in("product_filter[price][from]", :with => (10+i).to_s)
         fill_in("product_filter[price][to]", :with => (10+n-i-1).to_s)
@@ -179,10 +171,9 @@ describe "Tabulatrs" do
     end
   end
 
-  describe "Sorting" do
+  describe "Sorting", pending: true do
     it "knows how to sort" do
       visit index_sort_products_path
-      # save_and_open_page
       (1..10).each do |i|
         page.should have_content names[-i]
       end
@@ -197,129 +188,6 @@ describe "Tabulatrs" do
       end
     end
   end
-
-  describe "statefulness" do
-    it "sorts statefully" do
-      Capybara.reset_sessions!
-      visit index_stateful_products_path
-      click_button("product_sort_title_desc")
-      snames = names.sort
-      (1..10).each do |i|
-        page.should have_content snames[-i]
-      end
-      visit index_stateful_products_path
-      (1..10).each do |i|
-        page.should have_content snames[-i]
-      end
-      click_button("Reset")
-      (1..10).each do |i|
-        page.should have_content names[i-1]
-      end
-    end
-
-    it "filters statefully" do
-      Capybara.reset_sessions!
-      visit index_stateful_products_path
-      fill_in("product_filter[title]", :with => "lorem")
-      click_button("Apply")
-      visit index_stateful_products_path
-      #save_and_open_page
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
-      click_button("Reset")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
-    end
-
-    it "selects statefully" do
-      Capybara.reset_sessions!
-      visit index_stateful_products_path
-      fill_in("product_filter[title]", :with => "")
-      click_button("Apply")
-      n = names.length
-      (n/10).times do |i|
-        (1..3).each do |j|
-          check("product_checked_#{ids[10*i+j]}")
-        end
-        click_button("Apply")
-        tot = 3*(i+1)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
-        click_button('product_pagination_page_right')
-      end
-      visit index_stateful_products_path
-      tot = 3*(n/10)
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], names.length % 10, n, tot, n))
-      click_button("Reset")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, names.length, 0, names.length))
-    end
-
-  end
-
-  describe "Select and Batch actions" do
-    it "knows how to interpret the select_... buttons" do
-      # Showing 10, total 54, selected 54, matching 54
-      n = names.length
-      visit index_select_products_path
-      click_button('Select All')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n, n))
-      click_button('Select None')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, n))
-      click_button('Select visible')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 10, n))
-      click_button('Select None')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, n))
-      fill_in("product_filter[title][like]", :with => "a")
-      click_button("Apply")
-      tot = (names.select do |s| s.match /a/ end).length
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, tot))
-      click_button('Select filtered')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, tot))
-      fill_in("product_filter[title][like]", :with => "")
-      click_button("Apply")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
-      click_button("Unselect visible")
-      tot -= (names[0..9].select do |s| s.match /a/ end).length
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
-      click_button('Select None')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, 0, n))
-      click_button('Select All')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n, n))
-      fill_in("product_filter[title][like]", :with => "a")
-      click_button("Apply")
-      tot = (names.select do |s| s.match /a/ end).length
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n, tot))
-      click_button('Unselect filtered')
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n-tot, tot))
-      fill_in("product_filter[title][like]", :with => "")
-      click_button("Apply")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, n-tot, n))
-    end
-
-    it "knows how to select and apply batch actions" do
-      visit index_select_products_path
-      n = names.length
-      (n/10).times do |i|
-        (1..3).each do |j|
-          check("product_checked_#{ids[10*i+j]}")
-        end
-        click_button("Apply")
-        tot = 3*(i+1)
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, n, tot, n))
-        click_button('product_pagination_page_right')
-      end
-      select 'Delete', :from => 'product_batch'
-      click_button("Apply")
-      tot = n-3*(n/10)
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 10, tot, 0, tot))
-      #save_and_open_page
-    end
-  end
-
-  # describe "GET /products empty" do
-  #   it "works in general" do
-  #     get products_path
-  #     response.status.should be(200)
-  #   end
-  # end
-
 
 end
 
