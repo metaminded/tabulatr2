@@ -120,7 +120,8 @@ class Tabulatr
         end
         make_tag(:div, class: 'modal-footer') do
           make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
-            :class => 'submit-table btn btn-primary', :value => 'Apply')
+            :class => 'submit-table btn btn-primary',
+            :value => I18n.t('tabulatr.apply_filters'))
         end
       end
     end
