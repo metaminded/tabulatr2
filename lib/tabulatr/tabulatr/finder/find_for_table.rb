@@ -169,7 +169,7 @@ module Tabulatr::Finder
     found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
 
     found.define_singleton_method(:to_tabulatr_json) do |klass=nil|
-      if klass
+      if klass && ActiveModel.const_defined?(:ArraySerializer)
         ActiveModel::ArraySerializer.new(found,
           { root: "data", meta: found.__pagination,
             each_serializer: klass
