@@ -219,6 +219,9 @@ Tabulatr = {
     }
     if($('img.sorted').length == 1){
       hash.sort_by = $('img.sorted').closest('th').data('tabulatr-column-name');
+      if(hash.sort_by.indexOf(":") != -1){
+        hash.sort_by = $('img.sorted').closest('th').data('tabulatr-assoc-name');
+      }
       if($('img.sorted').data('sort') == 'asc'){
         hash.orientation = 'desc';
       }else{
@@ -254,7 +257,11 @@ $(document).on('ready page:load', function(){
     $(this).addClass('sorted');
     $('tbody tr').remove();
     $('#tabulatr_filter_form input[name=orientation]').val(orientation);
-    $('#tabulatr_filter_form input[name=sort_by]').val($(this).closest('th').data('tabulatr-column-name'));
+    var sort_by = $(this).closest('th').data('tabulatr-column-name');
+    if(sort_by.indexOf(":") != -1){
+        sort_by = $(this).closest('th').data('tabulatr-assoc-name');
+    }
+    $('#tabulatr_filter_form input[name=sort_by]').val(sort_by);
     if(orientation == 'asc'){
       $(this).removeClass('icon-arrow-down').addClass('icon-arrow-up');
       $(this).data('sort', 'desc');

@@ -71,13 +71,14 @@ class Tabulatr
     raise "Not in header mode!" if @row_mode != :header
     opts = normalize_column_options(name, opts)
     opts = normalize_header_column_options(opts)
-
+    sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}[#{relation.to_s}.#{name.to_s}]"
     filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation.to_s}.#{name.to_s}]"
     if opts[:format_methods]
       opts[:th_html]['data-tabulatr-methods'] = opts[:format_methods].join(',')
     end
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
     opts[:th_html]['data-tabulatr-column-name'] = "#{relation}:#{name}"
+    opts[:th_html]['data-tabulatr-assoc-name'] = "#{@klass.reflect_on_association(relation).table_name}.#{name}"
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"), :escape_html)
     end # </th>
