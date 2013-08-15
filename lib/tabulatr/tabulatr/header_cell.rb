@@ -41,7 +41,7 @@ class Tabulatr
     opts[:th_html]['data-tabulatr-column-name'] = name
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
     make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || @klass.human_attribute_name(name).titlecase), :escape_html)
+      concat(t(opts[:header] || readable_name_for(name)), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
         if @sorting and @sorting[:by].to_s == name.to_s
           pname = "#{sortparam}[_resort][#{name}]"
@@ -80,7 +80,22 @@ class Tabulatr
     opts[:th_html]['data-tabulatr-column-name'] = "#{relation}:#{name}"
     opts[:th_html]['data-tabulatr-assoc-name'] = "#{@klass.reflect_on_association(relation).table_name}.#{name}"
     make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"), :escape_html)
+      concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
+      if opts[:sortable] and @table_options[:sortable]
+        if @sorting and @sorting[:by].to_s == name.to_s
+          pname = "#{sortparam}[_resort][#{name}]"
+          bid = "#{bid}_#{name}"
+          sort_dir = @sorting[:direction] == 'asc' ? 'desc' : 'asc'
+          make_tag(:input, :type => :hidden,
+            :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
+            :value => "#{@sorting[:direction]}")
+        else
+          pname = "#{sortparam}[_resort][#{name}]"
+          bid = "#{bid}_#{name}"
+          sort_dir = 'desc'
+        end
+        make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
+      end
     end # </th>
   end
 

@@ -161,6 +161,17 @@ class Tabulatr
   end
 
 private
+
+  def readable_name_for(name, relation=nil)
+    if relation
+      "#{@klass.human_attribute_name(relation).titlecase}
+       #{@klass.reflect_on_association(relation).klass.
+          human_attribute_name(name).titlecase}"
+    else
+      @klass.human_attribute_name(name).titlecase
+    end
+  end
+
   # either append to the internal string buffer or use
   # ActionView#concat to output if an instance is available.
   def concat(s, html_escape=false)

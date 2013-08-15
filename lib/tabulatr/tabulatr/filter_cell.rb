@@ -44,7 +44,7 @@ class Tabulatr
     if of
       make_tag(:div, class: 'control-group') do
         make_tag(:label, class: 'control-label', for: "tabulatr_form_#{name}") do
-          concat name.to_s.humanize.titlecase
+          concat(t(opts[:header] || readable_name_for(name)), :escape_html)
         end
         make_tag(:div, class: 'controls') do
           filter_tag(of, "tabulatr_form_#{name}", iname, name, opts)
@@ -72,7 +72,7 @@ class Tabulatr
 
     make_tag(:div, class: 'control-group') do
       make_tag(:label, class: 'control-label', for: "tabulatr_form_#{relation}_#{name}") do
-        concat "#{relation.to_s.humanize.titlecase} #{name.to_s.humanize.titlecase}"
+        concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
       end
       of = opts[:filter]
       iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
