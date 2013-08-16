@@ -40,7 +40,6 @@ module Tabulatr::Finder
     opts            = Tabulatr.finder_options.merge(options)
     params          ||= {} # just to be sure
     cname           = adapter.class_to_param
-    pagination_name = "#{cname}#{form_options[:pagination_postfix]}"
     sort_name       = "#{cname}#{form_options[:sort_postfix]}"
     filter_name     = "#{cname}#{form_options[:filter_postfix]}"
     batch_name      = "#{cname}#{form_options[:batch_postfix]}"
@@ -59,17 +58,12 @@ module Tabulatr::Finder
       merge(params[check_name] || {})
 
     id = adapter.primary_key
-    id_type = adapter.key_type
-
 
     serializer = options[:serializer].presence
 
     # checkboxes
-    # checked_ids = uncompress_id_list(checked_param[:checked_ids])
     checked_ids = checked_param[:checked_ids]
     selected_ids = checked_ids.split(',')
-    # new_ids = checked_param[:current_page]
-    # new_ids.map!(&:to_i) if id_type==:integer
 
     # selected_ids = checked_ids + new_ids
     batch_param = params[batch_name]
@@ -82,9 +76,7 @@ module Tabulatr::Finder
     # the selected_ids.
     filter_param = (params[filter_name] || {})
     sortparam = params[sort_name]
-    pops = params[pagination_name] || {}
 
-    # firstly, get the conditions from the filters
     includes = []
     maps = opts[:name_mapping] || {}
     conditions = filter_param.each do |t|
@@ -148,15 +140,12 @@ module Tabulatr::Finder
     # here too
     total = total.count unless total.class == Fixnum
 
-
     # Now, actually find the stuff
     found = adapter.includes(includes).references(includes)
             .limit(pagesize.to_i).offset(((page-1)*pagesize).to_i)
             .order(order).to_a
 
-    # finally, inject methods to retrieve the current 'settings'
-    found.define_singleton_method(:__filters) { filter_param }
-    found.define_singleton_method(:__classinfo) { [klaz, cname, id, id_type] }
+
     found.define_singleton_method(:__pagination) do
       { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
         :pagesizes => {},#paginate_options[:pagesizes],
@@ -166,7 +155,7 @@ module Tabulatr::Finder
 
     found.define_singleton_method(:__sorting) { adapter.order(sortparam, opts[:default_order])  }
 
-    found.define_singleton_method(:__store_data) { opts[:store_data] || {} }
+  private
 
     found.define_singleton_method(:to_tabulatr_json) do |klass=nil|
       if klass && ActiveModel.const_defined?(:ArraySerializer)

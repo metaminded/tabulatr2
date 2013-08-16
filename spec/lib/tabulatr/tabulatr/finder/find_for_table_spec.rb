@@ -26,8 +26,6 @@ describe Tabulatr::Finder do
       result = subject.find_for_table(Product, {})
       result.should respond_to :__pagination
       result.should respond_to :to_tabulatr_json
-      result.should respond_to :__sorting
-      result.should respond_to :__filters
     end
 
     it 'orders the result' do

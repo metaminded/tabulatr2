@@ -26,8 +26,6 @@ class Tabulatr
   #render the paginator controls, inputs etc.
   def render_paginator
     # get the current pagination state
-    pagination_name = "#{@classname}#{TABLE_FORM_OPTIONS[:pagination_postfix]}"
-
     if (@table_options[:paginate].is_a?(Fixnum)) && @klass.count > @table_options[:paginate] ||
       @table_options[:paginate] === true
       # render the 'wrapping' div

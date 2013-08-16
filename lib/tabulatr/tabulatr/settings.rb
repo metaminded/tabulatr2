@@ -53,7 +53,6 @@ class Tabulatr
   # on a per-table basis.
   # That's necessary to allow find_for_table to work properly
   TABLE_FORM_OPTIONS = WhinyHash.new({
-    :pagination_postfix => '_pagination',       # name of the param w/ the pagination infos
     :filter_postfix => '_filter',               # postfix for name of the filter in the params :hash => xxx_filter
     :sort_postfix => '_sort',                   # postfix for name of the filter in the params :hash => xxx_filter
     :associations_filter => '__association',    # name of the associations in the filter hash
