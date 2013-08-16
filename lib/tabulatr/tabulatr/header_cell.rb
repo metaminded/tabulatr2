@@ -40,6 +40,7 @@ class Tabulatr
     opts = normalize_header_column_options opts
     opts[:th_html]['data-tabulatr-column-name'] = name
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
+    opts[:th_html]['data-tabulatr-sorting-name'] = "#{@klass.table_name}.#{name}"
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || readable_name_for(name)), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
@@ -78,7 +79,7 @@ class Tabulatr
     end
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
     opts[:th_html]['data-tabulatr-column-name'] = "#{relation}:#{name}"
-    opts[:th_html]['data-tabulatr-assoc-name'] = "#{@klass.reflect_on_association(relation).table_name}.#{name}"
+    opts[:th_html]['data-tabulatr-sorting-name'] = "#{@klass.reflect_on_association(relation).table_name}.#{name}"
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
       if opts[:sortable] and @table_options[:sortable]
