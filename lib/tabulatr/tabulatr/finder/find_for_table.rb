@@ -48,11 +48,7 @@ module Tabulatr::Finder
 
     opts[:default_pagesize] ||= 10
 
-    if append == 'true'
-      append = true
-    elsif append == 'false'
-      append = false
-    end
+    append = string_to_boolean append
     # before we do anything else, we find whether there's something to do for batch actions
     checked_param = ActiveSupport::HashWithIndifferentAccess.new({:checked_ids => '', :current_page => []}).
       merge(params[check_name] || {})
@@ -65,12 +61,7 @@ module Tabulatr::Finder
     checked_ids = checked_param[:checked_ids]
     selected_ids = checked_ids.split(',')
 
-    # selected_ids = checked_ids + new_ids
-    batch_param = params[batch_name]
-    if batch_param.present? and block_given?
-      batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
-      yield(Invoker.new(batch_param, selected_ids))
-    end
+    execute_batch_actions(params[batch_name], selected_ids, &block)
 
     # at this point, we've retrieved the filter settings, the sorting setting, the pagination settings and
     # the selected_ids.
@@ -79,62 +70,16 @@ module Tabulatr::Finder
 
     includes = []
     maps = opts[:name_mapping] || {}
-    conditions = filter_param.each do |t|
-      n, v = t
-      next unless v.present?
-      # FIXME n = name_escaping(n)
-      if (n != form_options[:associations_filter])
-        table_name = adapter.table_name
-        nn = if maps[n] then maps[n] else
-          t = "#{table_name}.#{n}"
-          raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
-          t
-        end
-        # puts ">>>>>1>> #{v} -> #{nn}"
-        adapter.add_conditions_from(nn, v)
-      else
-        v.each do |t|
-          n,v = t
-          assoc, att = n.split(".").map(&:to_sym)
-          includes << assoc
-          table_name = adapter.table_name_for_association(assoc)
-          nn = if maps[n] then maps[n] else
-            t = "#{table_name}.#{att}"
-            raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
-            t
-          end
-          # puts ">>>>>2>> #{n} -> #{nn}"
-          adapter.add_conditions_from(nn, v)
-        end
-      end
-    end
 
+    build_conditions(filter_param, form_options, includes, adapter, maps)
+    order = build_order(params[:sort_by], params[:orientation], params[:default_order], maps, adapter)
 
-    # secondly, find the order_by stuff
-    #order = adapter.order_for_query(sortparam, opts[:default_order])
-    if params[:sort_by].present?
-      s_by = maps[params[:sort_by]] ? maps[params[:sort_by]] : params[:sort_by]
-      order = adapter.order_for_query_new s_by, params[:orientation]
-    else
-      order = opts[:default_order]
-    end
-    # thirdly, get the pagination data
-
-    page = 1
-    if params[:page].present?
-      page = params[:page].to_i
-    end
-    pagesize = opts[:default_pagesize]
-    if params[:pagesize].present?
-      pagesize = params[:pagesize].to_i
-      pagesize = 10 if pagesize == 0
-    end
 
     c = adapter.includes(includes).references(includes).count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
-
-    pages = (c/pagesize).ceil
+    pagesize = params[:pagesize].present? ? params[:pagesize] : opts[:default_pagesize]
+    pagination_data = build_offset(params[:page], pagesize, c, opts)
 
     total = adapter.preconditions_scope(opts).count
     # here too
@@ -142,61 +87,99 @@ module Tabulatr::Finder
 
     # Now, actually find the stuff
     found = adapter.includes(includes).references(includes)
-            .limit(pagesize.to_i).offset(((page-1)*pagesize).to_i)
+            .limit(pagination_data[:pagesize]).offset(pagination_data[:offset])
             .order(order).to_a
 
 
     found.define_singleton_method(:__pagination) do
-      { :page => page, :pagesize => pagesize, :count => c, :pages => pages,
-        :pagesizes => {},#paginate_options[:pagesizes],
+      { :page => pagination_data[:page],
+        :pagesize => pagination_data[:pagesize],
+        :count => c,
+        :pages => pagination_data[:pages],
+        :pagesizes => {},
         :total => total,
         :append => append }
     end
 
-    found.define_singleton_method(:__sorting) { adapter.order(sortparam, opts[:default_order])  }
-
-  private
-
     found.define_singleton_method(:to_tabulatr_json) do |klass=nil|
-      if klass && ActiveModel.const_defined?(:ArraySerializer)
-        ActiveModel::ArraySerializer.new(found,
-          { root: "data", meta: found.__pagination,
-            each_serializer: klass
-          }).as_json
-      else
-        attrs = []
-        id_included = false
-        params[:arguments].split(',').each do |par|
-          if par.include? ':'
-            relation, action = par.split(':')
-            attrs << {action: action, relation: relation}
-          else
-            id_included = true if par == id
-            attrs << {action: par}
-          end
-        end
-        attrs << {action: id} unless id_included
-        result = []
-        found.each do |f|
-          r = {}
-          attrs.each do |at|
-            if !at.has_key? :relation
-              r[at[:action]] = f.send at[:action]
-            else
-              if f.class.reflect_on_association(at[:relation].to_sym).collection?
-                r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
-              else
-                r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
-              end
-            end
-          end
-          result << r
-        end
-        { data: result, meta: found.__pagination }
-      end
+      Tabulatr::JsonBuilder.build found, klass, params[:arguments], id
     end
 
     found
+  end
+
+  private
+
+  def self.execute_batch_actions batch_param, selected_ids, &block
+    if batch_param.present? && block_given?
+      batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
+      yield(Invoker.new(batch_param, selected_ids))
+    end
+  end
+
+  def self.build_conditions filter_param, form_options, includes, adapter, maps
+    filter_param.each do |filter|
+      name, value = filter
+      next unless value.present?
+      if (name != form_options[:associations_filter])
+        table_name = adapter.table_name
+        nn = extract_column_name(table_name, name, maps)
+        adapter.add_conditions_from(nn, value)
+      else
+        value.each do |assoc_filter|
+          name,value = assoc_filter
+          assoc, att = name.split(".").map(&:to_sym)
+          includes << assoc
+          table_name = adapter.table_name_for_association(assoc)
+          nn = extract_column_name(table_name, name, maps, att)
+          adapter.add_conditions_from(nn, value)
+        end
+      end
+    end
+  end
+
+  def self.extract_column_name(table_name, n, maps, att=nil)
+    if maps[n]
+      maps[n]
+    else
+      if att
+        t = "#{table_name}.#{att}"
+      else
+        t = "#{table_name}.#{n}"
+      end
+      raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
+      t
+    end
+  end
+
+  def self.build_order sort_by, orientation, default_order, maps, adapter
+    if sort_by
+      s_by = maps[sort_by] ? maps[sort_by] : sort_by
+      adapter.order_for_query_new s_by, orientation
+    else
+      default_order
+    end
+  end
+
+  def self.build_offset page, pagesize=10, count, opts
+    page ||= 1
+    pagesize, page = pagesize.to_i, page.to_i
+    pagesize = 10 if pagesize == 0
+
+    pages = (count/pagesize).ceil
+
+    {offset: ((page-1)*pagesize).to_i, pagesize: pagesize.to_i, pages: pages,
+     page: page
+    }
+  end
+
+  def self.string_to_boolean str
+    if str == 'true'
+      str = true
+    elsif str == 'false'
+      str = false
+    end
+    str
   end
 
 end
