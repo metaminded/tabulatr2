@@ -1,7 +1,6 @@
 require 'spec_helper'
 
-describe "Tabulatrs" do
-  # before { pending }
+describe "Tabulatr" do
 
   names = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
   "adipisicing", "elit", "sed", "eiusmod", "tempor", "incididunt", "labore",
@@ -19,7 +18,6 @@ describe "Tabulatrs" do
     @tag2 = Tag.create!(:title => 'bar')
     @tag3 = Tag.create!(:title => 'fubar')
   end
-  ids = []
 
   describe "General data" do
 
@@ -36,11 +34,6 @@ describe "Tabulatrs" do
         find('.tabulatr_table thead').should have_content(n)
       end
     end
-
-    # it "contains other elements" do
-    #   visit simple_index_products_path
-    #   page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, 0, 0, 0))
-    # end
 
     it "contains the actual data", js: true do
       product = Product.create!(:title => names[0], :active => true, :price => 10.0)
@@ -73,13 +66,6 @@ describe "Tabulatrs" do
         page.should have_content((11.0+i).to_s)
       end
     end
-
-    # it "contains row identifiers" do
-    #   visit simple_index_products_path
-    #   Product.all.each do |product|
-    #     page.should have_css("#product_#{product.id}")
-    #   end
-    # end
 
     it "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
@@ -124,74 +110,73 @@ describe "Tabulatrs" do
     end
   end
 
-  describe "Filters", pending: true do
-    it "filters" do
+  describe "Filters", js: true do
+    it "filters with like" do
+      names.each do |n|
+        Product.create!(:title => n, :active => true, :price => 10.0)
+      end
       visit simple_index_products_path
-      fill_in("product_filter[title]", :with => "lorem")
+      find('.icon-filter').trigger('click')
+      fill_in("product_filter[title][like]", :with => "ore")
       click_button("Apply")
       page.should have_content("lorem")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 1, names.length, 0, 1))
-      fill_in("product_filter[title]", :with => "loreem")
+      page.should have_content("labore")
+      page.should have_content("dolore")
+      find('.icon-filter').trigger('click')
+      fill_in("product_filter[title][like]", :with => "loreem")
       click_button("Apply")
       page.should_not have_content("lorem")
-      page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], 0, names.length, 0, 0))
     end
 
-    it "filters with like" do
-      visit index_filters_products_path
-      %w{a o lo lorem}.each do |str|
-        fill_in("product_filter[title][like]", :with => str)
-        click_button("Apply")
-        page.should have_content(str)
-        tot = (names.select do |s| s.match Regexp.new(str) end).length
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, names.length, 0, tot))
-      end
+    it "filters" do
+      Product.create!([{title: 'foo', vendor: @vendor1},
+                       {title: 'bar', vendor: @vendor2}])
+      visit simple_index_products_path
+      find('.icon-filter').trigger('click')
+      fill_in("product_filter[__association][vendor.name]", :with => 'producer')
+      click_button("Apply")
+      page.should have_content(@vendor2.name)
+      page.should_not have_content(@vendor1.name)
     end
 
     it "filters with range" do
-      visit index_filters_products_path
+      visit simple_index_products_path
       n = names.length
-      (0..n/2).each do |i|
-        fill_in("product_filter[price][from]", :with => (10+i).to_s)
-        fill_in("product_filter[price][to]", :with => "")
-        click_button("Apply")
-        tot = n-i
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
-        fill_in("product_filter[price][to]", :with => (10+i).to_s)
-        fill_in("product_filter[price][from]", :with => "")
-        click_button("Apply")
-        tot = i+1
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
-        fill_in("product_filter[price][from]", :with => (10+i).to_s)
-        fill_in("product_filter[price][to]", :with => (10+n-i-1).to_s)
-        click_button("Apply")
-        tot = n-i*2
-        page.should have_content(sprintf(Tabulatr::TABLE_OPTIONS[:info_text], [10,tot].min, n, 0, tot))
-      end
+      Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])
+      find('.icon-filter').trigger('click')
+      fill_in("product_filter[price][from]", :with => 4)
+      fill_in("product_filter[price][to]", :with => 10)
+      click_button("Apply")
+      page.should have_content('foo')
+      page.should_not have_content('bar')
+      find('.icon-filter').trigger('click')
+      fill_in("product_filter[price][from]", :with => 12)
+      fill_in("product_filter[price][to]", :with => 19)
+      click_button("Apply")
+      page.should have_content('bar')
+      page.should_not have_content('foo')
     end
   end
 
-  describe "Sorting", pending: true do
-    it "knows how to sort" do
-      visit index_sort_products_path
-      (1..10).each do |i|
-        page.should have_content names[-i]
+  describe "Sorting" do
+    it "knows how to sort", js: true do
+      names.each do |n|
+        Product.create!(title: n, vendor: @vendor1, active: true, price: 10.0)
       end
-      click_button("product_sort_title_desc")
+      Product.count.should > 10
+      visit simple_index_products_path
+      (1..10).each do |i|
+        page.should have_content names[i-1]
+      end
+      find("#product_sort_title").trigger('click')
       snames = names.sort
       (1..10).each do |i|
         page.should have_content snames[-i]
       end
-      click_button("product_sort_title_asc")
+      find("#product_sort_title").trigger('click')
       (1..10).each do |i|
         page.should have_content snames[i-1]
       end
     end
   end
-
 end
-
-
-
-
-
