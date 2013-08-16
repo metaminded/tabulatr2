@@ -41,26 +41,17 @@ class Tabulatr
         make_tag(:span, :class => 'caret'){}
       end
       make_tag(:ul, :class => 'dropdown-menu') do
-        make_tag(:li) do
-          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 10) do
-            concat('10')
-          end
+        [10, 25, 50, 100].each do |n|
+          create_pagination_select(n)
         end
-        make_tag(:li) do
-          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 25) do
-            concat('25')
-          end
-        end
-        make_tag(:li) do
-          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 50) do
-            concat('50')
-          end
-        end
-        make_tag(:li) do
-          make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => 100) do
-            concat('100')
-          end
-        end
+      end
+    end
+  end
+
+  def create_pagination_select n
+    make_tag(:li) do
+      make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => n) do
+        concat(n)
       end
     end
   end

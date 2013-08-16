@@ -90,41 +90,15 @@ class Tabulatr
   def build_table(&block)
     @val = []
     # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
-    make_tag(:div,  :class => @table_options[:control_div_class_before]) do
-      @table_options[:before_table_controls].each do |element|
-        render_element(element)
-      end
-    end if @table_options[:before_table_controls].present? # </div>
+    render_table_controls(:control_div_class_before, :before_table_controls)
 
     render_element(:table, &block)
 
-    make_tag(:div,  :class => @table_options[:control_div_class_after]) do
-      @table_options[:after_table_controls].each do |element|
-        render_element(element)
-      end
-    end if @table_options[:after_table_controls].present? # </div>
+    render_table_controls(:control_div_class_after, :after_table_controls)
 
     make_tag(:div, id: 'tabulatr_count', :'data-format-string' => I18n.t('tabulatr.count')){}
 
-    make_tag(:div, class: :modal, id: 'tabulatr_filter_dialog', style: "display:none ;") do
-      make_tag(:button, class: :close, :'data-dismiss' => :modal,
-        :'aria-hidden' => true) do
-        concat "&times"
-      end
-      make_tag(:h3) do
-        concat I18n.t('tabulatr.filter')
-      end
-      make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
-        make_tag(:div, class: 'modal-body') do
-          render_filter_options &block
-        end
-        make_tag(:div, class: 'modal-footer') do
-          make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
-            :class => 'submit-table btn btn-primary',
-            :value => I18n.t('tabulatr.apply_filters'))
-        end
-      end
-    end
+    render_filter_dialog &block
     sec_hash = Tabulatr::Security.sign(@attributes.join(','))
     make_tag(:span, :id => 'tabulatr_security', :'data-salt' => sec_hash.split('-')[1], :'data-hash' => sec_hash.split('-')[2]){}
     @val.join("").html_safe
@@ -228,6 +202,36 @@ private
     row_html[:class] = 'empty_row'
     make_tag(:tr, row_html) do
       yield empty_row_builder
+    end
+  end
+
+  def render_table_controls div_class, before_or_after
+    make_tag(:div,  :class => @table_options[div_class]) do
+      @table_options[before_or_after].each do |element|
+        render_element(element)
+      end
+    end if @table_options[before_or_after].present? # </div>
+  end
+
+  def render_filter_dialog &block
+    make_tag(:div, class: :modal, id: 'tabulatr_filter_dialog', style: "display:none ;") do
+      make_tag(:button, class: :close, :'data-dismiss' => :modal,
+        :'aria-hidden' => true) do
+        concat "&times"
+      end
+      make_tag(:h3) do
+        concat I18n.t('tabulatr.filter')
+      end
+      make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
+        make_tag(:div, class: 'modal-body') do
+          render_filter_options &block
+        end
+        make_tag(:div, class: 'modal-footer') do
+          make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
+            :class => 'submit-table btn btn-primary',
+            :value => I18n.t('tabulatr.apply_filters'))
+        end
+      end
     end
   end
 

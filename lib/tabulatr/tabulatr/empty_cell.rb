@@ -41,49 +41,4 @@ class Tabulatr
     opts = normalize_column_options(name, opts)
     make_tag(:td, opts[:filter_html])
   end
-
-  def empty_association(relation, name, opts={}, &block)
-    raise "Not in empty mode!" if @row_mode != :empty
-    opts = normalize_column_options(name, opts)
-    make_tag(:td, opts[:filter_html])
-  end
-
-private
-
-  # def filter_tag(of, iname, value, opts)
-  #   if !of
-  #     ""
-  #   elsif of.is_a?(Hash) or of.is_a?(Array) or of.is_a?(String)
-  #     make_tag(:select, :name => iname, :style => "width:#{opts[:filter_width]}") do
-  #       if of.class.is_a?(String)
-  #         concat(of)
-  #       else
-  #         concat("<option></option>")
-  #         t = options_for_select(of)
-  #         concat(t.sub("value=\"#{value}\"", "value=\"#{value}\" selected=\"selected\""))
-  #       end
-  #     end # </select>
-  #   elsif opts[:filter] == :range
-  #     make_tag(:input, :type => :text, :name => "#{iname}[from]",
-  #       :style => "width:#{opts[:filter_width]}",
-  #       :value => value ? value[:from] : '')
-  #     concat(t(opts[:range_filter_symbol]))
-  #     make_tag(:input, :type => :text, :name => "#{iname}[to]",
-  #       :style => "width:#{opts[:filter_width]}",
-  #       :value => value ? value[:to] : '')
-  #   elsif opts[:filter] == :checkbox
-  #     checkbox_value = opts[:checkbox_value]
-  #     checkbox_label = opts[:checkbox_label]
-  #     concat(check_box_tag(iname, checkbox_value, false, {}))
-  #     concat(checkbox_label)
-  #   elsif opts[:filter] == :like
-  #     make_tag(:input, :type => :text, :name => "#{iname}[like]",
-  #       :style => "width:#{opts[:filter_width]}",
-  #       :value => value ? value[:like] : '')
-  #   else
-  #     make_tag(:input, :type => :text, :name => "#{iname}", :style => "width:#{opts[:filter_width]}",
-  #       :value => value)
-  #   end # if
-  # end
-
 end

@@ -49,7 +49,7 @@ class Tabulatr
       @attributes << "#{relation}:#{name}"
       header_association(relation, name, opts, &block)
     when :filter then filter_association(relation, name, opts, &block)
-    when :empty then empty_association(relation, name, opts, &block)
+    when :empty then empty_column(name, opts, &block)
     else raise "Wrong row mode '#{@row_mode}'"
     end # case
   end

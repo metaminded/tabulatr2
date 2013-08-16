@@ -34,31 +34,20 @@ class Tabulatr
   def header_column(name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
     sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
-    bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
     filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
-    opts = normalize_column_options(name, opts)
-    opts = normalize_header_column_options opts
-    opts[:th_html]['data-tabulatr-column-name'] = name
-    opts[:th_html]['data-tabulatr-form-name'] = filter_name
-    opts[:th_html]['data-tabulatr-sorting-name'] = "#{@klass.table_name}.#{name}"
-    make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || readable_name_for(name)), :escape_html)
-      if opts[:sortable] and @table_options[:sortable]
-        if @sorting and @sorting[:by].to_s == name.to_s
-          pname = "#{sortparam}[_resort][#{name}]"
-          bid = "#{bid}_#{name}"
-          sort_dir = @sorting[:direction] == 'asc' ? 'desc' : 'asc'
-          make_tag(:input, :type => :hidden,
-            :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
-            :value => "#{@sorting[:direction]}")
-        else
-          pname = "#{sortparam}[_resort][#{name}]"
-          bid = "#{bid}_#{name}"
-          sort_dir = 'desc'
-        end
-        make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
-      end
-    end # </th>
+    bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
+    create_header_tag(name, opts, sortparam, filter_name, name,
+      "#{@klass.table_name}.#{name}", nil, bid
+    )
+    # opts = normalize_column_options(name, opts)
+    # opts = normalize_header_column_options opts
+    # opts[:th_html]['data-tabulatr-column-name'] = name
+    # opts[:th_html]['data-tabulatr-form-name'] = filter_name
+    # opts[:th_html]['data-tabulatr-sorting-name'] = "#{@klass.table_name}.#{name}"
+    # make_tag(:th, opts[:th_html]) do
+    #   concat(t(opts[:header] || readable_name_for(name)), :escape_html)
+    #   create_sorting_elements opts, sortparam, name, bid
+    # end # </th>
   end
 
   # the method used to actually define the headers of the columns,
@@ -70,34 +59,13 @@ class Tabulatr
   #                    otherwise, the capitalized name is used
   def header_association(relation, name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
-    opts = normalize_column_options(name, opts)
-    opts = normalize_header_column_options(opts)
-    sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}[#{relation.to_s}.#{name.to_s}]"
-    filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation.to_s}.#{name.to_s}]"
-    if opts[:format_methods]
-      opts[:th_html]['data-tabulatr-methods'] = opts[:format_methods].join(',')
-    end
-    opts[:th_html]['data-tabulatr-form-name'] = filter_name
-    opts[:th_html]['data-tabulatr-column-name'] = "#{relation}:#{name}"
-    opts[:th_html]['data-tabulatr-sorting-name'] = "#{@klass.reflect_on_association(relation).table_name}.#{name}"
-    make_tag(:th, opts[:th_html]) do
-      concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
-      if opts[:sortable] and @table_options[:sortable]
-        if @sorting and @sorting[:by].to_s == name.to_s
-          pname = "#{sortparam}[_resort][#{name}]"
-          bid = "#{bid}_#{name}"
-          sort_dir = @sorting[:direction] == 'asc' ? 'desc' : 'asc'
-          make_tag(:input, :type => :hidden,
-            :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
-            :value => "#{@sorting[:direction]}")
-        else
-          pname = "#{sortparam}[_resort][#{name}]"
-          bid = "#{bid}_#{name}"
-          sort_dir = 'desc'
-        end
-        make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
-      end
-    end # </th>
+    create_header_tag(name, opts,
+      "#{@classname}#{@table_form_options[:sort_postfix]}[#{relation.to_s}.#{name.to_s}]",
+      "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation.to_s}.#{name.to_s}]",
+      "#{relation}:#{name}",
+      "#{@klass.reflect_on_association(relation).table_name}.#{name}",
+      relation
+    )
   end
 
   def header_checkbox(opts={}, &block)
@@ -123,14 +91,43 @@ class Tabulatr
   private
 
   def normalize_header_column_options opts, type=nil
-    unless opts[:th_html]
-      opts[:th_html] = {}
-    end
+    opts[:th_html] ||= {}
     opts[:th_html]['data-tabulatr-column-type'] = type if type
     if opts[:format_methods]
       opts[:th_html]['data-tabulatr-methods'] = opts[:format_methods].join(',')
     end
     opts
+  end
+
+  def create_sorting_elements opts, sortparam, name, bid=""
+    if opts[:sortable] and @table_options[:sortable]
+      if @sorting and @sorting[:by].to_s == name.to_s
+        pname = "#{sortparam}[_resort][#{name}]"
+        bid = "#{bid}_#{name}"
+        sort_dir = @sorting[:direction] == 'asc' ? 'desc' : 'asc'
+        make_tag(:input, :type => :hidden,
+          :name => "#{sortparam}[#{name}][#{@sorting[:direction]}]",
+          :value => "#{@sorting[:direction]}")
+      else
+        pname = "#{sortparam}[_resort][#{name}]"
+        bid = "#{bid}_#{name}"
+        sort_dir = 'desc'
+      end
+      make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
+    end
+  end
+
+
+  def create_header_tag name, opts, sort_param, filter_name, column_name, sorting_name, relation=nil, bid=nil
+    opts = normalize_column_options(name, opts)
+    opts = normalize_header_column_options(opts)
+    opts[:th_html]['data-tabulatr-column-name'] = column_name
+    opts[:th_html]['data-tabulatr-form-name'] = filter_name
+    opts[:th_html]['data-tabulatr-sorting-name'] = sorting_name
+    make_tag(:th, opts[:th_html]) do
+      concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
+      create_sorting_elements opts, sort_param, name, bid
+    end # </th>
   end
 
 end
