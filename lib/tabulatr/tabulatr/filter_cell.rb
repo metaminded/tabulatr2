@@ -121,25 +121,22 @@ private
       concat(check_box_tag(iname, checkbox_value, false, {}))
       concat(checkbox_label)
     elsif opts[:filter] == :exact
-      make_tag(:input, :type => :text, :id => name, :style => "width:#{opts[:filter_width]}",
-        :'data-type' => 'normal',
-        :value => '',
-        :'data-tabulatr-attribute' => attr_name,
-        :class => 'tabulatr_filter',
-        :name => iname)
+      filter_text_tag(opts[:filter_width], name, iname, attr_name, 'normal')
     else
       filter_text_tag(opts[:filter_width], name, iname, attr_name, 'like')
     end # if
   end
 
-  def filter_text_tag width, name, iname, attr_name, type
+  def filter_text_tag width, name, iname, attr_name, type=nil
+    name_attribute = iname
+    name_attribute += "[#{type}]" if type && type != 'normal'
     make_tag(:input, :type => :text, :id => name,
         :style => "width:#{width}",
         :value => '',
         :'data-type' => type,
         :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
-        :name => "#{iname}[#{type}]")
+        :name => name_attribute)
   end
 
 end
