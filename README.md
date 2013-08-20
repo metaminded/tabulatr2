@@ -50,7 +50,7 @@ In `ProductsController#index` we have:
 
 To get a simple Table, all we need to do is
 
-```ruby
+```erb
   <%= table_for Product do |t|
     t.column :title
     t.column :price
@@ -68,7 +68,7 @@ t.checkbox
 
 To add e.g. edit-buttons, we would specify
 
-```ruby
+```erb
   t.action do |record|
     link_to "Edit", edit_product_path(record.id)
   end
@@ -77,7 +77,7 @@ To add e.g. edit-buttons, we would specify
 To add a select box with batch-actions (i.e., actions that are to be performed on all selected rows),
 we add an option to the table_for:
 
-```ruby
+```erb
   <%= table_for Product, batch_actions: {'foo' => 'Foo', 'delete' => "Delete"} do |t|
     ...
   end %>
