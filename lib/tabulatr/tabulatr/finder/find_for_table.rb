@@ -141,8 +141,9 @@ module Tabulatr::Finder
   end
 
   def self.extract_column_name(table_name, n, maps, att=nil)
-    if maps[n]
-      maps[n]
+    debugger
+    if maps[n.to_sym]
+      maps[n.to_sym]
     else
       if att
         t = "#{table_name}.#{att}"
