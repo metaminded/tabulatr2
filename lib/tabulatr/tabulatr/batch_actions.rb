@@ -27,8 +27,8 @@ class Tabulatr
   def render_batch_actions
     iname = "#{@classname}#{TABLE_FORM_OPTIONS[:batch_postfix]}"
     make_tag(:span, :class => 'dropdown') do
-      make_tag(:button, :id => 'tabulatr-wrench',
-                :class => 'disabled btn btn-small',
+      make_tag(:button,
+                :class => 'disabled btn btn-small tabulatr-wrench',
                 :'data-toggle' => "dropdown") do
         concat("<i class='icon-wrench'></i>#{I18n.t('tabulatr.batch_actions')}
                 <span class='caret'></span>")

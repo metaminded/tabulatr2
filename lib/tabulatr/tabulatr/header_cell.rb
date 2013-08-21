@@ -73,7 +73,8 @@ class Tabulatr
     opts = normalize_column_options(:checkbox_column, opts)
     opts = normalize_header_column_options opts, :checkbox
     make_tag(:th, opts[:th_html]) do
-      make_tag(:input, type: 'checkbox', id: 'tabulatr_mark_all'){}
+      make_tag(:input, type: 'checkbox', :'data-table' => "#{@klass.to_s.downcase}_table",
+        class: "tabulatr_mark_all"){}
       render_batch_actions if @table_options[:batch_actions]
     end
   end
@@ -82,8 +83,12 @@ class Tabulatr
     raise "Please specify a block" unless block_given?
     opts = normalize_column_options(:action_column, opts)
     opts = normalize_header_column_options opts, :action
-    opts[:th_html]['data-tabulatr-action'] = yield(DummyRecord.new).gsub!(/"/, "")
-    make_tag(:th, opts[:th_html]) do
+    dummy = DummyRecord.new()
+    opts[:th_html]['data-tabulatr-action'] = yield(dummy).gsub!(/"/, "")
+    @attributes = (@attributes + dummy.requested_methods).flatten
+    names = dummy.requested_methods.join(',')
+
+    make_tag(:th, opts[:th_html].merge('data-tabulatr-column-name' => names)) do
       concat(t(opts[:header] || ""), :escape_html)
     end
   end

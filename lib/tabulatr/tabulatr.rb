@@ -96,11 +96,12 @@ class Tabulatr
 
     render_table_controls(:control_div_class_after, :after_table_controls)
 
-    make_tag(:div, id: 'tabulatr_count', :'data-format-string' => I18n.t('tabulatr.count')){}
+    make_tag(:div, class: "tabulatr_count", :'data-table' => "#{@klass.to_s.downcase}_table",
+                :'data-format-string' => I18n.t('tabulatr.count')){}
 
     render_filter_dialog &block
     sec_hash = Tabulatr::Security.sign(@attributes.join(','))
-    make_tag(:span, :id => 'tabulatr_security', :'data-salt' => sec_hash.split('-')[1], :'data-hash' => sec_hash.split('-')[2]){}
+    make_tag(:span, :id => "tabulatr_security_#{@klass.to_s.downcase}", :'data-salt' => sec_hash.split('-')[1], :'data-hash' => sec_hash.split('-')[2]){}
     @val.join("").html_safe
   end
 
@@ -122,7 +123,7 @@ class Tabulatr
   def render_table(&block)
     to = @table_options[:table_html]
     to = (to || {}).merge(:class => "#{@table_options[:table_class]} table",
-      :'data-path' => @table_options[:path])
+      :'data-path' => @table_options[:path], :id => "#{@klass.to_s.downcase}_table")
     make_tag(:table, to) do
       make_tag(:thead) do
         render_table_header(&block)
@@ -214,7 +215,7 @@ private
   end
 
   def render_filter_dialog &block
-    make_tag(:div, class: :modal, id: 'tabulatr_filter_dialog', style: "display:none ;") do
+    make_tag(:div, class: :modal, id: "tabulatr_filter_dialog_#{@klass.to_s.downcase}", style: "display:none ;") do
       make_tag(:button, class: :close, :'data-dismiss' => :modal,
         :'aria-hidden' => true) do
         concat "&times"
@@ -222,12 +223,13 @@ private
       make_tag(:h3) do
         concat I18n.t('tabulatr.filter')
       end
-      make_tag(:form, id: 'tabulatr_filter_form', class: 'form-horizontal', :'data-remote' => true) do
+      make_tag(:form, :'data-table' => "#{@klass.to_s.downcase}_table",
+        class: 'form-horizontal tabulatr_filter_form', :'data-remote' => true) do
         make_tag(:div, class: 'modal-body') do
           render_filter_options &block
         end
         make_tag(:div, class: 'modal-footer') do
-          make_tag(:input, :type => 'submit', :id => 'tabulatr_filter_form_submit',
+          make_tag(:input, :type => 'submit',
             :class => 'submit-table btn btn-primary',
             :value => I18n.t('tabulatr.apply_filters'))
         end

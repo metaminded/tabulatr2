@@ -29,11 +29,12 @@ class Tabulatr
     if (@table_options[:paginate].is_a?(Fixnum)) && @klass.count > @table_options[:paginate] ||
       @table_options[:paginate] === true
       # render the 'wrapping' div
-      make_tag(:div, :class => @table_options[:paginator_div_class]) do
+      make_tag(:div, :class => @table_options[:paginator_div_class],
+          :'data-table' => "#{@klass.to_s.downcase}_table") do
         make_tag(:ul){}
       end # </div>
     end
-    make_tag(:div, :class => 'btn-group tabulatr-per-page') do
+    make_tag(:div, :class => 'btn-group tabulatr-per-page', :'data-table' => "#{@klass.to_s.downcase}_table") do
       make_tag(:button, :class => 'btn') do
         concat(I18n.t('tabulatr.rows_per_page'))
       end

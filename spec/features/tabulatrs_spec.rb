@@ -179,4 +179,12 @@ describe "Tabulatr" do
       end
     end
   end
+
+  describe 'multiple tables', js: true do
+    it 'displays both tables' do
+      visit multiple_tables_path
+      page.should have_content('producer')
+      page.should have_content('fubar')
+    end
+  end
 end

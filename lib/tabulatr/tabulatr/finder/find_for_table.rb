@@ -99,7 +99,8 @@ module Tabulatr::Finder
         :pages => pagination_data[:pages],
         :pagesizes => {},
         :total => total,
-        :append => append }
+        :append => append,
+        :table_id => params[:table_id] }
     end
 
     found.define_singleton_method(:to_tabulatr_json) do |klass=nil|
