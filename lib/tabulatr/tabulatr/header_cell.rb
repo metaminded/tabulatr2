@@ -36,8 +36,9 @@ class Tabulatr
     sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
     filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
     bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
+
     create_header_tag(name, opts, sortparam, filter_name, name,
-      "#{@klass.table_name}.#{name}", nil, bid
+      nil, bid
     )
     # opts = normalize_column_options(name, opts)
     # opts = normalize_header_column_options opts
@@ -63,7 +64,6 @@ class Tabulatr
       "#{@classname}#{@table_form_options[:sort_postfix]}[#{relation.to_s}.#{name.to_s}]",
       "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation.to_s}.#{name.to_s}]",
       "#{relation}:#{name}",
-      "#{@klass.reflect_on_association(relation).table_name}.#{name}",
       relation
     )
   end
@@ -118,16 +118,22 @@ class Tabulatr
   end
 
 
-  def create_header_tag name, opts, sort_param, filter_name, column_name, sorting_name, relation=nil, bid=nil
+  def create_header_tag name, opts, sort_param, filter_name, column_name, relation=nil, bid=nil
     opts = normalize_column_options(name, opts)
     opts = normalize_header_column_options(opts)
     opts[:th_html]['data-tabulatr-column-name'] = column_name
     opts[:th_html]['data-tabulatr-form-name'] = filter_name
-    opts[:th_html]['data-tabulatr-sorting-name'] = sorting_name
+    opts[:th_html]['data-tabulatr-sorting-name'] = sorting_name(name, relation)
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
       create_sorting_elements opts, sort_param, name, bid
     end # </th>
+  end
+
+  def sorting_name name, relation=nil
+    return "#{@klass.reflect_on_association(relation).table_name}.#{name}" if relation && @klass.reflect_on_association(relation).klass.column_names.include?(name.to_s)
+    return "#{@klass.table_name}.#{name}" if @klass.column_names.include?(name.to_s)
+    name
   end
 
 end
