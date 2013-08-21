@@ -41,16 +41,8 @@ class Tabulatr
     opts = normalize_column_options(name, opts)
     of = opts[:filter]
     iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
-    if of
-      make_tag(:div, class: 'control-group') do
-        make_tag(:label, class: 'control-label', for: "tabulatr_form_#{name}") do
-          concat(t(opts[:header] || readable_name_for(name)), :escape_html)
-        end
-        make_tag(:div, class: 'controls') do
-          filter_tag(of, "tabulatr_form_#{name}", iname, name, opts)
-        end
-      end
-    end
+    filter_name = "tabulatr_form_#{name}"
+    build_filter(of, filter_name, name, iname, opts) if filterable?(of, name.to_s)
   end
 
   # the method used to actually define the filters of the columns,
@@ -70,16 +62,10 @@ class Tabulatr
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(name, opts)
 
-    make_tag(:div, class: 'control-group') do
-      make_tag(:label, class: 'control-label', for: "tabulatr_form_#{relation}_#{name}") do
-        concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
-      end
-      of = opts[:filter]
-      iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
-      make_tag(:div, class: 'controls') do
-        filter_tag(of, "tabulatr_form_#{relation}_#{name}", iname, name, opts)
-      end
-    end
+    of = opts[:filter]
+    iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
+    filter_name = "tabulatr_form_#{relation}_#{name}"
+    build_filter(of, filter_name, name, iname, opts, relation) if filterable?(of, name.to_s, relation)
   end
 
   def filter_checkbox(opts={}, &block)
@@ -137,6 +123,26 @@ private
         :'data-tabulatr-attribute' => attr_name,
         :class => 'tabulatr_filter',
         :name => name_attribute)
+  end
+
+  def build_filter(of, filter_name, name, iname, opts, relation=nil)
+    if of
+      make_tag(:div, class: 'control-group') do
+        make_tag(:label, class: 'control-label', for: filter_name) do
+          concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
+        end
+        make_tag(:div, class: 'controls') do
+          filter_tag(of, filter_name, iname, name, opts)
+        end
+      end
+    end
+  end
+
+  def filterable?(of, name, relation=nil)
+    of &&
+    ((@klass.column_names.include?(name) && !relation) ||
+      (relation &&
+       @klass.reflect_on_association(relation).klass.column_names.include?(name)))
   end
 
 end
