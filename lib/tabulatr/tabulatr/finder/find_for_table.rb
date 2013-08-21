@@ -86,11 +86,11 @@ module Tabulatr::Finder
     total = total.count unless total.class == Fixnum
 
     # Now, actually find the stuff
+    opts[:name_mapping] ||= {}
     find_on = (klaz.tabulatr_select_attributes(opts[:name_mapping]).try do |s| adapter.select(s) end) || adapter
-    found = find_on.includes(includes).references(includes)
+    found = find_on.includes(includes)
             .limit(pagination_data[:pagesize]).offset(pagination_data[:offset])
             .order(order).to_a
-
 
     found.define_singleton_method(:__pagination) do
       { :page => pagination_data[:page],
