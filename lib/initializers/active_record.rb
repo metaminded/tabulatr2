@@ -28,5 +28,21 @@ if Object.const_defined? "ActiveRecord"
     def self.find_for_table(params, opts={}, &block)
       Tabulatr::Finder.find_for_table(self, params, opts, &block)
     end
+
+    def self.tabulatr_name_mapping(name_mapping_hash)
+      tabulatr_name_mappings.merge! name_mapping_hash
+    end
+
+    def self.tabulatr_name_mappings
+      @tabulatr_name_mappings ||= {}
+    end
+
+    def self.tabulatr_select_attributes(more={})
+      maps = tabulatr_name_mappings.merge(more)
+      return nil if maps.blank?
+       "#{table_name}.*, " + maps.map do |name, mapping|
+        %{#{mapping} AS "#{name}"}
+      end.join(", ")
+    end
   end
 end

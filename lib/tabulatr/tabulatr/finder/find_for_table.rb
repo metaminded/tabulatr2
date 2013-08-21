@@ -69,7 +69,7 @@ module Tabulatr::Finder
     sortparam = params[sort_name]
 
     includes = []
-    maps = opts[:name_mapping] || {}
+    maps = klaz.tabulatr_name_mappings.merge(opts[:name_mapping] || {})
 
     build_conditions(filter_param, form_options, includes, adapter, maps)
     order = build_order(params[:sort_by], params[:orientation], params[:default_order], maps, adapter)
@@ -86,7 +86,8 @@ module Tabulatr::Finder
     total = total.count unless total.class == Fixnum
 
     # Now, actually find the stuff
-    found = adapter.includes(includes).references(includes)
+    find_on = (klaz.tabulatr_select_attributes(opts[:name_mapping]).try do |s| adapter.select(s) end) || adapter
+    found = find_on.includes(includes).references(includes)
             .limit(pagination_data[:pagesize]).offset(pagination_data[:offset])
             .order(order).to_a
 

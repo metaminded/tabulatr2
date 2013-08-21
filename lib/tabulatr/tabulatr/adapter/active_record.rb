@@ -39,6 +39,10 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
     @relation.includes(inc)
   end
 
+  def select(s)
+    @relation.select(s)
+  end
+
   def includes!(inc)
     @relation = includes(includes)
   end
