@@ -140,8 +140,9 @@ Tabulatr = {
       for(var i = 0; i < response.data.length; i++){
         $tr = $('<tr data-page="'+ response.meta.page +'"></tr>');
         var td = '';
+        var column;
         for(var c = 0; c < columns.length; c++){
-          var column = columns[c];
+          column = columns[c];
           if(column.association === undefined){
             var value = response.data[i][column.name];
           }else{
@@ -213,7 +214,7 @@ Tabulatr = {
 
   makeAction: function(action, data){
     Tabulatr.currentData = data;
-    return unescape(action).replace(/{{(\w+)}}/g, Tabulatr.replacer);
+    return unescape(action).replace(/{{([\w:]+)}}/g, Tabulatr.replacer);
   },
 
   createParameterString: function(hash, tableId){
