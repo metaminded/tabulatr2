@@ -41,7 +41,11 @@ module Tabulatr::JsonBuilder
   def self.insert_attribute_in_hash at, f, r={}
     if at.has_key? :relation
       if f.class.reflect_on_association(at[:relation].to_sym).collection?
-        r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
+        if at[:action].to_sym == :count
+          r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).count
+        else
+          r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
+        end
       else
         r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
       end

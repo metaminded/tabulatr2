@@ -139,11 +139,7 @@ private
   end
 
   def filterable?(of, name, relation=nil)
-    # of &&
-    # ((@klass.column_names.include?(name) && !relation) ||
-    #   (relation &&
-    #    @klass.reflect_on_association(relation).klass.column_names.include?(name)))
-    of
+   of && (!(relation && name.to_sym == :count))
   end
 
 end

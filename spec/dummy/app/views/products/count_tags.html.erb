@@ -1,0 +1,9 @@
+<%= table_for Product do |t|
+  t.checkbox
+  t.column :title
+  t.column :price, filter: :range
+  t.column :active
+  t.column :updated_at
+  t.association :vendor, :name, filter: :exact
+  t.association :tags, :count
+end %>

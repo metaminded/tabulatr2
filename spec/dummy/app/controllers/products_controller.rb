@@ -13,4 +13,8 @@ class ProductsController < ApplicationController
     @pagination = false
     tabulatr_for Product, {action: 'simple_index', default_pagesize: 1}
   end
+
+  def count_tags
+    tabulatr_for Product
+  end
 end

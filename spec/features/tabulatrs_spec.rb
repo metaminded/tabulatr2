@@ -78,6 +78,18 @@ describe "Tabulatr" do
     end
   end
 
+  describe 'has_many' do
+    it 'displays the count when called with :count', js: true do
+      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      [@tag1, @tag2, @tag3].each do |tag|
+        product.tags << tag
+      end
+      product.save
+      visit count_tags_products_path
+      page.should have_content 3
+    end
+  end
+
   describe "Pagination" do
 
 

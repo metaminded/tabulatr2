@@ -131,7 +131,7 @@ class Tabulatr
     opts[:th_html]['data-tabulatr-sorting-name'] = sorting_name(name, relation)
     make_tag(:th, opts[:th_html]) do
       concat(t(opts[:header] || readable_name_for(name, relation)), :escape_html)
-      create_sorting_elements opts, sort_param, name, bid
+      create_sorting_elements(opts, sort_param, name, bid) unless relation && name.to_sym == :count
     end # </th>
   end
 
