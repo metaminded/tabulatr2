@@ -295,11 +295,11 @@ $(document).on('ready page:load', function(){
     }
   };
 
-  if($('div.pagination').length == 0){
-    $('.tabulatr_table').each(function(ix, el){
+  $('.tabulatr_table').each(function(ix, el){
+    if($('div.pagination[data-table='+ $(el).attr('id') +']').length == 0){
       $('.tabulatr_count[data-table='+ $(el).attr('id') +']').bind('inview', cbfn);
-    });
-  }
+    }
+  });
 
   $('.batch-action-inputs').click(function(){
     params = {page: 1};
