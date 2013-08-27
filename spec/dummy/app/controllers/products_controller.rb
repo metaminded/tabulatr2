@@ -1,8 +1,7 @@
 class ProductsController < ApplicationController
 
   def simple_index
-    # tabulatr_for Product, {action: 'simple_index'}
-    tabulatr_for Product, {action: 'simple_index'}
+    tabulatr_for Product
   end
 
   def one_item_per_page_with_pagination
