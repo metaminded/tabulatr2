@@ -1,4 +1,5 @@
-# Tabulatr2 - Index Tables made easy, finally
+# Tabulatr2 - Index Tables made easy
+[![Code Climate](https://codeclimate.com/github/provideal/tabulatr2.png)](https://codeclimate.com/github/provideal/tabulatr2)
 
 **WARNING: Tabulatr2 is not production ready yet!**
 
