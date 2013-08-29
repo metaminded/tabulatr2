@@ -7,9 +7,11 @@
 
 Require tabulatr2 in your Gemfile:
 ```ruby
-gem 'tabulatr2', require: 'tabulatr'
+gem 'tabulatr2', github: 'provideal/tabulatr2', require: 'tabulatr'
 ```
-After that run `bundle` and `rails g tabulatr:install` to finish up the installation.
+After that run `bundle` and `rails g tabulatr:install`.
+
+Also add `//= require tabulatr` to your application js file.
 
 ### Security
 
