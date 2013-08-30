@@ -19,7 +19,7 @@ class Tabulatr::DummyRecord
   end
 
   def requested_methods
-    @method_names.uniq
+    Array(@method_names).try(:uniq)
   end
 
 end
