@@ -1,6 +1,7 @@
 class Tabulatr::DummyRecord
 
   def to_s
+    @methods ||= []
     if @methods.any?
       m = @methods.join(':')
       @method_names ||= []
