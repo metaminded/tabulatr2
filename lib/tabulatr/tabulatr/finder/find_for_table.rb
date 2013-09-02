@@ -88,7 +88,7 @@ module Tabulatr::Finder
     # Now, actually find the stuff
     opts[:name_mapping] ||= {}
     find_on = (klaz.tabulatr_select_attributes(opts[:name_mapping]).try do |s| adapter.select(s) end) || adapter
-    found = find_on.includes(includes)
+    found = find_on.outer_joins(includes)
             .limit(pagination_data[:pagesize]).offset(pagination_data[:offset])
             .order(order).to_a
 

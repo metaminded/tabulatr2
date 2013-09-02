@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('rails', '>= 4.0.0')
   s.add_dependency('whiny_hash', '>= 0.0.2')
+  s.add_runtime_dependency('activerecord_outer_joins', '~> 0.0.1')
 end
