@@ -24,6 +24,8 @@
 # These are extensions for use from ActionController instances
 # In a seperate class call only for clearity
 
+require 'activerecord_outer_joins'
+
 module Tabulatr::Finder
 
   # -------------------------------------------------------------------

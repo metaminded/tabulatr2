@@ -39,6 +39,10 @@ class Tabulatr::Adapter::ActiveRecordAdapter < Tabulatr::Adapter
     @relation.includes(inc)
   end
 
+  def outer_joins(*args)
+    @relation.outer_joins(*args)
+  end
+
   def select(s)
     @relation.select(s)
   end

@@ -24,7 +24,6 @@
 require 'tabulatr/tabulatr'
 require 'tabulatr/engine'
 require 'whiny_hash'
-require 'activerecord_outer_joins'
 
 #--
 # Mainly Monkey Patching...
