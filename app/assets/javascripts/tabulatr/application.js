@@ -241,7 +241,8 @@ Tabulatr = {
       }
     }
     hash.pagesize = pagesize;
-    hash.arguments = $.map($('#'+ tableId +' th'), function(n){ return $(n).data('tabulatr-column-name') }).join();
+    hash.arguments = $.map($('#'+ tableId +' th'), function(n){ return $(n).data('tabulatr-column-name') })
+                      .filter(function(n){return n}).join();
     hash.hash = $('#tabulatr_security_'+ tableName).data('hash');
     hash.salt = $('#tabulatr_security_'+ tableName).data('salt');
     hash.table_id = tableId;
