@@ -74,8 +74,7 @@ module Tabulatr::Finder
     maps = klaz.tabulatr_name_mappings.merge(opts[:name_mapping] || {})
 
     build_conditions(filter_param, form_options, includes, adapter, maps)
-    order = build_order(params[:sort_by], params[:orientation], params[:default_order], maps, adapter)
-
+    order = build_order(params[:sort_by], params[:orientation], params[:default_order], maps, adapter, klaz)
 
     c = adapter.includes(includes).references(includes).count
     # Group statments return a hash
@@ -156,12 +155,12 @@ module Tabulatr::Finder
     end
   end
 
-  def self.build_order sort_by, orientation, default_order, maps, adapter
-    if sort_by
+  def self.build_order sort_by, orientation, default_order, maps, adapter, klaz
+    if sort_by.present?
       s_by = maps[sort_by] ? maps[sort_by] : sort_by
       adapter.order_for_query_new s_by, orientation
     else
-      default_order
+      default_order || "#{klaz.table_name}.#{klaz.primary_key} asc"
     end
   end
 
