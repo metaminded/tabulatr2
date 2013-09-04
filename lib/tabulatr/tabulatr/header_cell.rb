@@ -84,7 +84,7 @@ class Tabulatr
     opts = normalize_column_options(:action_column, opts)
     opts = normalize_header_column_options opts, :action
     dummy = DummyRecord.new()
-    opts[:th_html]['data-tabulatr-action'] = yield(dummy).gsub(/"/, "")
+    opts[:th_html]['data-tabulatr-action'] = yield(dummy).gsub(/"/, "'")
     @attributes = (@attributes + dummy.requested_methods).flatten
     names = dummy.requested_methods.join(',')
 
