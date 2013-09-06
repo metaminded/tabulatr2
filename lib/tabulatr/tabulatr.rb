@@ -63,8 +63,12 @@ class Tabulatr
     @attributes = []
   end
 
+  cattr_accessor :bootstrap_paginator, instance_accessor: false do
+    'create_ul_paginator'
+  end
+
   def self.config &block
-    yield
+    yield self
   end
 
   def self.secret_tokens=(secret_tokens)
@@ -215,26 +219,32 @@ private
   end
 
   def render_filter_dialog &block
-    make_tag(:div, class: :modal, id: "tabulatr_filter_dialog_#{@klass.to_s.downcase}", style: "display:none ;") do
-      make_tag(:button, class: :close, :'data-dismiss' => :modal,
-        :'aria-hidden' => true) do
-        concat "&times"
-      end
-      make_tag(:h3) do
-        concat I18n.t('tabulatr.filter')
-      end
-      make_tag(:form, :'data-table' => "#{@klass.to_s.downcase}_table",
-        class: 'form-horizontal tabulatr_filter_form', :'data-remote' => true) do
-        make_tag(:div, class: 'modal-body') do
-          render_filter_options &block
-        end
-        make_tag(:div, class: 'modal-footer') do
-          make_tag(:input, :type => 'submit',
-            :class => 'submit-table btn btn-primary',
-            :value => I18n.t('tabulatr.apply_filters'))
-        end
-      end
-    end
+    make_tag(:div, class: 'modal fade', id: "tabulatr_filter_dialog_#{@klass.to_s.downcase}", style: "display:none ;") do
+      make_tag(:div, class: 'modal-dialog') do
+        make_tag(:div, class: 'modal-content') do
+          make_tag(:div, class: 'modal-header') do
+            make_tag(:button, class: :close, :'data-dismiss' => :modal,
+              :'aria-hidden' => true) do
+              concat "&times"
+            end
+            make_tag(:h3, class: 'modal-title') do
+              concat I18n.t('tabulatr.filter')
+            end
+          end
+          make_tag(:form, :'data-table' => "#{@klass.to_s.downcase}_table",
+            class: 'form-horizontal tabulatr_filter_form', :'data-remote' => true) do
+            make_tag(:div, class: 'modal-body') do
+              render_filter_options &block
+            end
+            make_tag(:div, class: 'modal-footer') do
+              make_tag(:input, :type => 'submit',
+                :class => 'submit-table btn btn-primary',
+                :value => I18n.t('tabulatr.apply_filters'))
+            end
+          end
+        end # modal-content
+      end # modal-dialog
+    end # modal fade
   end
 
   # stringly produce a tag w/ some options
@@ -270,10 +280,6 @@ private
     else
       make_tag(:i, :class => "tabulatr-sort #{icon_class}")
     end
-  end
-
-  def self.config(&block)
-    yield(self)
   end
 
 end

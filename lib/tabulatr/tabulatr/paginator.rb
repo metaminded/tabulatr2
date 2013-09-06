@@ -28,11 +28,7 @@ class Tabulatr
     # get the current pagination state
     if (@table_options[:paginate].is_a?(Fixnum)) && @klass.count > @table_options[:paginate] ||
       @table_options[:paginate] === true
-      # render the 'wrapping' div
-      make_tag(:div, :class => @table_options[:paginator_div_class],
-          :'data-table' => "#{@klass.to_s.downcase}_table") do
-        make_tag(:ul){}
-      end # </div>
+      send(Tabulatr.bootstrap_paginator)
     end
     make_tag(:div, :class => 'btn-group tabulatr-per-page', :'data-table' => "#{@klass.to_s.downcase}_table") do
       make_tag(:button, :class => 'btn') do
@@ -54,6 +50,23 @@ class Tabulatr
       make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => n) do
         concat(n)
       end
+    end
+  end
+
+  private
+
+  # bootstrap 3
+  def create_ul_paginator
+    make_tag(:ul, :class => @table_options[:paginator_div_class],
+      :'data-table' => "#{@klass.to_s.downcase}_table") do
+    end
+  end
+
+  # bootstrap 2
+  def create_div_paginator
+    make_tag(:div, :class => @table_options[:paginator_div_class],
+      :'data-table' => "#{@klass.to_s.downcase}_table") do
+      make_tag(:ul){}
     end
   end
 

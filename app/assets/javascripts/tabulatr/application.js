@@ -4,7 +4,11 @@ Tabulatr = {
   currentData: null,
 
   updatePagination: function(currentPage, numPages, tableId){
-    var ul = $('div.pagination[data-table='+ tableId +'] > ul');
+    var ul = $('.pagination[data-table='+ tableId +'] > ul');
+    if(ul.length == 0){
+      // bootstrap 3
+      ul = $('.pagination[data-table='+ tableId +']');
+    }
     ul.html('');
     if(numPages < 13){
       for(var i = 1; i <= numPages; i++){
@@ -79,7 +83,7 @@ Tabulatr = {
         $('#'+ tableId + ' tbody tr[data-page='+ hash.page +']').show();
 
         Tabulatr.updatePagination(hash.page,
-          $('div.pagination[data-table='+ tableId +'] a:last').data('page'),
+          $('.pagination[data-table='+ tableId +'] a:last').data('page'),
           tableId);
         return;
       }
@@ -275,7 +279,7 @@ $(document).on('ready page:load', function(){
     }
     if(!Tabulatr.moreResults){
       Tabulatr.moreResults = true;
-      if($('div.pagination[data-table='+ tableId +']').length == 0){
+      if($('.pagination[data-table='+ tableId +']').length == 0){
         $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
       }
     }
@@ -298,7 +302,7 @@ $(document).on('ready page:load', function(){
   };
 
   $('.tabulatr_table').each(function(ix, el){
-    if($('div.pagination[data-table='+ $(el).attr('id') +']').length == 0){
+    if($('.pagination[data-table='+ $(el).attr('id') +']').length == 0){
       $('.tabulatr_count[data-table='+ $(el).attr('id') +']').bind('inview', cbfn);
     }
   });
@@ -425,10 +429,9 @@ $(document).on('click', '.pagination a', function(){
      a.parent().hasClass('disabled')){
     return;
   }
-  var tableId = $(a).closest('div').attr('id');
-  var tableName = tableId.split('_')[1];
+  var tableId = $(a).closest('div').data('table');
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
-  Tabulatr.updateTable({append: false, page: a.data('page')}, tableName +'_table');
+  Tabulatr.updateTable({append: false, page: a.data('page')}, tableId);
   return false;
 });
