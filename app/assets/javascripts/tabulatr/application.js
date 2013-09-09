@@ -429,7 +429,7 @@ $(document).on('click', '.pagination a', function(){
      a.parent().hasClass('disabled')){
     return;
   }
-  var tableId = $(a).closest('div').data('table');
+  var tableId = $(a).closest('.pagination').data('table');
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
   Tabulatr.updateTable({append: false, page: a.data('page')}, tableId);
