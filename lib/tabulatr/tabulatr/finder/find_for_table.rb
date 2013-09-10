@@ -169,7 +169,7 @@ module Tabulatr::Finder
     pagesize, page = pagesize.to_i, page.to_i
     pagesize = 10 if pagesize == 0
 
-    pages = (count/pagesize).ceil
+    pages = (count/pagesize.to_f).ceil
 
     {offset: ((page-1)*pagesize).to_i, pagesize: pagesize.to_i, pages: pages,
      page: page

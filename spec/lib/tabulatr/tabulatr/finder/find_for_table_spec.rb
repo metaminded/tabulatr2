@@ -5,7 +5,7 @@ class Example
 end
 
 describe Tabulatr::Finder do
-  describe '#find_for_table' do
+  describe '.find_for_table' do
     before(:each) do
       Tabulatr::Security.stub(:validate!){ true }
     end
@@ -175,6 +175,13 @@ describe Tabulatr::Finder do
       p2 = Product.create!(title: 'buz')
       expect{ |b| subject.find_for_table(Product, {}, &b)}
         .to_not yield_control
+    end
+  end
+
+  describe '.build_offset' do
+    it 'figures the correct number of pages' do
+      pages = Tabulatr::Finder.build_offset(1, 10, 302, {})
+      expect(pages[:pages]).to eq 31
     end
   end
 end
