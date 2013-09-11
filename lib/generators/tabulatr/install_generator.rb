@@ -34,10 +34,6 @@ class Tabulatr
         copy_file "tabulatr.yml", "config/locales/tabulatr.yml"
       end
 
-      def copy_inview
-        copy_file "jquery.inview.min.js", "app/assets/javascripts/inview.min.js"
-      end
-
       def bootstrap
         unless yes?('Do you use Bootstrap version 3 ?')
           gsub_file 'config/initializers/tabulatr.rb', 'create_ul_paginator', 'create_div_paginator'
