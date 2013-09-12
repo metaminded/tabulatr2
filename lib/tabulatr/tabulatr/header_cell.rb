@@ -83,7 +83,7 @@ class Tabulatr
     raise "Please specify a block" unless block_given?
     opts = normalize_column_options(:action_column, opts)
     opts = normalize_header_column_options opts, :action
-    dummy = DummyRecord.new()
+    dummy = DummyRecord.for(@klass)
     cont = yield(dummy)
     cont = cont.join(' ') if cont.is_a? Array
     opts[:th_html]['data-tabulatr-action'] = cont.gsub('"', "'")
