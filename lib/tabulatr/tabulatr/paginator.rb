@@ -38,16 +38,19 @@ class Tabulatr
         make_tag(:span, :class => 'caret'){}
       end
       make_tag(:ul, :class => 'dropdown-menu') do
-        [10, 25, 50, 100].each do |n|
-          create_pagination_select(n)
+        [10, 25, 50, 100].push(@table_options[:default_pagesize]).uniq.sort.each do |n|
+          create_pagination_select(n, n == @table_options[:default_pagesize])
         end
       end
     end
   end
 
-  def create_pagination_select n
+  def create_pagination_select n, default=false
     make_tag(:li) do
-      make_tag(:a, :href => "javascript: void(0);", :'data-items-per-page' => n) do
+      params = { :href => "javascript: void(0);",
+                 :'data-items-per-page' => n }
+      params[:class] = 'active' if default
+      make_tag(:a, params) do
         concat(n)
       end
     end
