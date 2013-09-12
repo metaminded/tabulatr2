@@ -43,6 +43,7 @@ class Tabulatr
     :filter_html => false,             # a hash with html attributes for the filter trs
     :filter => true,                   # false for no filter row at all
     :paginate => false,                # true to show paginator
+    :default_pagesize => 10,           # default pagesize
     :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
     :batch_actions => false,           # :name => value hash of batch action stuff
     :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
@@ -95,7 +96,6 @@ class Tabulatr
   # defaults for the find_for_table
   FINDER_OPTIONS = WhinyHash.new({
     :default_order => false,
-    :default_pagesize => false,
     :precondition => false,
     :store_data => false,
     :name_mapping => nil,

@@ -98,9 +98,9 @@ private
         end
       end # </select>
     elsif opts[:filter] == :range
-      filter_text_tag(opts[:filter_width], name, iname, attr_name, 'from')
+      filter_text_tag(opts[:filter_width], "#{name}_from", iname, attr_name, 'from')
       concat(t(opts[:range_filter_symbol]))
-      filter_text_tag(opts[:filter_width], name, iname, attr_name, 'to')
+      filter_text_tag(opts[:filter_width], "#{name}_to", iname, attr_name, 'to')
     elsif opts[:filter] == :checkbox
       checkbox_value = opts[:checkbox_value]
       checkbox_label = opts[:checkbox_label]

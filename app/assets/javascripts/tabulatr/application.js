@@ -2,6 +2,7 @@ Tabulatr = {
   moreResults: true,
   storePage: false,
   currentData: null,
+  locked: false,
 
   updatePagination: function(currentPage, numPages, tableId){
     var ul = $('.pagination[data-table='+ tableId +'] > ul');
@@ -90,6 +91,8 @@ Tabulatr = {
     }else{
       Tabulatr.storePage = false;
     }
+    if(Tabulatr.locked){ return; }
+    Tabulatr.locked = true;
     jQuery.get($('table#'+ tableId).data('path') + '.json',
         Tabulatr.createParameterString(hash, tableId),
         Tabulatr.handleResponse
@@ -103,6 +106,7 @@ Tabulatr = {
   handleResponse: function(response) {
     Tabulatr.insertTabulatrData(response);
     Tabulatr.updatePagination(response.meta.page, response.meta.pages, response.meta.table_id);
+    Tabulatr.locked = false;
   },
 
   insertTabulatrData: function(response){
@@ -237,9 +241,10 @@ Tabulatr = {
     }
     if(hash.pagesize === undefined){
       var pagesize = $('.tabulatr-per-page[data-table='+ tableId +'] a.active').data('items-per-page');
+      if(pagesize == null){ pagesize = 10; }
     }
     if(hash.page === undefined){
-      hash.page = Math.floor($('#'+ tableId +' tbody tr').length/pagesize) + 1;
+      hash.page = Math.floor($('#'+ tableId +' tbody tr[class!=empty_row]').length/pagesize) + 1;
       if(!isFinite(hash.page)){
         hash.page = 1;
       }
@@ -403,16 +408,22 @@ $(document).on('ready page:load', function(){
     if($(this).hasClass('active')){ return false; }
     $(this).closest('div').find('a').removeClass('active');
     $(this).addClass('active');
+    var tableId = $(this).closest('div').data('table');
+    Tabulatr.moreResults = true;
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+    }
     if(typeof(Storage) !== undefined){
       localStorage.tabulatr_page_display_count = $(this).data('items-per-page');
     }
-    Tabulatr.updateTable({page: 1}, $(this).closest('div').data('table'), true);
+    Tabulatr.updateTable({page: 1}, tableId, true);
   });
 
   if($('.tabulatr_table').length > 0){
     if(typeof(Storage) !== undefined){
       var count = localStorage.tabulatr_page_display_count;
       if(count !== undefined){
+        $('.tabulatr-per-page a').removeClass('active');
         $('.tabulatr-per-page a[data-items-per-page='+ count +']').
           addClass('active');
       }

@@ -151,13 +151,16 @@ describe "Tabulatr" do
       page.should_not have_content(@vendor1.name)
     end
 
-    it "filters with range" do
-      visit simple_index_products_path
+    it "filters with range", js: true do
       n = names.length
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])
+      visit simple_index_products_path
       find('.icon-filter').trigger('click')
-      fill_in("product_filter[price][from]", :with => 4)
-      fill_in("product_filter[price][to]", :with => 10)
+      page.save_screenshot('/Users/crunch/Desktop/file.png')
+      within('form.tabulatr_filter_form') do
+        fill_in("product_filter[price][from]", :with => 4)
+        fill_in("product_filter[price][to]", :with => 10)
+      end
       click_button("Apply")
       page.should have_content('foo')
       page.should_not have_content('bar')
@@ -189,14 +192,6 @@ describe "Tabulatr" do
       (1..10).each do |i|
         page.should have_content snames[i-1]
       end
-    end
-  end
-
-  describe 'multiple tables', js: true do
-    it 'displays both tables' do
-      visit multiple_tables_path
-      page.should have_content('producer')
-      page.should have_content('fubar')
     end
   end
 end

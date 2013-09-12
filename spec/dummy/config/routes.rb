@@ -8,6 +8,5 @@ Rails.application.routes.draw do
     end
   end
 
-  get 'multiple_tables' => 'tags#index', as: 'multiple_tables'
   resources :vendors, only: [:index]
 end

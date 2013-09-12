@@ -48,7 +48,6 @@ module Tabulatr::Finder
     check_name      = "tabulatr_checked"
     append = params[:append].present? ? params[:append] : false
 
-    opts[:default_pagesize] ||= 10
 
     append = string_to_boolean append
     # before we do anything else, we find whether there's something to do for batch actions
@@ -79,7 +78,7 @@ module Tabulatr::Finder
     c = adapter.includes(includes).references(includes).count
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
-    pagesize = params[:pagesize].present? ? params[:pagesize] : opts[:default_pagesize]
+    pagesize = params[:pagesize]
     pagination_data = build_offset(params[:page], pagesize, c, opts)
 
     total = adapter.preconditions_scope(opts).count
