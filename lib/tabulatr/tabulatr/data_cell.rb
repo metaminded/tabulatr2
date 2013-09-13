@@ -51,10 +51,9 @@ class Tabulatr
           val = @record.send(opts[:method] || name)
           format = opts[:format]
           concat(
-            if format.is_a?(Proc) then format.call(val)
+            if format.is_a?(Proc) then @view.instance_exec(val, &format)
             elsif format.is_a?(String) then h(format % val)
-            elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
-            elsif format.is_a?(Hash) then format[val]
+            elsif format.is_a?(Symbol) then @view.send(format, val)
             else h(val.to_s)
           end)
         end # block_given?
@@ -90,7 +89,7 @@ class Tabulatr
           val = h(r.send(opts[:method] || name))
           if format.is_a?(Proc) then format.call(val)
           elsif format.is_a?(String) then h(format % val)
-          elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
+          elsif format.is_a?(Symbol) then @view.send(format, val)
           else h(val.to_s)
           end
         end.join(opts[:join_symbol] || ', ')
@@ -98,9 +97,9 @@ class Tabulatr
         return '' unless ass
         #puts ass.to_s
         val = h(ass.send(opts[:method] || name))
-        val = if format.is_a?(Proc) then format.call(val)
+        val = if format.is_a?(Proc) then @view.instance_exec(val, &format)
         elsif format.is_a?(String) then h(format % val)
-        elsif format.is_a?(Symbol) then Tabulatr::Formattr.format(format, val)
+        elsif format.is_a?(Symbol) then @view.send(format, val)
         else h(val.to_s)
         end
       end)

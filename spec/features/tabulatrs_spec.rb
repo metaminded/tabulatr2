@@ -211,8 +211,14 @@ describe "Tabulatr" do
         page.should have_content(product.price)
         find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.vendor.name)
         find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.title)
+        find(".tabulatr_table tbody #product_#{product.id}").should have_content("foo#{product.title}foo")
+        find(".tabulatr_table tbody #product_#{product.id}").should have_content("bar#{product.title}bar")
+        find(".tabulatr_table tbody #product_#{product.id}").should have_content("%08.4f" % product.price)
+        find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.tags.count)
         product.tags.each do |tag|
           find(".tabulatr_table tbody #product_#{product.id}").should have_content(tag.title)
+          find(".tabulatr_table tbody #product_#{product.id}").should have_content("foo#{tag.title}foo")
+          find(".tabulatr_table tbody #product_#{product.id}").should have_content("bar#{tag.title}bar")
         end
       end
     end
