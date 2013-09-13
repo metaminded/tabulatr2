@@ -46,7 +46,7 @@ class Tabulatr
         end
       make_tag((href ? :a : nil), :href => href) do
         if block_given?
-          concat(yield(@record))
+          concat(@view.instance_exec(@record, &block))
         else
           val = @record.send(opts[:method] || name)
           format = opts[:format]
@@ -75,7 +75,7 @@ class Tabulatr
     raise "Not in data mode!" if @row_mode != :data
     opts = normalize_column_options(name, opts)
     if block_given?
-      return yield(@record)
+      return @view.instance_exec(@record, &block)
     end
     assoc = @record.class.reflect_on_association(relation)
     make_tag(:td, opts[:td_html]) do

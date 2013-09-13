@@ -6,6 +6,9 @@
   t.column :price, format: "%08.4f"
   t.column :active
   t.column :updated_at
+  t.column :updated_at do |r|
+    r.updated_at.strftime('%d.%M.%Y')
+  end
   t.association :vendor, :name
   t.association :tags, :title
   t.association :tags, :title, format: :bar_me
