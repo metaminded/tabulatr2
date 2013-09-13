@@ -194,4 +194,27 @@ describe "Tabulatr" do
       end
     end
   end
+
+  describe "Show simple records" do
+
+    it "contains the actual data", js: false do
+      names.shuffle.each.with_index do |n,i|
+        p = Product.new(:title => n, :active => true, :price => 10.0 + i)
+        p.vendor = [@vendor1, @vendor2].shuffle.first
+        p.tags = [@tag1, @tag2, @tag3].shuffle[0..rand(3)]
+        p.save!
+      end
+      visit stupid_array_products_path
+      Product.order('price asc').limit(11).each do |product|
+        page.should have_content(product.title)
+        page.should have_content(product.title.upcase)
+        page.should have_content(product.price)
+        find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.vendor.name)
+        find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.title)
+        product.tags.each do |tag|
+          find(".tabulatr_table tbody #product_#{product.id}").should have_content(tag.title)
+        end
+      end
+    end
+  end
 end

@@ -17,4 +17,8 @@ class ProductsController < ApplicationController
   def count_tags
     tabulatr_for Product
   end
+
+  def stupid_array
+    @products = Product.order('price asc').limit(11).to_a
+  end
 end

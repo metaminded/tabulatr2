@@ -51,15 +51,27 @@ class Tabulatr
   # <tt>klass</tt>:: the klass of the data for the table
   # <tt>view</tt>:: the current instance of ActionView
   # <tt>opts</tt>:: a hash of options specific for this table
-  def initialize(klass, view=nil, toptions={})
-    @klass = klass
+  def initialize(klass_or_record, view=nil, toptions={})
+    if klass_or_record.is_a?(Class) && klass_or_record < ActiveRecord::Base
+      @klass = klass_or_record
+      @records = nil
+    elsif klass_or_record.respond_to?(:each)
+      @records = klass_or_record
+      @klass = @records.first.try(:class)
+      toptions = toptions.merge! \
+        :filter => false,
+        :paginate => false,
+        :sortable => false
+    else
+      raise "Give a model-class or an collection to `table_for'"
+    end
     @view = view
     @table_options = TABLE_OPTIONS.merge(toptions)
     @table_form_options = TABLE_FORM_OPTIONS
     @val = []
     @record = nil
     @row_mode = false
-    @classname = klass.to_s.downcase.gsub("/","_")
+    @classname = @klass.to_s.downcase.gsub("/","_")
     @attributes = []
   end
 
@@ -92,20 +104,27 @@ class Tabulatr
   #                      for the data rows
   # <tt>:filter</tt>:: if set to false, no filter row is output
   def build_table(&block)
+    return nil if @records && @records.blank?
     @val = []
     # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
-    render_table_controls(:control_div_class_before, :before_table_controls)
+    unless @records
+      render_table_controls(:control_div_class_before, :before_table_controls)
+    end
 
     render_element(:table, &block)
 
-    render_table_controls(:control_div_class_after, :after_table_controls)
+    unless @records
+      render_table_controls(:control_div_class_after, :after_table_controls)
+      make_tag(:div, class: "tabulatr_count",
+        :'data-table' => "#{@klass.to_s.downcase}_table",
+        :'data-format-string' => I18n.t('tabulatr.count')){}
 
-    make_tag(:div, class: "tabulatr_count", :'data-table' => "#{@klass.to_s.downcase}_table",
-                :'data-format-string' => I18n.t('tabulatr.count')){}
-
-    render_filter_dialog &block
-    sec_hash = Tabulatr::Security.sign(@attributes.join(','))
-    make_tag(:span, :id => "tabulatr_security_#{@klass.to_s.downcase}", :'data-salt' => sec_hash.split('-')[1], :'data-hash' => sec_hash.split('-')[2]){}
+      render_filter_dialog &block
+      sec_hash = Tabulatr::Security.sign(@attributes.join(','))
+      make_tag(:span, :id => "tabulatr_security_#{@klass.to_s.downcase}",
+        :'data-salt' => sec_hash.split('-')[1],
+        :'data-hash' => sec_hash.split('-')[2]){}
+    end
     @val.join("").html_safe
   end
 
@@ -132,9 +151,15 @@ class Tabulatr
       make_tag(:thead) do
         render_table_header(&block)
       end # </thead>
-      make_tag(:tbody) do
-        render_empty_start_row(&block)
-      end # </tbody>
+      if @records
+        make_tag(:tbody) do
+          render_table_rows(&block)
+        end # </tbody>
+      else
+        make_tag(:tbody) do
+          render_empty_start_row(&block)
+        end # </tbody>
+      end
       content_for(@table_options[:footer_content]) if @table_options[:footer_content]
     end # </table>
   end
@@ -246,6 +271,35 @@ private
       end # modal-dialog
     end # modal fade
   end
+
+  # render the table rows, only used if records are passed
+  def render_table_rows(&block)
+    #   row_classes = @table_options[:row_classes] || []
+    #   row_html = @table_options[:row_html] || {}
+    #   row_class = row_html[:class] || ""
+    @records.each_with_index do |record, i|
+      #concat("<!-- Row #{i} -->")
+      # if row_classes.present?
+      #   rc = row_class.present? ? row_class + " " : ''
+      #   rc += row_classes[i % row_classes.length]
+      # else
+      #   rc = nil
+      # end
+      rc = nil
+      make_tag(:tr, :class => rc, :id => dom_id(record)) do
+        yield(data_row_builder(record))
+      end # </tr>
+    end
+  end
+
+  def render_table_row(&block)
+    row_html = @table_options[:row_html] || {}
+    row_html[:class] = 'empty_row'
+    make_tag(:tr, row_html) do
+      yield empty_row_builder
+    end
+  end
+
 
   # stringly produce a tag w/ some options
   def make_tag(name, hash={}, &block)

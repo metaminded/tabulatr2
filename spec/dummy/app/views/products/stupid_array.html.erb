@@ -1,0 +1,11 @@
+<%= table_for @products do |t|
+  t.column :title
+  t.column :price, filter: :range
+  t.column :active
+  t.column :updated_at
+  t.association :vendor, :name, filter: :exact
+  t.association :tags, :title
+  t.action header: "ACTION!" do |t|
+    t.title.upcase
+  end
+end or "empty" %>

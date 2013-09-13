@@ -31,6 +31,7 @@ class Tabulatr
   def column(name, opts={}, &block)
     #puts "column: '#{name}'"
     case @row_mode
+    when :data   then data_column(name, opts, &block)
     when :header then
       @attributes << name.to_s
       header_column(name, opts, &block)
@@ -45,6 +46,7 @@ class Tabulatr
   def association(relation, name, opts={}, &block)
     #puts "assoc: '#{relation}.#{name}'"
     case @row_mode
+    when :data   then data_association(relation, name, opts, &block)
     when :header then
       @attributes << "#{relation}:#{name}"
       header_association(relation, name, opts, &block)
@@ -59,6 +61,7 @@ class Tabulatr
   def checkbox(opts={}, &block)
     #puts "column: '#{name}'"
     case @row_mode
+    when :data   then data_checkbox(opts, &block)
     when :header then header_checkbox(opts, &block)
     when :filter then filter_checkbox(opts, &block)
     when :empty then nil
@@ -69,6 +72,7 @@ class Tabulatr
   def action(opts={}, &block)
     #puts "column: '#{name}'"
     case @row_mode
+    when :data   then data_action(opts, &block)
     when :header then header_action(opts, &block)
     when :filter then filter_action(opts, &block)
     when :empty then nil
@@ -97,6 +101,13 @@ private
     @row_mode = :empty
     self
   end
+
+  def data_row_builder(record)
+    @record = record
+    @row_mode = :data
+    self
+  end
+
 
   # some preprocessing of the options
   def normalize_column_options(name, opts)
