@@ -131,6 +131,7 @@ describe "Tabulatr" do
       find('.icon-filter').trigger('click')
       fill_in("product_filter[title][like]", :with => "ore")
       click_button("Apply")
+      sleep(2)
       page.should have_content("lorem")
       page.should have_content("labore")
       page.should have_content("dolore")
