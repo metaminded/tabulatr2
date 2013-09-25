@@ -42,12 +42,18 @@ We suppose we have a couple of models
 
 In `ProductsController#index` we have:
 
-<pre>
+```ruby
   def index
     tabulatr_for Product
   end
-</pre>
+```
 
+_Hint:_ If you want to prefilter your table, you can do that too! Just pass an `ActiveRecord::Relation` to `tabulatr_for`:
+```ruby
+  def index
+    tabulatr_for Product.where(active: true)
+  end
+```
 
 ### View
 
