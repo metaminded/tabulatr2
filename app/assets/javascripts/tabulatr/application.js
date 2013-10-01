@@ -260,6 +260,10 @@ Tabulatr = {
       hash[form_array[i].name] = form_array[i].value;
     }
     return hash;
+  },
+
+  localDate: function(value, $td, $tr, obj){
+    return new Date(value).toLocaleString();
   }
 }
 
