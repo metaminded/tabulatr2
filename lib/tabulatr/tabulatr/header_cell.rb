@@ -33,9 +33,9 @@ class Tabulatr
   #                    otherwise, the capitalized name is used
   def header_column(name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
-    sortparam = "#{@classname}#{@table_form_options[:sort_postfix]}"
-    filter_name = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
-    bid = "#{@classname}#{@table_form_options[:sort_postfix]}"
+    sortparam = "#{@classname}_sort"
+    filter_name = "#{@classname}_filter[#{name}]"
+    bid = "#{@classname}_sort"
 
     create_header_tag(name, opts, sortparam, filter_name, name,
       nil, bid
@@ -61,8 +61,8 @@ class Tabulatr
   def header_association(relation, name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
     create_header_tag(name, opts,
-      "#{@classname}#{@table_form_options[:sort_postfix]}[#{relation.to_s}.#{name.to_s}]",
-      "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation.to_s}.#{name.to_s}]",
+      "#{@classname}_sort[#{relation.to_s}.#{name.to_s}]",
+      "#{@classname}_filter[__association][#{relation.to_s}.#{name.to_s}]",
       "#{relation}:#{name}",
       relation
     )

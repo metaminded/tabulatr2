@@ -53,13 +53,6 @@ class Tabulatr
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis.
   # That's necessary to allow find_for_table to work properly
-  TABLE_FORM_OPTIONS = WhinyHash.new({
-    :filter_postfix => '_filter',               # postfix for name of the filter in the params :hash => xxx_filter
-    :sort_postfix => '_sort',                   # postfix for name of the filter in the params :hash => xxx_filter
-    :associations_filter => '__association',    # name of the associations in the filter hash
-    :batch_postfix => '_batch',                 # postfix for name of the batch action select
-    :checked_separator => ','                   # symbol to separate the checked ids
-  })
 
   # these settings are considered constant for the whole application, can not be overridden
   # on a per-table basis.
