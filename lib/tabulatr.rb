@@ -23,12 +23,20 @@
 
 require 'tabulatr/tabulatr'
 require 'tabulatr/engine'
+require 'tabulatr/tabulatr/utility/utility'
 require 'whiny_hash'
 
 #--
 # Mainly Monkey Patching...
 #--
 Dir[File.join(File.dirname(__FILE__), "tabulatr", "rails", "*.rb")].each do |file|
+  require file
+end
+
+#---
+# Utility methods
+#--
+Dir[File.join(File.dirname(__FILE__), "tabulatr", "utility", "*.rb")].each do |file|
   require file
 end
 

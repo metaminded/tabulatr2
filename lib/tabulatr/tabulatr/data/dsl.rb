@@ -1,7 +1,7 @@
 module Tabulatr::Data::DSL
 
   def column(name, sort_sql: nil, filter_sql: nil, sql: nil, &block)
-    @columns ||= {}
+    @columns ||= HashWithIndifferentAccess.new
     @columns[name.to_sym] = {
       name: name,
       sort_sql: sort_sql || sql,
@@ -11,7 +11,7 @@ module Tabulatr::Data::DSL
   end
 
   def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, &block)
-    @assocs ||= {}
+    @assocs ||= HashWithIndifferentAccess.new
     @assocs[assoc.to_sym] ||= {}
     @assocs[assoc.to_sym][name.to_sym] = {
       name: name,

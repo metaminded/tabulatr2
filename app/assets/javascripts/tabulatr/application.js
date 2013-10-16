@@ -232,11 +232,11 @@ Tabulatr = {
       hash.append = false;
     }
     if($('#'+ tableId +' i.sorted').length == 1){
-      hash.sort_by = $('#'+ tableId +' i.sorted').closest('th').data('tabulatr-sorting-name');
+      hash[tableName + '_sort'] = $('#'+ tableId +' i.sorted').closest('th').data('tabulatr-sorting-name');
       if($('#'+ tableId +' i.sorted').data('sort') == 'asc'){
-        hash.orientation = 'desc';
+        hash[tableName + '_sort'] += ' desc';
       }else{
-        hash.orientation = 'asc';
+        hash[tableName + '_sort'] += ' asc';
       }
     }
     if(hash.pagesize === undefined){
@@ -278,13 +278,14 @@ $(document).on('ready page:load', function(){
     $($(this).parents('table').find('tbody tr')).remove();
     $('.tabulatr_filter_form[data-table='+ tableId +'] input[name=orientation]').val(orientation);
     var sort_by = $(this).closest('th').data('tabulatr-sorting-name');
-    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name=sort_by]').val(sort_by);
     if(orientation == 'asc'){
-      $(this).removeClass('icon-arrow-down').addClass('icon-arrow-up');
+      $(this).removeClass('glyphicon-arrow-down icon-arrow-down').addClass('glyphicon-arrow-up icon-arrow-up');
       $(this).data('sort', 'desc');
+      $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName+'_sort]').val(sort_by + ' desc');
     }else{
-      $(this).addClass('icon-arrow-up').addClass('icon-arrow-down');
+      $(this).removeClass('glyphicon-arrow-up icon-arrow-up').addClass('glyphicon-arrow-down icon-arrow-down');
       $(this).data('sort', 'asc');
+      $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName+'_sort]').val(sort_by + ' asc');
     }
     if(!Tabulatr.moreResults){
       Tabulatr.moreResults = true;

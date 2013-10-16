@@ -222,8 +222,7 @@ private
 
   def render_filter_options(&block)
       yield(filter_form_builder)
-      make_tag(:input, :type => 'hidden', :name => 'sort_by')
-      make_tag(:input, :type => 'hidden', :name => 'orientation')
+      make_tag(:input, :type => 'hidden', :name => "#{@klass.to_s.downcase}_sort")
   end
 
   def render_empty_start_row(&block)
@@ -320,18 +319,18 @@ private
   def make_image_button(options)
     inactive = options.delete(:inactive)
     if(options['data-sort'] == 'desc')
-      icon_class = 'icon-arrow-down'
+      icon_class = 'glyphicon glyphicon-arrow-down icon-arrow-down'
     else
-      icon_class = 'icon-arrow-up'
+      icon_class = 'glyphicon glyphicon-arrow-up icon-arrow-up'
     end
     if !inactive
-      make_tag(:i,
+      make_tag(:span,
         options.merge(
           :class => "tabulatr-sort #{icon_class}"
         )
       )
     else
-      make_tag(:i, :class => "tabulatr-sort #{icon_class}")
+      make_tag(:span, :class => "tabulatr-sort #{icon_class}")
     end
   end
 
