@@ -1,5 +1,5 @@
 module Tabulatr::JsonBuilder
-  def self.build(data, klass, requested_attributes, id)
+  def self.build(data, klass, requested_attributes, id=nil)
     if klass && ActiveModel.const_defined?(:ArraySerializer)
       ActiveModel::ArraySerializer.new(data,
         { root: "data", meta: data.__pagination,

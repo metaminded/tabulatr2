@@ -67,7 +67,6 @@ class Tabulatr
     end
     @view = view
     @table_options = TABLE_OPTIONS.merge(toptions)
-    @table_form_options = TABLE_FORM_OPTIONS
     @val = []
     @record = nil
     @row_mode = false
@@ -341,3 +340,4 @@ end
 Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|
   require file
 end
+require File.join(File.dirname(__FILE__), "tabulatr", "data", "data.rb")

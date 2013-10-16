@@ -40,7 +40,7 @@ class Tabulatr
     raise "Not in filter mode!" if @row_mode != :filter
     opts = normalize_column_options(name, opts)
     of = opts[:filter]
-    iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{name}]"
+    iname = "#{@classname}_filter[#{name}]"
     filter_name = "tabulatr_form_#{name}"
     build_filter(of, filter_name, name, iname, opts) if filterable?(of, name.to_s)
   end
@@ -63,7 +63,7 @@ class Tabulatr
     opts = normalize_column_options(name, opts)
 
     of = opts[:filter]
-    iname = "#{@classname}#{@table_form_options[:filter_postfix]}[#{@table_form_options[:associations_filter]}][#{relation}.#{name}]"
+    iname = "#{@classname}_filter[__association][#{relation}.#{name}]"
     filter_name = "tabulatr_form_#{relation}_#{name}"
     build_filter(of, filter_name, name, iname, opts, relation) if filterable?(of, name.to_s, relation)
   end

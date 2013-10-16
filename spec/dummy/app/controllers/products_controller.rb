@@ -1,7 +1,12 @@
 class ProductsController < ApplicationController
 
   def simple_index
-    tabulatr_for Product
+    begin
+      tabulatr_for Product
+    rescue Exception => e
+      puts e.backtrace
+      raise e
+    end
   end
 
   def one_item_per_page_with_pagination

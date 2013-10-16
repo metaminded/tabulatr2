@@ -79,7 +79,7 @@ module Tabulatr::Finder
     # Group statments return a hash
     c = c.count unless c.class == Fixnum
     pagesize = params[:pagesize]
-    pagination_data = build_offset(params[:page], pagesize, c, opts)
+  pagination_data = build_offset(params[:page], pagesize, c, opts)
 
     total = adapter.preconditions_scope(opts).count
     # here too
@@ -117,62 +117,6 @@ module Tabulatr::Finder
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       yield(Invoker.new(batch_param, selected_ids))
     end
-  end
-
-  def self.build_conditions filter_param, form_options, includes, adapter, maps
-    filter_param.each do |filter|
-      name, value = filter
-      next unless value.present?
-      if (name != form_options[:associations_filter])
-        table_name = adapter.table_name
-        nn = extract_column_name(table_name, name, maps)
-        adapter.add_conditions_from(nn, value)
-      else
-        value.each do |assoc_filter|
-          name,value = assoc_filter
-          assoc, att = name.split(".").map(&:to_sym)
-          includes << assoc
-          table_name = adapter.table_name_for_association(assoc)
-          nn = extract_column_name(table_name, name, maps, att)
-          adapter.add_conditions_from(nn, value)
-        end
-      end
-    end
-  end
-
-  def self.extract_column_name(table_name, n, maps, att=nil)
-    if maps[n.to_sym]
-      maps[n.to_sym]
-    else
-      if att
-        t = "#{table_name}.#{att}"
-      else
-        t = "#{table_name}.#{n}"
-      end
-      raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
-      t
-    end
-  end
-
-  def self.build_order sort_by, orientation, default_order, maps, adapter, klaz
-    if sort_by.present?
-      s_by = maps[sort_by] ? maps[sort_by] : sort_by
-      adapter.order_for_query_new s_by, orientation
-    else
-      default_order || "#{klaz.table_name}.#{klaz.primary_key} asc"
-    end
-  end
-
-  def self.build_offset page, pagesize=10, count, opts
-    page ||= 1
-    pagesize, page = pagesize.to_i, page.to_i
-    pagesize = 10 if pagesize == 0
-
-    pages = (count/pagesize.to_f).ceil
-
-    {offset: ((page-1)*pagesize).to_i, pagesize: pagesize.to_i, pages: pages,
-     page: page
-    }
   end
 
   def self.string_to_boolean str

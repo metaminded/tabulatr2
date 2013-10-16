@@ -21,23 +21,19 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-# This is probably a REALLY bad idea...
-module MarkAsLocalizable
-  def l
-    @should_localize = true
-    self
+# We monkey patch ActiveRecord::Base to add a function for finding using
+# the information of the params hash as created by a Tabulatr table
+if Object.const_defined? "ActiveRecord"
+  class ActiveRecord::Base
+    def self.tabulatr(tabulatr_data_class = nil)
+      return tabulatr_data_class.new(self) if tabulatr_data_class
+      begin
+        klaz = self.respond_to?(:klass) ? self.klass : self
+        "#{klaz.name}TabulatrData".constantize.new(self)
+      rescue NameError => e
+        # TODO: Better message
+        raise "No class `#{klaz.name}TabulatrData' defined. Explanation here."
+      end
+    end
   end
-
-  def should_localize?
-    @should_localize == true
-  end
 end
-
-class String
-  include MarkAsLocalizable
-end
-
-class Symbol
-  include MarkAsLocalizable
-end
-
