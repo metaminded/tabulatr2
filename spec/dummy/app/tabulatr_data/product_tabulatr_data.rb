@@ -14,7 +14,9 @@ class ProductTabulatrData < Tabulatr::Data
   #   do
   #     "#{firstname} #{lastname}"
   # end
+  column :active
+  column :updated_at do "#{updated_at.strftime('%H:%M %d.%m.%Y')}" end
   association :vendor, :name
-  association :tag, :title do "'#{title.upcase}'" end
+  association :tags, :title do "'#{tags.map(&:title).map(&:upcase).join(', ')}'" end
 
 end

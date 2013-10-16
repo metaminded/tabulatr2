@@ -138,8 +138,8 @@ class Tabulatr
   end
 
   def sorting_name name, relation=nil
-    return "#{@klass.reflect_on_association(relation).table_name}.#{name}" if relation && @klass.reflect_on_association(relation).klass.column_names.include?(name.to_s)
-    return "#{@klass.table_name}.#{name}" if @klass.column_names.include?(name.to_s)
+    return "#{@klass.reflect_on_association(relation).klass.name.downcase}.#{name}" if relation && @klass.reflect_on_association(relation).klass.column_names.include?(name.to_s)
+    return "#{@klass.name.downcase}.#{name}" if @klass.column_names.include?(name.to_s)
     name
   end
 

@@ -1,5 +1,5 @@
 module Tabulatr::JsonBuilder
-  def self.build(data, klass, requested_attributes, id=nil)
+  def self.build(data, klass, requested_attributes, id="id")
     if klass && ActiveModel.const_defined?(:ArraySerializer)
       ActiveModel::ArraySerializer.new(data,
         { root: "data", meta: data.__pagination,
@@ -40,17 +40,31 @@ module Tabulatr::JsonBuilder
 
   def self.insert_attribute_in_hash at, f, r={}
     if at.has_key? :relation
-      if f.class.reflect_on_association(at[:relation].to_sym).collection?
-        if at[:action].to_sym == :count
-          r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).count
-        else
-          r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
-        end
-      else
-        r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
+      rel = at[:relation].to_sym
+      action = at[:action].to_sym
+      # if f.class.reflect_on_association(at[:relation].to_sym).collection?
+      #   if at[:action].to_sym == :count
+      #     r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).count
+      #   else
+      #     r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
+      #   end
+      # else
+      #   r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
+      # end
+      begin
+        r["#{at[:relation]}:#{at[:action]}"] = f[rel][action]
+      rescue NoMethodError => e
+        raise $!, "You requested '#{at[:action]}' on '#{at[:relation]}' but
+          there was no such method included in your TabulatrData", $!.backtrace
       end
     else
-      r[at[:action]] = f.send at[:action]
+      begin
+        action = at[:action].to_sym
+        r[at[:action]] = f[action]
+      rescue NoMethodError => e
+        raise $!, "You requested '#{at[:action]}' but
+          there was no such method included in your TabulatrData", $!.backtrace
+      end
     end
     r
   end
