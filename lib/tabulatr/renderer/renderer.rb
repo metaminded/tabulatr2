@@ -1,49 +1,42 @@
-#--
-# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
-#
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-#++
-
-# Tabulatr is a class to allow easy creation of data tables as you
-# frequently find them on 'index' pages in rails. The 'table convention'
-# here is that we consider every table to consist of three parts:
-# * a header containing the names of the attribute of the column
-# * a filter which is an input element to allow for searching the
-#   particular attribute
-# * the rows with the actual data.
-#
-# Additionally, we expect that people want to 'select' rows and perform
-# batch actions on these rows.
-#
-# Author::    Peter Horn, (mailto:peter.horn@provideal.net)
-# Copyright:: Copyright (c) 2010-2011 by Provideal GmbH (http://www.provideal.net)
-# License::   MIT Licence
-class Tabulatr
+class Tabulatr::Renderer
 
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::FormTagHelper
   include ActionView::Helpers::FormOptionsHelper
   include ActionView::Helpers::TranslationHelper
   include ActionView::Helpers::RecordTagHelper
+
+  include Tabulatr::Renderer::Paginator
+  include Tabulatr::Renderer::RowBuilder
+  include Tabulatr::Renderer::HeaderCell
+  include Tabulatr::Renderer::EmptyCell
+  include Tabulatr::Renderer::FilterCell
+  include Tabulatr::Renderer::FilterIcon
 #  include ActionView::Helpers::AssetTagHelper
 #  include Rails::Application::Configurable
+
+  TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
+    :table_class => 'tabulatr_table',               # class for the actual data table
+    :control_div_class_before => 'table-controls',  # class of the upper div containing the paging and batch action controls
+    :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
+    :paginator_div_class => 'pagination',            # class of the div containing the paging controls
+
+    # which controls to be rendered above and below the tabel and in which order
+    :before_table_controls => [:filter, :paginator],
+    :after_table_controls => [],
+
+    :table_html => false,              # a hash with html attributes for the table
+    :row_html => false,                # a hash with html attributes for the normal trs
+    :header_html => false,             # a hash with html attributes for the header trs
+    :filter_html => false,             # a hash with html attributes for the filter trs
+    :filter => true,                   # false for no filter row at all
+    :paginate => false,                # true to show paginator
+    :default_pagesize => 10,           # default pagesize
+    :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
+    :batch_actions => false,           # :name => value hash of batch action stuff
+    :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
+    :path => '#'                       # where to send the AJAX-requests to
+  })
 
   # Constructor of Tabulatr
   #
@@ -333,10 +326,8 @@ private
       make_tag(:span, :class => "tabulatr-sort #{icon_class}")
     end
   end
-
 end
-
-Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|
-  require file
-end
-require File.join(File.dirname(__FILE__), "tabulatr", "data", "data.rb")
+# Dir[File.join(File.dirname(__FILE__), "tabulatr", "*.rb")].each do |file|
+#   require file
+# end
+# require File.join(File.dirname(__FILE__), "tabulatr", "data", "data.rb")
