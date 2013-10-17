@@ -15,29 +15,6 @@ class Tabulatr::Renderer
 #  include ActionView::Helpers::AssetTagHelper
 #  include Rails::Application::Configurable
 
-  TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
-    :table_class => 'tabulatr_table',               # class for the actual data table
-    :control_div_class_before => 'table-controls',  # class of the upper div containing the paging and batch action controls
-    :control_div_class_after => 'table-controls',   # class of the lower div containing the paging and batch action controls
-    :paginator_div_class => 'pagination',            # class of the div containing the paging controls
-
-    # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:filter, :paginator],
-    :after_table_controls => [],
-
-    :table_html => false,              # a hash with html attributes for the table
-    :row_html => false,                # a hash with html attributes for the normal trs
-    :header_html => false,             # a hash with html attributes for the header trs
-    :filter_html => false,             # a hash with html attributes for the filter trs
-    :filter => true,                   # false for no filter row at all
-    :paginate => false,                # true to show paginator
-    :default_pagesize => 10,           # default pagesize
-    :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
-    :batch_actions => false,           # :name => value hash of batch action stuff
-    :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
-    :path => '#'                       # where to send the AJAX-requests to
-  })
-
   # Constructor of Tabulatr
   #
   # Parameters:
@@ -59,7 +36,7 @@ class Tabulatr::Renderer
       raise "Give a model-class or an collection to `table_for'"
     end
     @view = view
-    @table_options = TABLE_OPTIONS.merge(toptions)
+    @table_options = Tabulatr::Settings::TABLE_OPTIONS.merge(toptions)
     @val = []
     @record = nil
     @row_mode = false
