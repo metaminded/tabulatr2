@@ -72,44 +72,6 @@ class Tabulatr::Data
   def batch_params(params)  params["#{@cname}_batch"] end
   def check_params(params)  params["tabulatr_checked"] end
 
-  #--
-  # Access the sctual data
-  #++
-  def build_column_name(colname, table_name: nil, use_for: nil, assoc_name: nil)
-    if colname['.']
-      t,c = colname.split(".")
-      return build_column_name(c, table_name: t, use_for: use_for)
-    end
-    table_name ||= @table_name
-    if table_name == @table_name
-      mapping = case use_for.to_sym
-      when :filter then @columns[colname.to_sym][:filter_sql]
-      when :sort then @columns[colname.to_sym][:sort_sql]
-      end
-      return mapping if mapping.present?
-    else
-      if assoc_name
-        @includes << assoc_name.to_sym
-      else
-        @includes << table_name.to_sym
-      end
-      if assoc_name
-        assoc_key = assoc_name
-      else
-        assoc_key = table_name
-      end
-      mapping = case use_for.to_sym
-      when :filter then @assocs[assoc_key.to_sym][colname.to_sym][:filter_sql]
-      when :sort then @assocs[assoc_key.to_sym][colname.to_sym][:sort_sql]
-      end
-      return mapping if mapping.present?
-    end
-
-    t = "#{table_name}.#{colname}"
-    raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
-    t
-  end
-
   def join_required_tables(params)
     tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
           table_name_for_association(s.split(':').first)
@@ -128,6 +90,7 @@ class Tabulatr::Data
 
 end
 
+require_relative './column_name_builder'
 require_relative './dsl'
 require_relative './filtering'
 require_relative './sorting'
