@@ -60,6 +60,9 @@ class Tabulatr
   #                    otherwise, the capitalized name is used
   def header_association(relation, name, opts={}, &block)
     raise "Not in header mode!" if @row_mode != :header
+    if @klass.reflect_on_association(relation.to_sym).collection?
+      opts[:sortable] = false
+    end
     create_header_tag(name, opts,
       "#{@classname}_sort[#{relation.to_s}.#{name.to_s}]",
       "#{@classname}_filter[__association][#{relation.to_s}.#{name.to_s}]",
