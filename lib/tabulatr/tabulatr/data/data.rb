@@ -26,14 +26,18 @@ class Tabulatr::Data
     # get the records
     found = apply_formats()
 
+    append = params[:append].present? ? Tabulatr::Utility.string_to_boolean(params[:append]) : false
+
+    total = @relation.unscope(:where, :limit, :offset).count
+
     # prepare result for rendering
     found.define_singleton_method(:__pagination) do
       { :page => pagination[:page],
         :pagesize => pagination[:pagesize],
         :count => pagination[:count],
         :pages => pagination[:pages],
-        :total => 100,#FIXME!!
-        :append => true,#FIXME!!
+        :total => total,
+        :append => append,
         :table_id => params[:table_id]
       }
     end

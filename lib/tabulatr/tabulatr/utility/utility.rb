@@ -11,4 +11,13 @@ module Tabulatr::Utility
       warn("Tabulatr Warning: Don't know which LIKE operator to use for the ConnectionAdapter '#{ActiveRecord::Base.connection.class}'.\n")
     end
   end
+
+  def self.string_to_boolean str
+    if str.downcase == 'true'
+      str = true
+    elsif str.downcase == 'false'
+      str = false
+    end
+    str
+  end
 end

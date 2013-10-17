@@ -1,11 +1,11 @@
 module Tabulatr::Data::Pagination
 
-  def apply_pagination(offset: 0, pagesize: 10, pages: nil, page: 1)
+  def apply_pagination(offset: 0, pagesize: 10, pages: nil, page: 1, count: nil)
     @relation = @relation.limit(pagesize).offset(offset)
   end
 
   def compute_pagination(page, pagesize)
-    count = 16#@relation.count.count #FIXME!!!
+    count = @relation.count
     page ||= 1
     pagesize, page = pagesize.to_i, page.to_i
     pagesize = 10 if pagesize == 0
@@ -17,7 +17,8 @@ module Tabulatr::Data::Pagination
       offset: ((page-1)*pagesize).to_i,
       pagesize: pagesize,
       pages: pages,
-      page: page
+      page: page,
+      count: count
     }
   end
 end

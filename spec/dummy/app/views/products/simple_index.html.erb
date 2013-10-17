@@ -3,6 +3,7 @@
   t.column :title, sortable: true
   t.column :price, filter: :range
   t.column :active
+  t.column :vendor_product_name, header: 'Product by vendor'
   t.column :updated_at
   t.association :vendor, :name, filter: :exact
   t.association :tags, :title

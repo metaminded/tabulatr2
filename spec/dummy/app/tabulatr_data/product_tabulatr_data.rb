@@ -14,6 +14,9 @@ class ProductTabulatrData < Tabulatr::Data
   #   do
   #     "#{firstname} #{lastname}"
   # end
+  column :vendor_product_name, sort_sql: "products.title || '' || vendors.name", filter_sql: "products.title || '' || vendors.name" do
+    "#{title} from #{vendor.name}"
+  end
   column :active
   column :updated_at do "#{updated_at.strftime('%H:%M %d.%m.%Y')}" end
   association :vendor, :name
