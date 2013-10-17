@@ -224,4 +224,42 @@ describe "Tabulatr" do
       end
     end
   end
+
+  describe "Batch actions", js: true do
+    it "shows the actions" do
+      visit with_batch_actions_products_path
+      find(".tabulatr-wrench").should have_content('Batch actions')
+    end
+
+    it "hides the actions if there are none" do
+      visit simple_index_products_path
+      page.should have_no_selector('.tabulatr-wrench')
+    end
+
+    it 'is initially not active' do
+      visit with_batch_actions_products_path
+      page.should have_selector('.tabulatr-wrench.disabled')
+    end
+
+    it 'becomes active when a checkbox is checked' do
+      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      visit with_batch_actions_products_path
+      find('.tabulatr-checkbox').trigger('click')
+      page.should have_no_selector('.tabulatr-wrench.disabled')
+      page.should have_selector('.tabulatr-wrench')
+    end
+
+    it 'executes the action when clicked' do
+      product1 = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      product2 = Product.create!(:title => names[1], :active => true, :price => 10.0)
+      product3 = Product.create!(:title => names[2], :active => true, :price => 10.0)
+      page.has_css?(".tabulatr_table tbody tr", :count => 3)
+      visit with_batch_actions_products_path
+      find(".tabulatr-checkbox[value='#{product1.id}']").trigger('click')
+      find(".tabulatr-checkbox[value='#{product3.id}']").trigger('click')
+      find('.tabulatr-wrench').trigger('click')
+      find("a[name='product_batch\\[destroy\\]']").trigger('click')
+      page.has_css?(".tabulatr_table tbody tr", :count => 1)
+    end
+  end
 end

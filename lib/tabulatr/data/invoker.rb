@@ -1,4 +1,4 @@
-module Tabulatr::Data::Invoker
+class Tabulatr::Data::Invoker
   def initialize(batch_action, ids)
     @batch_action = batch_action.to_sym
     @ids = ids
@@ -11,4 +11,4 @@ module Tabulatr::Data::Invoker
   end
 end
 
-Tabulatr::Data.send :include, Tabulatr::Data::Invoker
+
