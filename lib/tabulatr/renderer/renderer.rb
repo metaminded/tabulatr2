@@ -12,6 +12,7 @@ class Tabulatr::Renderer
   include Tabulatr::Renderer::EmptyCell
   include Tabulatr::Renderer::FilterCell
   include Tabulatr::Renderer::FilterIcon
+  include Tabulatr::Renderer::BatchActions
 #  include ActionView::Helpers::AssetTagHelper
 #  include Rails::Application::Configurable
 

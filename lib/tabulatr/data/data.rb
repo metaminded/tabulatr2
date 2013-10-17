@@ -8,10 +8,15 @@ class Tabulatr::Data
     @columns    = self.class.instance_variable_get('@columns')
     @includes   = Set.new()
     @cname      = @base.name.downcase
+    @batch_actions = nil
   end
 
-  def data_for_table(params)
+  def data_for_table(params, &block)
     check_request_signature!(params)
+
+    @batch_actions = block if block_given?
+
+    execute_batch_actions(batch_params(params), check_params(params))
     # prepare the query
     apply_filters(filter_params params)
     apply_search(search_param params)
@@ -54,11 +59,10 @@ class Tabulatr::Data
     Tabulatr::Security.validate!("#{params[:arguments]}-#{params[:salt]}-#{params[:hash]}")
   end
 
-  def execute_batch_actions batch_param, selected_ids, &block
-    raise "FIXME"
-    if batch_param.present? && block_given?
+  def execute_batch_actions batch_param, selected_ids
+    if batch_param.present? && @batch_actions.present?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
-      yield(Invoker.new(batch_param, selected_ids))
+      @batch_actions.yield(Invoker.new(batch_param, selected_ids))
     end
   end
 
@@ -70,7 +74,12 @@ class Tabulatr::Data
   def search_param(params)  params["#{@cname}_search"] end
   def sort_params(params)   params["#{@cname}_sort"] end
   def batch_params(params)  params["#{@cname}_batch"] end
-  def check_params(params)  params["tabulatr_checked"] end
+  def check_params(params)
+    tabulatr_checked = params["tabulatr_checked"]
+    if tabulatr_checked.present?
+      tabulatr_checked['checked_ids'].split(',')
+    end
+  end
 
   def join_required_tables(params)
     tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
@@ -93,6 +102,7 @@ end
 require_relative './column_name_builder'
 require_relative './dsl'
 require_relative './filtering'
+require_relative './invoker'
 require_relative './sorting'
 require_relative './pagination'
 require_relative './formatting'
