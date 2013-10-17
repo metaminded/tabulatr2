@@ -24,7 +24,7 @@
 class ActionView::Base
   # render the table in a view
   def table_for(klass, opts={}, &block)
-    tabulatr = Tabulatr.new(klass, self, opts)
+    tabulatr = Tabulatr::Renderer.new(klass, self, opts)
     tabulatr.build_table(&block)
   end
 end

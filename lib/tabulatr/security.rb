@@ -1,10 +1,10 @@
 require 'securerandom'
 
-class Tabulatr
-  class Security
+module Tabulatr
+  module Security
     def self.sign(arglist, salt=nil)
       salt ||= SecureRandom.base64
-      str = "#{Tabulatr.secret_tokens.first}-#{salt}-#{arglist}-#{Rails.application.config.secret_token}-#{Tabulatr.secret_tokens.last}"
+      str = "#{Tabulatr::Renderer.secret_tokens.first}-#{salt}-#{arglist}-#{Rails.application.config.secret_token}-#{Tabulatr::Renderer.secret_tokens.last}"
       hash = Digest::SHA1.hexdigest(str)
       "#{arglist}-#{salt}-#{hash[5..40]}"
     end

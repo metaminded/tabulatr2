@@ -1,7 +1,7 @@
 module Tabulatr::Data::Filtering
 
   def apply_search(query)
-    like ||= Tabulatr.sql_options[:like]
+    like ||= Tabulatr::Utility.like_statement
     return unless query.present?
     if @search.is_a? Array
       query = query.strip.gsub(/['*%\s]+/, '%')

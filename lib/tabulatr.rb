@@ -21,9 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require 'tabulatr/tabulatr'
 require 'tabulatr/engine'
-require 'tabulatr/tabulatr/utility/utility'
+require 'tabulatr/settings'
+require 'tabulatr/renderer/row_builder'
+require 'tabulatr/security'
+require 'tabulatr/data/data'
+require 'tabulatr/json_builder'
 require 'whiny_hash'
 
 #--
@@ -40,3 +43,20 @@ Dir[File.join(File.dirname(__FILE__), "tabulatr", "utility", "*.rb")].each do |f
   require file
 end
 
+
+#--
+# Renderer methods
+#--
+#---
+# Utility methods
+#--
+# Dir[File.join(File.dirname(__FILE__), "tabulatr", "renderer", "row_builder.rb")].each do |file|
+#   require file
+# end
+Dir[File.join(File.dirname(__FILE__), "tabulatr", "renderer", "*.rb")].each do |file|
+  require file
+end
+
+module Tabulatr
+
+end

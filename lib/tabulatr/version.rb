@@ -1,3 +1,3 @@
-class Tabulatr
-  VERSION = "0.6.0"
+module Tabulatr
+  VERSION = "0.7.0"
 end
