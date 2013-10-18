@@ -342,8 +342,10 @@ $(document).on('ready page:load', function(){
 
   $('form.tabulatr_filter_form').submit(function(ev){
     var tableId = $(this).data('table');
-    $('.tabulatr_count[data-table='+ tableId +']').unbind('inview', cbfn);
-    $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.tabulatr_count[data-table='+ tableId +']').unbind('inview', cbfn);
+      $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+    }
     Tabulatr.updateTable({page: 1, append: false}, tableId, true);
     var ary = $(this).serializeArray();
     $('#'+ tableId +' th').removeClass('tabulatr_filtered_column');
@@ -379,7 +381,9 @@ $(document).on('ready page:load', function(){
     }
     var tableId = $(this).closest('.tabulatr_table').attr('id');
     $(this).remove();
-    $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+    }
     Tabulatr.updateTable({}, tableId);
     return false;
   });
