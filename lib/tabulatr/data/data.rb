@@ -84,8 +84,8 @@ class Tabulatr::Data
 
   def join_required_tables(params)
     tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
-          table_name_for_association(s.split(':').first)
-        end.uniq)
+          s.split(':').first
+        end.uniq.map(&:to_sym))
     @includes = @includes + tt
     # @relation = @relation.includes(@includes.map(&:to_sym)).references(@includes.map(&:to_sym))
     @relation = @relation.eager_load(@includes.map(&:to_sym))
@@ -93,9 +93,8 @@ class Tabulatr::Data
   end
 
   def table_name_for_association(assoc)
-    # ass = @base.reflect_on_association(assoc.to_sym)
-    # .table_name
-    assoc.to_sym
+    @base.reflect_on_association(assoc.to_sym).table_name
+    # assoc.to_sym
   end
 
 end
