@@ -22,6 +22,7 @@
 #++
 
 require 'tabulatr/engine'
+require 'tabulatr/dummy_record'
 require 'tabulatr/settings'
 require 'tabulatr/renderer/row_builder'
 require 'tabulatr/renderer/search'

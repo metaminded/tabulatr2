@@ -11,12 +11,12 @@ class ProductsController < ApplicationController
 
   def one_item_per_page_with_pagination
     @pagination = true
-    tabulatr_for Product, {action: 'one_item_per_page'}
+    tabulatr_for Product, render_action: 'one_item_per_page'
   end
 
   def one_item_per_page_without_pagination
     @pagination = false
-    tabulatr_for Product, {action: 'one_item_per_page'}
+    tabulatr_for Product, render_action: 'one_item_per_page'
   end
 
   def count_tags

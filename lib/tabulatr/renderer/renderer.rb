@@ -10,6 +10,7 @@ class Tabulatr::Renderer
   include Tabulatr::Renderer::RowBuilder
   include Tabulatr::Renderer::HeaderCell
   include Tabulatr::Renderer::EmptyCell
+  include Tabulatr::Renderer::DataCell
   include Tabulatr::Renderer::FilterCell
   include Tabulatr::Renderer::FilterIcon
   include Tabulatr::Renderer::BatchActions

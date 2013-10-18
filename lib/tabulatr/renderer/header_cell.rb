@@ -56,7 +56,7 @@ module Tabulatr
         raise "Please specify a block" unless block_given?
         opts = normalize_column_options(:action_column, opts)
         opts = normalize_header_column_options opts, :action
-        dummy = DummyRecord.for(@klass)
+        dummy = Tabulatr::DummyRecord.for(@klass)
         cont = yield(dummy)
         cont = cont.join(' ') if cont.is_a? Array
         opts[:th_html]['data-tabulatr-action'] = cont.gsub('"', "'")
@@ -91,7 +91,7 @@ module Tabulatr
           else
             pname = "#{sortparam}[_resort][#{name}]"
             bid = "#{bid}_#{name}"
-            sort_dir = 'desc'
+            sort_dir = 'asc'
           end
           make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
         end
