@@ -39,14 +39,14 @@ module Tabulatr
 
       # bootstrap 3
       def create_ul_paginator
-        make_tag(:ul, :class => @table_options[:paginator_div_class],
+        make_tag(:ul, :class => 'pagination',
           :'data-table' => "#{@klass.to_s.downcase}_table") do
         end
       end
 
       # bootstrap 2
       def create_div_paginator
-        make_tag(:div, :class => @table_options[:paginator_div_class],
+        make_tag(:div, :class => 'pagination',
           :'data-table' => "#{@klass.to_s.downcase}_table") do
           make_tag(:ul){}
         end
