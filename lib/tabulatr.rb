@@ -59,5 +59,19 @@ Dir[File.join(File.dirname(__FILE__), "tabulatr", "renderer", "*.rb")].each do |
 end
 
 module Tabulatr
+  def self.config &block
+    yield self
+  end
 
+  mattr_accessor :bootstrap_paginator, instance_accessor: false do
+    'create_ul_paginator'
+  end
+
+  def self.secret_tokens=(secret_tokens)
+    @@secret_tokens = secret_tokens
+  end
+
+  def self.secret_tokens
+    @@secret_tokens ||= []
+  end
 end

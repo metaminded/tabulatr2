@@ -46,21 +46,6 @@ class Tabulatr::Renderer
     @attributes = []
   end
 
-  cattr_accessor :bootstrap_paginator, instance_accessor: false do
-    'create_ul_paginator'
-  end
-
-  def self.config &block
-    yield self
-  end
-
-  def self.secret_tokens=(secret_tokens)
-    @@secret_tokens = secret_tokens
-  end
-
-  def self.secret_tokens
-    @@secret_tokens ||= []
-  end
 
   # the actual table definition method. It takes an Array of records, a hash of
   # options and a block with the actual <tt>column</tt> calls.
@@ -79,16 +64,13 @@ class Tabulatr::Renderer
     @val = []
     # TODO: make_tag(:input, :type => 'submit', :style => 'display:inline; width:1px; height:1px', :value => '__submit')
     unless @records
-      render_table_controls(:control_div_class_before, :before_table_controls)
+      render_table_controls('table-controls', :before_table_controls)
     end
 
     render_element(:table, &block)
 
     unless @records
-      render_table_controls(:control_div_class_after, :after_table_controls)
-      make_tag(:div, class: "tabulatr_count",
-        :'data-table' => "#{@klass.to_s.downcase}_table",
-        :'data-format-string' => I18n.t('tabulatr.count')){}
+      render_table_controls('table-controls', :after_table_controls)
 
       render_filter_dialog &block
       sec_hash = Tabulatr::Security.sign(@attributes.join(','))
@@ -207,7 +189,7 @@ private
   end
 
   def render_table_controls div_class, before_or_after
-    make_tag(:div,  :class => @table_options[div_class]) do
+    make_tag(:div,  :class => div_class) do
       @table_options[before_or_after].each do |element|
         render_element(element)
       end
