@@ -1,8 +1,10 @@
 class ProductTabulatrData < Tabulatr::Data
 
-  search :title
+  search :vendor_product_name, :price
 
-  # search do |query| "adsd like query" end
+  # search do |query|
+  #   "products.title LIKE '#{query}'"
+  # end
 
   column :id
   column :title

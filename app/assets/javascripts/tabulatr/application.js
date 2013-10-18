@@ -255,6 +255,7 @@ Tabulatr = {
     hash.hash = $('#tabulatr_security_'+ tableName).data('hash');
     hash.salt = $('#tabulatr_security_'+ tableName).data('salt');
     hash.table_id = tableId;
+    hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
     var form_array = $('.tabulatr_filter_form[data-table='+ tableId +']').serializeArray();
     for(var i = 0; i < form_array.length; i++){
       hash[form_array[i].name] = form_array[i].value;
@@ -338,6 +339,16 @@ $(document).on('ready page:load', function(){
     $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
     $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
     Tabulatr.updateTable(params, tableId, true);
+  });
+
+  $('form.tabulatr-fuzzy-search').submit(function(){
+    var tableId = $(this).data('table');
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.tabulatr_count[data-table='+ tableId +']').unbind('inview', cbfn);
+      $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+    }
+    Tabulatr.updateTable({page: 1, append: false}, tableId, true);
+    return false;
   });
 
   $('form.tabulatr_filter_form').submit(function(ev){

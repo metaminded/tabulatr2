@@ -5,7 +5,7 @@ module Tabulatr::Data::Filtering
     return unless query.present?
     if @search.is_a? Array
       query = query.strip.gsub(/['*%\s]+/, '%')
-      a = @search.map do |nam|
+      a = @search.map do |name|
         nn = build_column_name name, use_for: :filter
         "(#{nn} #{like} '%#{query}%')"
       end

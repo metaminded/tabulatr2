@@ -6,6 +6,7 @@ class Tabulatr::Data
     @table_name = @base.table_name
     @assocs     = self.class.instance_variable_get('@assocs')
     @columns    = self.class.instance_variable_get('@columns')
+    @search     = self.class.instance_variable_get('@search')
     @includes   = Set.new()
     @cname      = @base.name.downcase
     @batch_actions = nil

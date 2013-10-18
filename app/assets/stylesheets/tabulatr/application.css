@@ -35,6 +35,12 @@ i.tabulatr_remove_filter:hover{
   margin-right: 5px;
 }
 
+.table-controls .form-inline{
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+}
+
 #tabulatr-wrench{
   margin-left: 10px;
 }
