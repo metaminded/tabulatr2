@@ -93,9 +93,27 @@ module Tabulatr
             bid = "#{bid}_#{name}"
             sort_dir = 'asc'
           end
-          make_image_button(:id => bid, :name => pname, :'data-sort' => sort_dir)
+          make_sort_icon(:id => bid, :name => pname, :'data-sort' => sort_dir)
         end
       end
+
+        def make_sort_icon(options)
+          inactive = options.delete(:inactive)
+          if(options['data-sort'] == 'desc')
+            icon_class = 'glyphicon glyphicon-arrow-down icon-arrow-down'
+          else
+            icon_class = 'glyphicon glyphicon-arrow-up icon-arrow-up'
+          end
+          if !inactive
+            make_tag(:span,
+              options.merge(
+                :class => "tabulatr-sort #{icon_class}"
+              )
+            )
+          else
+            make_tag(:span, :class => "tabulatr-sort #{icon_class}")
+          end
+        end
 
 
       def create_header_tag name, opts, sort_param, filter_name, column_name, relation=nil, bid=nil
