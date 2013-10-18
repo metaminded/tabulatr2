@@ -12,7 +12,7 @@ module Tabulatr
     :paginator_div_class => 'pagination',            # class of the div containing the paging controls
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:filter, :paginator],
+    :before_table_controls => [:filter, :paginator, :search],
     :after_table_controls => [],
 
     :table_html => false,              # a hash with html attributes for the table
@@ -20,6 +20,7 @@ module Tabulatr
     :header_html => false,             # a hash with html attributes for the header trs
     :filter_html => false,             # a hash with html attributes for the filter trs
     :filter => true,                   # false for no filter row at all
+    :search => true,                   # show fuzzy search field
     :paginate => false,                # true to show paginator
     :default_pagesize => 10,           # default pagesize
     :sortable => true,                 # true to allow sorting (can be specified for every sortable column)

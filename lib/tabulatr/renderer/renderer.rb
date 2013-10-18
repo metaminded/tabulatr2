@@ -13,6 +13,7 @@ class Tabulatr::Renderer
   include Tabulatr::Renderer::FilterCell
   include Tabulatr::Renderer::FilterIcon
   include Tabulatr::Renderer::BatchActions
+  include Tabulatr::Renderer::Search
 #  include ActionView::Helpers::AssetTagHelper
 #  include Rails::Application::Configurable
 
@@ -102,6 +103,7 @@ class Tabulatr::Renderer
     case element
     when :filter then render_filter_icon
     when :paginator then render_paginator
+    when :search then render
     when :table then render_table &block
     else
       if element.is_a?(String)

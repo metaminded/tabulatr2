@@ -24,6 +24,7 @@
 require 'tabulatr/engine'
 require 'tabulatr/settings'
 require 'tabulatr/renderer/row_builder'
+require 'tabulatr/renderer/search'
 require 'tabulatr/security'
 require 'tabulatr/data/data'
 require 'tabulatr/json_builder'
