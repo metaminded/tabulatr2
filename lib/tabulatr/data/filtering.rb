@@ -33,7 +33,7 @@ module Tabulatr::Data::Filtering
       name, value = assoc_filter
       assoc, att = name.split(".").map(&:to_sym)
       table_name = table_name_for_association(assoc)
-      nn = build_column_name(att, table_name: table_name, use_for: :filter)
+      nn = build_column_name(att, table_name: table_name, assoc_name: assoc, use_for: :filter)
       apply_condition(nn, value)
     end
   end
