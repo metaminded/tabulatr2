@@ -53,7 +53,7 @@ describe "Tabulatr" do
         product.tags << tag
         product.save
         visit simple_index_products_path
-        page.should have_content tag.title
+        page.should have_content tag.title.upcase
       end
     end
 
@@ -128,17 +128,22 @@ describe "Tabulatr" do
         Product.create!(:title => n, :active => true, :price => 10.0)
       end
       visit simple_index_products_path
-      find('.icon-filter').trigger('click')
-      fill_in("product_filter[title][like]", :with => "ore")
+      find("a[href='#tabulatr_filter_dialog_product']").click()
+      within("#tabulatr_filter_dialog_product") do
+        fill_in("product_filter[title][like]", :with => "ore")
+      end
       click_button("Apply")
-      sleep(2)
       page.should have_content("lorem")
       page.should have_content("labore")
       page.should have_content("dolore")
-      find('.icon-filter').trigger('click')
-      fill_in("product_filter[title][like]", :with => "loreem")
+      find("a[href='#tabulatr_filter_dialog_product']").click()
+      within("#tabulatr_filter_dialog_product") do
+        fill_in("product_filter[title][like]", :with => "loreem")
+      end
       click_button("Apply")
       page.should_not have_content("lorem")
+      page.should_not have_content("labore")
+      page.should_not have_content("dolore")
     end
 
     it "filters" do
@@ -157,7 +162,6 @@ describe "Tabulatr" do
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])
       visit simple_index_products_path
       find('.icon-filter').trigger('click')
-      page.save_screenshot('/Users/crunch/Desktop/file.png')
       within('form.tabulatr_filter_form') do
         fill_in("product_filter[price][from]", :with => 4)
         fill_in("product_filter[price][to]", :with => 10)
@@ -184,14 +188,14 @@ describe "Tabulatr" do
       (1..10).each do |i|
         page.should have_content names[i-1]
       end
-      find("#product_sort_title").trigger('click')
+      find("#product_sort_title").click
       snames = names.sort
       (1..10).each do |i|
-        page.should have_content snames[-i]
-      end
-      find("#product_sort_title").trigger('click')
-      (1..10).each do |i|
         page.should have_content snames[i-1]
+      end
+      find("#product_sort_title").click
+      (1..10).each do |i|
+        page.should have_content snames[-i]
       end
     end
   end
