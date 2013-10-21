@@ -4,11 +4,7 @@ module Tabulatr
       def render_table(&block)
         to = @table_options[:table_html]
         table_id = "#{@klass.to_s.downcase}_table"
-<<<<<<< HEAD
         to = (to || {}).merge(:class => "tabulatr_table table",
-=======
-        to = (to || {}).merge(:class => "#{@table_options[:table_class]} table",
->>>>>>> 470130e... move count display over table, create new pagination trigger
           :'data-path' => @table_options[:path], :id => table_id)
         make_tag(:table, to) do
           make_tag(:thead) do
