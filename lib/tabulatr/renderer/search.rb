@@ -2,7 +2,7 @@ module Tabulatr
   class Renderer
     module Search
 
-      def render
+      def render_search
         if(@table_options[:search])
           make_tag(:form, class: "form-inline tabulatr-fuzzy-search pull-right", role: "form",
                       id: "#{@klass.to_s.downcase}_fuzzy_search",

@@ -11,7 +11,7 @@ module Tabulatr
     :paginator_div_class => 'pagination',            # class of the div containing the paging controls
 
     # which controls to be rendered above and below the tabel and in which order
-    :before_table_controls => [:filter, :paginator, :search],
+    :before_table_controls => [:filter, :paginator, :count, :search],
     :after_table_controls => [],
 
     :table_html => false,              # a hash with html attributes for the table
