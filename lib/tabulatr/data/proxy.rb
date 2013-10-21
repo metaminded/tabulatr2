@@ -9,6 +9,7 @@ class Data::Proxy
     return if @_initialized
     @_initialized = true
     include ActionView::Helpers
+    include Rails.application.helpers
     include Rails.application.routes.url_helpers
   end
 
