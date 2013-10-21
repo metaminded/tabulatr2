@@ -4,9 +4,9 @@ class Tabulatr::Data
     @relation   = relation
     @base       = relation.respond_to?(:klass) ? relation.klass : relation
     @table_name = @base.table_name
-    @assocs     = self.class.instance_variable_get('@assocs')
-    @columns    = self.class.instance_variable_get('@columns')
-    @search     = self.class.instance_variable_get('@search')
+    @assocs     = self.class.instance_variable_get('@assocs') || HashWithIndifferentAccess.new
+    @columns    = self.class.instance_variable_get('@columns') || HashWithIndifferentAccess.new
+    @search     = self.class.instance_variable_get('@search') || HashWithIndifferentAccess.new
     @includes   = Set.new()
     @cname      = @base.name.downcase
     @batch_actions = nil
