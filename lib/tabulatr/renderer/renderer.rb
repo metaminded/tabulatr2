@@ -17,6 +17,7 @@ class Tabulatr::Renderer
   include Tabulatr::Renderer::BatchActions
   include Tabulatr::Renderer::Search
   include Tabulatr::Renderer::Table
+  include Tabulatr::Renderer::Count
 
 
   def initialize(klass_or_record, view=nil, toptions={})
@@ -63,7 +64,8 @@ class Tabulatr::Renderer
     case element
     when :filter then render_filter_icon
     when :paginator then render_paginator
-    when :search then render
+    when :search then render_search
+    when :count then render_count
     when :table then render_table &block
     else
       if element.is_a?(String)
