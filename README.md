@@ -9,9 +9,19 @@ Require tabulatr2 in your Gemfile:
 ```ruby
 gem 'tabulatr2', github: 'provideal/tabulatr2', require: 'tabulatr'
 ```
-After that run `bundle` and `rails g tabulatr:install`.
+After that run `bundle install`.
 
-Also add `//= require tabulatr` to your application js file.
+Also add `//= require tabulatr` to your application js file and `*= require tabulatr` to your CSS asset
+pipeline.
+
+If you want to create a `tabulatr` table for an existing model run
+`rails g tabulatr:install product`.
+
+This will generate a `ProductTabulatrData` class in `app/tabulatr_data/product_tabulatr_data.rb` for you.
+
+You can also run the generator for a new model, if you just run the standard Rails `resource` generator.
+
+`rails g resource Product title:string vendor:references description:text`
 
 ### Security
 
@@ -33,10 +43,57 @@ end
 
 ### Models
 
-We suppose we have a couple of models
-* tags has and belong to many products
-* vendors have many products
-* products belong to vendors and have and belong to many tags
+We suppose we have these three models:
+```ruby
+class Tag < ActiveRecord::Base
+  has_and_belongs_to_many :products
+end
+```
+```ruby
+class Product < ActiveRecord::Base
+  belongs_to :vendor
+  has_and_belongs_to_many :tags
+end
+```
+```ruby
+class Vendor < ActiveRecord::Base
+  has_many :products
+end
+```
+
+and we want to display information about products in the `ProductsController#index` action.
+
+## ProductTabulatrData
+
+In this class we define which information should be available for the table and how it is formatted.
+```ruby
+class ProductTabulatrData < Tabulatr::Data
+
+  search :vendor_address, :title
+
+  # search do |query|
+  #   "products.title LIKE '#{query}'"
+  # end
+
+  column :id
+  column :title { title.capitalize }
+  column :price do "#{price} EUR" end
+  column :vendor_address, sort_sql: "vendors.zipcode || '' || vendors.city",
+                        filter_sql: "vendors.street || '' || vendors.zipcode || '' vendors.city" do
+         "#{vendor.house_number} #{vendor.street}, #{vendor.zipcode} #{vendor.city}"
+  end
+  column :edit_link do 
+    link_to "edit #{title}", product_path(id)
+  end
+  column :updated_at do
+    "#{updated_at.strftime('%H:%M %Y/%m/%d')}"
+  end
+  association :vendor, :name
+  association :tags, :title do "'#{tags.map(&:title).map(&:upcase).join(', ')}'" end
+
+end
+```
+The search method is used for a fuzzy search field.
 
 ## Controller
 
@@ -57,33 +114,26 @@ _Hint:_ If you want to prefilter your table, you can do that too! Just pass an `
 
 ### View
 
-To get a simple Table, all we need to do is
+In the view we can use all the attributes which are defined in our `ProductTabulatrData` class. 
 
 ```erb
   <%= table_for Product do |t|
     t.column :title
     t.column :price
-    t.column :active
     t.association :vendor, :name
+    t.column :vendor_address
+    t.column :updated_at
     t.association :tags, :title
+    t.column :edit_link
   end %>
 ```
 
 To add a checkbox column just add
-```ruby
+```erb
 t.checkbox
 ```
 
-
-To add e.g. edit-buttons, we would specify
-
-```erb
-  t.action do |record|
-    link_to "Edit", edit_product_path(record.id)
-  end
-```
-
-To add a select box with batch-actions (i.e., actions that are to be performed on all selected rows),
+To add a select box with batch-actions (actions that should be performed on all selected rows),
 we add an option to the table_for:
 
 ```erb
@@ -140,20 +190,15 @@ Tabulatr tries to make these common tasks as simple/transparent as possible:
 
 ### Table Options
 
-These options are to be specified at the `table_for` level and change the appearance and behaviour of the table.
+These options should be specified at the view level as parameters to the `table_for` call.
+They change the appearance and behaviour of the table.
 
 ```ruby
-  :table_class => 'tabulatr_table',               # class for the actual data table
-  :control_div_class_before => 'table-controls',  # class of upper div containing the paging and batch action controls
-  :control_div_class_after => 'table-controls',   # class of lower div containing the paging and batch action controls
-  :paginator_div_class => 'pagination',            # class of the div containing the paging controls
-
   # which controls to be rendered above and below the table and in which order
   :before_table_controls => [:filter, :paginator],
   :after_table_controls => [],
 
   :table_html => false,              # a hash with html attributes for the table
-  :row_html => false,                # a hash with html attributes for the normal trs
   :header_html => false,             # a hash with html attributes for the header trs
   :filter_html => false,             # a hash with html attributes for the filter trs
   :filter => true,                   # false for no filter row at all
@@ -161,7 +206,6 @@ These options are to be specified at the `table_for` level and change the appear
                                      # number for limit of items to show via pagination
   :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
   :batch_actions => false,           # :name => value hash of batch action stuff
-  :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
   :path => '#'                       # where to send the AJAX-requests to
 ```
 
