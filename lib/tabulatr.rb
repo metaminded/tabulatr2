@@ -30,6 +30,7 @@ require 'tabulatr/renderer/table'
 require 'tabulatr/security'
 require 'tabulatr/data/data'
 require 'tabulatr/json_builder'
+require 'tabulatr/generators/railtie' if defined?(Rails)
 require 'whiny_hash'
 
 #--
