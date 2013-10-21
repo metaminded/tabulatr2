@@ -20,11 +20,18 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
-class Tabulatr
+module Tabulatr
   module Generators
-    class InstallGenerator < Rails::Generators::Base
+    class InstallGenerator < Rails::Generators::NamedBase
       desc "initialize tabulatr"
       source_root File.expand_path('../templates', __FILE__)
+      check_class_collision suffix: 'TabulatrData'
+
+      argument :attributes, type: :array, default: [], banner: 'field:type field:type'
+
+      def create_tabulatr_data_file
+        template 'tabulatr_data.rb', File.join('app/tabulatr_data/', class_path, "#{file_name}_tabulatr_data.rb")
+      end
 
       def copy_initializer_file
         copy_file "tabulatr.rb", "config/initializers/tabulatr.rb"
@@ -38,6 +45,16 @@ class Tabulatr
         unless yes?('Do you use Bootstrap version 3 ?')
           gsub_file 'config/initializers/tabulatr.rb', 'create_ul_paginator', 'create_div_paginator'
         end
+      end
+
+      private
+
+      def attributes_names
+        [:id] + attributes.select { |attr| !attr.reference? }.map { |a| a.name.to_sym }
+      end
+
+      def association_names
+        attributes.select { |attr| attr.reference? }.map { |a| a.name.to_sym }
       end
     end
   end
