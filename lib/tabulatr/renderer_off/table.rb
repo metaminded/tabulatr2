@@ -5,7 +5,8 @@ module Tabulatr
         to = @table_options[:table_html]
         table_id = "#{@klass.to_s.downcase}_table"
         to = (to || {}).merge(:class => "tabulatr_table table",
-          :'data-path' => @table_options[:path], :id => table_id)
+          :'data-path' => @table_options[:path], :id => table_id,
+          :'data-pagesize' => @table_options[:pagesize])
         make_tag(:table, to) do
           make_tag(:thead) do
             render_table_header(&block)

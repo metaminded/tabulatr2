@@ -1,6 +1,6 @@
 class ProductTabulatrData < Tabulatr::Data
 
-  search :vendor_product_name, :price
+  search :vendor_product_name, :price, :title
 
   # search do |query|
   #   "products.title LIKE '#{query}'"

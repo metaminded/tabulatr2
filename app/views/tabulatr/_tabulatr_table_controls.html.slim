@@ -1,0 +1,17 @@
+- if table_options[:filter] && columns.filtered_columns.present?
+  .dropdown
+    a.btn.btn-default data-toggle="dropdown" href="#"
+      i.icon-filter'
+      i.icon-caret-down
+    ul.dropdown-menu role="menu" aria-labelledby="dLabel"
+      - columns.filtered_columns.each do |column|
+        li
+          = link_to column.human_name, '#', "data-show-table-filter" => column.name
+
+- if (table_options[:paginate].is_a?(Fixnum)) && klass.count > table_options[:paginate] || table_options[:paginate] == true
+  - if Tabulatr.bootstrap_paginator.to_s == 'create_ul_paginator'
+    ul.pagination data-table="#{@klass.to_s.downcase}_table"
+  - elsif Tabulatr.bootstrap_paginator.to_s == 'create_div_paginator'
+    .pagination data-table="#{@klass.to_s.downcase}_table"
+      ul
+

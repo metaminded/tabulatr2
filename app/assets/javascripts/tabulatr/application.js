@@ -240,8 +240,10 @@ Tabulatr = {
       }
     }
     if(hash.pagesize === undefined){
-      var pagesize = $('.tabulatr-per-page[data-table='+ tableId +'] a.active').data('items-per-page');
-      if(pagesize == null){ pagesize = 10; }
+      var pagesize = $('table#'+ tableId).data('pagesize');
+      if(pagesize == null) {
+        console.log('Tabulatr: No pagesize specified')
+      }
     }
     if(hash.page === undefined){
       hash.page = Math.floor($('#'+ tableId +' tbody tr[class!=empty_row]').length/pagesize) + 1;
@@ -482,3 +484,13 @@ $(document).on('click', '.pagination a', function(){
   Tabulatr.updateTable({append: false, page: a.data('page')}, tableId);
   return false;
 });
+
+
+// TODO: We absolutely need to clean that up!
+
+$(document).on('click', 'a[data-show-table-filter]', function(){
+  var a = $(this);
+  var nam = a.data('show-table-filter');
+  $('div[data-filter-column-name='+nam+']').show();
+  return false;
+})

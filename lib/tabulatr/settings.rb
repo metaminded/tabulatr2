@@ -21,7 +21,7 @@ module Tabulatr
     :filter => true,                   # false for no filter row at all
     :search => true,                   # show fuzzy search field
     :paginate => false,                # true to show paginator
-    :default_pagesize => 10,           # default pagesize
+    :pagesize => 20,                   # default pagesize
     :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
     :batch_actions => false,           # :name => value hash of batch action stuff
     :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
@@ -31,15 +31,6 @@ module Tabulatr
     # these settings are considered constant for the whole application, can not be overridden
     # on a per-table basis.
     # That's necessary to allow find_for_table to work properly
-
-    # these settings are considered constant for the whole application, can not be overridden
-    # on a per-table basis.
-    # That's necessary to allow find_for_table to work properly
-    PAGINATE_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
-      :page => 1,
-      :pagesize => 10,
-      :pagesizes => [10, 20, 50]
-    })
 
     # Hash keeping the defaults for the column options
     COLUMN_OPTIONS = ActiveSupport::HashWithIndifferentAccess.new({
@@ -91,11 +82,6 @@ module Tabulatr
     def self.table_options(n=nil)
       TABLE_OPTIONS.merge!(n) if n
       TABLE_OPTIONS
-    end
-
-    def self.paginate_options(n=nil)
-      PAGINATE_OPTIONS.merge!(n) if n
-      PAGINATE_OPTIONS
     end
 
     def self.table_form_options(n=nil)

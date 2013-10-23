@@ -1,0 +1,32 @@
+
+- if table_options[:filter] && columns.filtered_columns.present?
+  form.form.form-horizontal.tabulatr_filter_form data-table="#{@klass.to_s.downcase}_table"  data-remote="true" role='form'
+    - columns.filtered_columns.each do |column|
+      - name = column.name
+      .control-group.form-group data-filter-column-name=name
+        - iname = "#{@classname}_filter[#{name}]"
+        - filter_name = "tabulatr_form_#{name}"
+
+        label.control-label.col-md-3 for=filter_name
+          = column.human_name
+
+        .controls.col-md-9
+          - if column.filter.is_a?(Hash) || column.filter.is_a?(Array) || column.filter.is_a?(String)
+            .select id=name name=iname
+              - if column.filter.class.is_a?(String)
+                = column.filter
+              - else
+                option
+                = options_for_select(column.filter)
+          - elsif column.filter == :range
+            input.tabulatr_filter.col-md-5 type="text" id="#{name}_from" data-tabulatr-attribute="#{name}_from" name="#{iname}[from]"
+            span.col-md-1.text-center —
+            input.tabulatr_filter.col-md-5 type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"
+          - elsif column.filter == :checkbox
+            = check_box_tag(iname, column.checkbox_value, false, {})
+            = column.checkbox_label
+          - elsif column.filter == :exact
+            input.tabulatr_filter.col-md-11 type="text" id="#{name}_from" data-tabulatr-attribute="#{name}" name="#{iname}"
+          - else
+            input.tabulatr_filter.col-md-11 type="text" id="#{name}_from" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
+    input.submit-table.btn.btn-primary type='submit' value=I18n.t('tabulatr.apply_filters')

@@ -1,5 +1,25 @@
 class Tabulatr::Renderer
 
+  include ActionView::Helpers::TagHelper
+  include ActionView::Helpers::FormTagHelper
+  include ActionView::Helpers::FormOptionsHelper
+  include ActionView::Helpers::TranslationHelper
+  include ActionView::Helpers::RecordTagHelper
+
+  include Tabulatr::Renderer::Paginator
+  include Tabulatr::Renderer::RowBuilder
+  include Tabulatr::Renderer::HeaderCell
+  include Tabulatr::Renderer::EmptyCell
+  include Tabulatr::Renderer::DataCell
+  include Tabulatr::Renderer::FilterCell
+  include Tabulatr::Renderer::FilterDialog
+  include Tabulatr::Renderer::FilterIcon
+  include Tabulatr::Renderer::BatchActions
+  include Tabulatr::Renderer::Search
+  include Tabulatr::Renderer::Table
+  include Tabulatr::Renderer::Count
+
+
   def initialize(klass_or_record, view=nil, toptions={})
     if klass_or_record.is_a?(Class) && klass_or_record < ActiveRecord::Base
       @klass = klass_or_record
@@ -20,28 +40,6 @@ class Tabulatr::Renderer
   end
 
   def build_table(&block)
-    @columns = ColumnsFromBlock.process @klass, &block
-    @attributes = @columns.map do |column|
-      case column
-      when Action then nil
-      when Checkbox then nil
-      when Association then "#{column.table_name}.#{column.name}"
-      when Column then column.name
-      end
-    end.compact
-
-    @view.render(partial: '/tabulatr/tabulatr_table', locals: {
-      columns: @columns,
-      table_options: @table_options,
-      klass: @klass,
-      classname: @classname
-    })
-  end
-
-
-
-
-  def build_table_alt(&block)
     return nil if @records && @records.blank?
     @val = []
     unless @records

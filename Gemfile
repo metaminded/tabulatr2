@@ -5,7 +5,7 @@ gemspec
 gem 'tabulatr2', path: './', require: 'tabulatr'
 
 gem 'jquery-rails'
-
+gem 'slim'
 
 
 group :development, :test do
