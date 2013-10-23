@@ -1,4 +1,4 @@
-<%= table_for Product, :paginate => @pagination do |t|
+<%= table_for Product, batch_actions: {'destroy' => "Delete"}, :paginate => @pagination do |t|
   t.checkbox
   t.column :title, sortable: true
   t.column :price, filter: :range

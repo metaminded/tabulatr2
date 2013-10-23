@@ -20,15 +20,61 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
+module Tabulatr
+  def self.config &block
+    yield self
+  end
 
-require 'tabulatr/tabulatr'
+  mattr_accessor :bootstrap_paginator, instance_accessor: false do
+    'create_ul_paginator'
+  end
+
+  def self.secret_tokens=(secret_tokens)
+    @@secret_tokens = secret_tokens
+  end
+
+  def self.secret_tokens
+    @@secret_tokens ||= []
+  end
+end
+
 require 'tabulatr/engine'
+require 'tabulatr/dummy_record'
+require 'tabulatr/settings'
+require 'tabulatr/renderer/row_builder'
+require 'tabulatr/renderer/search'
+require 'tabulatr/renderer/table'
+require 'tabulatr/security'
+require 'tabulatr/data/data'
+require 'tabulatr/json_builder'
+require 'tabulatr/generators/railtie' if defined?(Rails)
 require 'whiny_hash'
 
 #--
 # Mainly Monkey Patching...
 #--
-Dir[File.join(File.dirname(__FILE__), "initializers", "*.rb")].each do |file|
+Dir[File.join(File.dirname(__FILE__), "tabulatr", "rails", "*.rb")].each do |file|
+  require file
+end
+
+#---
+# Utility methods
+#--
+Dir[File.join(File.dirname(__FILE__), "tabulatr", "utility", "*.rb")].each do |file|
+  require file
+end
+
+
+#--
+# Renderer methods
+#--
+#---
+# Utility methods
+#--
+# Dir[File.join(File.dirname(__FILE__), "tabulatr", "renderer", "row_builder.rb")].each do |file|
+#   require file
+# end
+Dir[File.join(File.dirname(__FILE__), "tabulatr", "renderer", "*.rb")].each do |file|
   require file
 end
 

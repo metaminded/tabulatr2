@@ -122,11 +122,11 @@ Tabulatr = {
     }
     if(response.data.length == 0){
       Tabulatr.moreResults = false;
-      $('.tabulatr_count[data-table='+ tableId +']').unbind('inview');
+      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
     }else{
       if(response.data.length < response.meta.pagesize){
         Tabulatr.moreResults = false;
-        $('.tabulatr_count[data-table='+ tableId + ']').unbind('inview');
+        $('.pagination_trigger[data-table='+ tableId + ']').unbind('inview');
       }else{
         Tabulatr.moreResults = true;
       }
@@ -232,11 +232,11 @@ Tabulatr = {
       hash.append = false;
     }
     if($('#'+ tableId +' i.sorted').length == 1){
-      hash.sort_by = $('#'+ tableId +' i.sorted').closest('th').data('tabulatr-sorting-name');
+      hash[tableName + '_sort'] = $('#'+ tableId +' i.sorted').closest('th').data('tabulatr-sorting-name');
       if($('#'+ tableId +' i.sorted').data('sort') == 'asc'){
-        hash.orientation = 'desc';
+        hash[tableName + '_sort'] += ' desc';
       }else{
-        hash.orientation = 'asc';
+        hash[tableName + '_sort'] += ' asc';
       }
     }
     if(hash.pagesize === undefined){
@@ -255,6 +255,7 @@ Tabulatr = {
     hash.hash = $('#tabulatr_security_'+ tableName).data('hash');
     hash.salt = $('#tabulatr_security_'+ tableName).data('salt');
     hash.table_id = tableId;
+    hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
     var form_array = $('.tabulatr_filter_form[data-table='+ tableId +']').serializeArray();
     for(var i = 0; i < form_array.length; i++){
       hash[form_array[i].name] = form_array[i].value;
@@ -271,30 +272,44 @@ $(document).on('ready page:load', function(){
 
   $('.tabulatr-sort').click(function(){
     orientation = $(this).data('sort');
-    $($(this).parents('tr').find('.tabulatr-sort')).removeClass('sorted');
-    $(this).addClass('sorted');
+    direction = {
+      desc: {
+        opposite: 'asc', ownClasses: 'glyphicon-arrow-down icon-arrow-down', oppositeClasses: 'glyphicon-arrow-up icon-arrow-up'
+      },
+      asc: {
+        opposite: 'desc', ownClasses: 'glyphicon-arrow-up icon-arrow-up', oppositeClasses: 'glyphicon-arrow-down icon-arrow-down'
+      }
+    };
     var tableId = $(this).parents('table').attr('id');
     var tableName = tableId.split('_')[0];
-    $($(this).parents('table').find('tbody tr')).remove();
-    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name=orientation]').val(orientation);
     var sort_by = $(this).closest('th').data('tabulatr-sorting-name');
-    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name=sort_by]').val(sort_by);
-    if(orientation == 'asc'){
-      $(this).removeClass('icon-arrow-down').addClass('icon-arrow-up');
-      $(this).data('sort', 'desc');
+    var isSorted = $(this).hasClass('sorted');
+    var $sortedColumn = $('.tabulatr-sort.sorted:first');
+    $($(this).parents('tr').find('.tabulatr-sort')).removeClass('sorted');
+    $(this).addClass('sorted');
+    if(isSorted){
+      $(this).removeClass(direction[orientation].oppositeClasses).addClass(direction[orientation].ownClasses);
     }else{
-      $(this).addClass('icon-arrow-up').addClass('icon-arrow-down');
-      $(this).data('sort', 'asc');
+      if($sortedColumn.length > 0){
+        $sortedColumn.data('sort', 'asc');
+        $sortedColumn.removeClass(direction['asc'].oppositeClasses).addClass(direction['asc'].ownClasses);
+      }
     }
+    $(this).data('sort', direction[orientation].opposite);
+    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName+'_sort]').val(sort_by + ' '+  orientation);
+    $($(this).parents('table').find('tbody tr')).remove();
+
+    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name=orientation]').val(orientation);
     if(!Tabulatr.moreResults){
       Tabulatr.moreResults = true;
       if($('.pagination[data-table='+ tableId +']').length == 0){
-        $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+        $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
       }
     }
 
     $('.tabulatr_mark_all[data-table='+ tableName +']').prop('checked', false).prop('indeterminate', false);
     Tabulatr.updateTable({}, tableId);
+    $(this).data('sort', direction[orientation].opposite);
   });
 
   var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
@@ -312,7 +327,7 @@ $(document).on('ready page:load', function(){
 
   $('.tabulatr_table').each(function(ix, el){
     if($('.pagination[data-table='+ $(el).attr('id') +']').length == 0){
-      $('.tabulatr_count[data-table='+ $(el).attr('id') +']').bind('inview', cbfn);
+      $('.pagination_trigger[data-table='+ $(el).attr('id') +']').bind('inview', cbfn);
     }
   });
 
@@ -326,8 +341,22 @@ $(document).on('ready page:load', function(){
     Tabulatr.updateTable(params, tableId, true);
   });
 
+  $('form.tabulatr-fuzzy-search').submit(function(){
+    var tableId = $(this).data('table');
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
+      $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
+    }
+    Tabulatr.updateTable({page: 1, append: false}, tableId, true);
+    return false;
+  });
+
   $('form.tabulatr_filter_form').submit(function(ev){
     var tableId = $(this).data('table');
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
+      $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
+    }
     Tabulatr.updateTable({page: 1, append: false}, tableId, true);
     var ary = $(this).serializeArray();
     $('#'+ tableId +' th').removeClass('tabulatr_filtered_column');
@@ -341,7 +370,7 @@ $(document).on('ready page:load', function(){
         if($col.length > 0){
           $col.addClass('tabulatr_filtered_column');
           // icon-remove-sign
-          $col.append('<i class="icon-remove-sign '+
+          $col.append('<i class="icon-remove-sign glyphicon glyphicon-remove-sign '+
             'tabulatr_remove_filter" ></i>');
         }
       }
@@ -363,6 +392,9 @@ $(document).on('ready page:load', function(){
     }
     var tableId = $(this).closest('.tabulatr_table').attr('id');
     $(this).remove();
+    if($('.pagination[data-table='+ tableId +']').length == 0){
+      $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
+    }
     Tabulatr.updateTable({}, tableId);
     return false;
   });
@@ -415,7 +447,7 @@ $(document).on('ready page:load', function(){
     var tableId = $(this).closest('div').data('table');
     Tabulatr.moreResults = true;
     if($('.pagination[data-table='+ tableId +']').length == 0){
-      $('.tabulatr_count[data-table='+ tableId +']').bind('inview', cbfn);
+      $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
     if(typeof(Storage) !== undefined){
       localStorage.tabulatr_page_display_count = $(this).data('items-per-page');
