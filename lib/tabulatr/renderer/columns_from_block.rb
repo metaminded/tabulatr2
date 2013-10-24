@@ -54,17 +54,11 @@ class Tabulatr::Renderer
       )
     end
 
-    def klassname
-      @_klassname ||= @klass.name.underscore
-    end
-
-    def human_name
-      header || klass.human_attribute_name(name)
-    end
-
-    def sort_param
-      "#{klassname}_sort"
-    end
+    def klassname() @_klassname ||= @klass.name.underscore end
+    def human_name() header || klass.human_attribute_name(name) end
+    def sort_param() "#{klassname}_sort" end
+    def full_name() [table_name, name].compact.join(":") end
+    def coltype() 'column' end
 
     def column?() true end
     def association?() false end
@@ -78,10 +72,12 @@ class Tabulatr::Renderer
   ###
   class Association < Column
     def human_name
-      puts ">>>> #{klass}, #{name}, #{table_name}"
-      header || klass.reflect_on_association(table_name.to_sym).klass.human_attribute_name(name)
+      header ||
+        klass.reflect_on_association(table_name.to_sym).klass.model_name.human + ' ' +
+        klass.reflect_on_association(table_name.to_sym).klass.human_attribute_name(name)
     end
 
+    def coltype() 'association' end
     def column?() false end
     def association?() true end
   end
@@ -94,6 +90,7 @@ class Tabulatr::Renderer
       nil
     end
 
+    def coltype() 'checkbox' end
     def column?() false end
     def checkbox?() true end
   end
@@ -106,8 +103,29 @@ class Tabulatr::Renderer
       header
     end
 
+    def coltype() 'action' end
     def column?() false end
     def action?() true end
+  end
+
+  ###
+  # Tabulatr::Renderer::Columns
+  ###
+  class Columns < Array
+
+    def initialize(klass)
+      super()
+      @klass = klass
+    end
+
+    def filtered_columns
+      self.select &:filter
+    end
+
+    def class_name
+      @klass.name.underscore
+    end
+
   end
 
   ###
@@ -118,7 +136,7 @@ class Tabulatr::Renderer
 
     def initialize(klass)
       @klass = klass
-      @columns ||= []
+      @columns ||= Columns.new(klass)
     end
 
     def column(name, opts={}, &block)
@@ -141,13 +159,6 @@ class Tabulatr::Renderer
       i = self.new(klass)
       yield(i)
       c = i.columns
-      c.define_singleton_method :filtered_columns do
-        self.select &:filter
-      end
-
-      c.define_singleton_method :class_name do
-        klass.name.underscore
-      end
       c
     end
   end

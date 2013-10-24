@@ -1,0 +1,13 @@
+- if table_options[:batch_actions]
+  - iname = "#{classname}_batch"
+  .dropdown style='margin-left: 20px;'
+    a.btn.btn-default data-toggle="dropdown" href="#"
+      i.icon-cog.glyphicon.glyphicon-cog'
+      i.icon-caret-down.glyphicon.glyphicon-caret-down
+    ul.dropdown-menu role="menu" aria-labelledby="dLabel"
+      - table_options[:batch_actions].each do |key, label|
+        li
+          = link_to label, '#', class: "batch-action-inputs", data: { \
+              "do-batch-action-name" => iname, \
+              "do-batch-action" => key, \
+              "table-id" => table_id }

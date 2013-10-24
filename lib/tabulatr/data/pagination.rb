@@ -13,7 +13,7 @@ module Tabulatr::Data::Pagination
     page = [page, pages].min
 
     {
-      offset: ((page-1)*pagesize).to_i,
+      offset: [0,((page-1)*pagesize).to_i].max,
       pagesize: pagesize,
       pages: pages,
       page: page,

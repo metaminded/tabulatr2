@@ -13,7 +13,7 @@ class Tabulatr::Data
   end
 
   def data_for_table(params, &block)
-    check_request_signature!(params)
+    # check_request_signature!(params)
 
     @batch_actions = block if block_given?
 

@@ -45,6 +45,8 @@ module Tabulatr::Data::Filtering
     elsif v.is_a?(Hash)
       if v[:like].present?
         @relation = @relation.where("#{n} #{like} ?", "%#{v[:like]}%")
+      elsif v[:date].present?
+        apply_date_condition(n, v[:date])
       else
         @relation = @relation.where("#{n} >= ?", "#{v[:from]}") if v[:from].present?
         @relation = @relation.where("#{n} <= ?", "#{v[:to]}") if v[:to].present?
@@ -52,6 +54,23 @@ module Tabulatr::Data::Filtering
     else
       raise "Wrong filter type: #{v.class}"
     end
+  end
+
+  def apply_date_condition(n, cond)
+    today = Date.today
+    case cond[:simple]
+    when 'none' then return
+    when 'today' then since = today
+    when 'yesterday' then since = today - 1.day
+    when 'this_week' then since = today.at_beginning_of_week
+    when 'last_7_days' then since = today - 7.day
+    when 'this_month' then since = today.at_beginning_of_month
+    when 'last_30_days' then since = today. - 30.day
+    when 'from_to'
+      since = Date.parse(cond[:from]) if cond[:from].present?
+      @relation = @relation.where("#{n} <= ?", Date.parse(cond[:to])) if cond[:to].present?
+    end
+    @relation = @relation.where("#{n} >= ?", since) if since.present?
   end
 
 end

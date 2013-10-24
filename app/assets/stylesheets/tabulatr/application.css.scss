@@ -61,3 +61,29 @@ i.tabulatr_remove_filter:hover{
 div[data-filter-column-name] {
   display:none;
 }
+
+.tabulatr-table-controls-wrapper {
+  display: block;
+  padding-top: 10px;
+
+  .tabulatr-filter-menu-wrapper {
+    display: inline-block;
+  }
+
+  .tabulatr-paginator-wrapper {
+    display: inline-block;
+  }
+
+  .tabulatr-info-string-wrapper {
+    display: inline-block;
+  }
+
+  .tabulatr-fuzzy-search-field-wrapper {
+    display: inline-block;
+    float: right;
+  }
+
+  .tabulatr-filter-dialog-wrapper {
+    display: block;
+  }
+}
