@@ -89,19 +89,28 @@ div[data-filter-column-name] {
 
   .tabulatr-filter-menu-wrapper {
     display: inline-block;
+    padding: 20px 0 20px 0;
+  }
+
+  .tabulatr-batch-actions-menu-wrapper {
+    display: inline-block;
+    padding: 20px 0 20px 20px;
   }
 
   .tabulatr-paginator-wrapper {
     display: inline-block;
+    padding: 0;
   }
 
   .tabulatr-info-string-wrapper {
     display: inline-block;
+    padding: 20px 20px 20px 0;
   }
 
   .tabulatr-fuzzy-search-field-wrapper {
     display: inline-block;
     float: right;
+    padding: 20px 0 20px 0;
   }
 
   .tabulatr-filter-dialog-wrapper {
