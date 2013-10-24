@@ -1,1 +1,131 @@
-| actual table
+- table_id = "#{@klass.to_s.downcase}_table"
+- to = (table_options[:table_html] || {}).merge(:class => "tabulatr_table table",\
+  :'data-path' => @table_options[:path], :id => table_id,\
+  :'data-pagesize' => @table_options[:pagesize])
+table.table.tabulatr_table data-path=table_options[:path] id=table_id
+	thead
+    tr
+     - columns.each do |column|
+       th data-tabulatr-column-name=column.full_name data-tabulatr-sorting-name=sorting_name
+
+      th data-tabulatr-column-type="checkbox" data-tabulatr-methods=""
+        input.tabulatr_mark_all data-table="product_table" type="checkbox"
+
+
+
+
+.table-controls
+  a.btn.btn-info data-toggle="modal" href="#tabulatr_filter_dialog_product"
+    i.icon-filter>
+    | Filter
+  .btn-group.tabulatr-per-page data-table="product_table"
+    button.btn No. of rows per page:
+    button.btn.dropdown-toggle data-toggle="dropdown"
+      span.caret
+    ul.dropdown-menu
+      li
+        a.active data-items-per-page="10" href="javascript: void(0);"
+      li
+        a data-items-per-page="25" href="javascript: void(0);"
+      li
+        a data-items-per-page="50" href="javascript: void(0);"
+      li
+        a data-items-per-page="100" href="javascript: void(0);"
+  .tabulatr_count{"data-format-string" => "Showing: %{current} of total %{total}. % per_page} items per page." data-table="product_table"
+  form#product_fuzzy_search.form-inline.tabulatr-fuzzy-search.pull-right data-table="product_table" role="form"
+    .form-group
+      label.sr-only for="product_fuzzy_search_query"
+      input#product_fuzzy_search_query.form-control placeholder="Search" type="search"
+table#product_table.tabulatr_table.table data-path="#"
+  thead
+    tr
+      th data-tabulatr-column-type="checkbox" data-tabulatr-methods=""
+        input.tabulatr_mark_all data-table="product_table" type="checkbox"
+      th data-tabulatr-column-name="title" data-tabulatr-form-name="product_filter[title]" data-tabulatr-methods="" data-tabulatr-sorting-name="product.title"
+        span.translation_missing title="translation missing: en.Title"
+        span#product_sort_title.tabulatr-sort.glyphicon.glyphicon-arrow-up.icon-arrow-up data-sort="asc" name="product_sort[_resort][title]"
+      th data-tabulatr-column-name="price" data-tabulatr-form-name="product_filter[price]" data-tabulatr-methods="" data-tabulatr-sorting-name="product.price"
+        span.translation_missing title="translation missing: en.Price"
+        span#product_sort_price.tabulatr-sort.glyphicon.glyphicon-arrow-up.icon-arrow-up data-sort="asc" name="product_sort[_resort][price]"
+      th data-tabulatr-column-name="active" data-tabulatr-form-name="product_filter[active]" data-tabulatr-methods="" data-tabulatr-sorting-name="product.active"
+        span.translation_missing title="translation missing: en.Active"
+        span#product_sort_active.tabulatr-sort.glyphicon.glyphicon-arrow-up.icon-arrow-up data-sort="asc" name="product_sort[_resort][active]"
+      th data-tabulatr-column-name="vendor_product_name" data-tabulatr-form-name="product_filter[vendor_product_name]" data-tabulatr-methods="" data-tabulatr-sorting-name="vendor_product_name"
+        span.translation_missing title="translation missing: en.Product by vendor"
+        span#product_sort_vendor_product_name.tabulatr-sort.glyphicon.glyphicon-arrow-up.icon-arrow-up data-sort="asc" name="product_sort[_resort][vendor_product_name]"
+      th data-tabulatr-column-name="updated_at" data-tabulatr-form-name="product_filter[updated_at]" data-tabulatr-methods="" data-tabulatr-sorting-name="product.updated_at"
+        span.translation_missing title="translation missing: en.Updated At"
+        span#product_sort_updated_at.tabulatr-sort.glyphicon.glyphicon-arrow-up.icon-arrow-up data-sort="asc" name="product_sort[_resort][updated_at]"
+      th data-tabulatr-column-name="vendor:name" data-tabulatr-form-name="product_filter[__association][vendor.name]" data-tabulatr-methods="" data-tabulatr-sorting-name="vendor.name"
+        span.translation_missing title="translation missing: en.Vendor\r\n       Name"
+          | Vendor
+          | Name
+        span#_name.tabulatr-sort.glyphicon.glyphicon-arrow-up.icon-arrow-up data-sort="asc" name="product_sort[vendor.name][_resort][name]"
+      th data-tabulatr-column-name="tags:title" data-tabulatr-form-name="product_filter[__association][tags.title]" data-tabulatr-methods="" data-tabulatr-sorting-name="tag.title"
+        span.translation_missing title="translation missing: en.Tags\r\n       Title"
+          | Tags
+          | Title
+  tbody
+    tr.empty_row
+      td/
+      td/
+      td/
+      td/
+      td/
+      td/
+      td/
+span.pagination_trigger data-table="product_table"
+#tabulatr_filter_dialog_product.modal.fade style="display:none ;"
+  .modal-dialog
+    .modal-content
+      .modal-header
+        button.close aria-hidden="true" data-dismiss="modal"
+        h3.modal-title Filter
+      form.form-horizontal.tabulatr_filter_form data-remote="true" data-table="product_table"
+        .modal-body
+          td
+          .control-group
+            label.control-label for="tabulatr_form_title"
+              span.translation_missing title="translation missing: en.Title"
+            .controls
+              input#tabulatr_form_title.tabulatr_filter data-tabulatr-attribute="title" data-type="like" name="product_filter[title][like]" style="width:97%" type="text" value=""
+          .control-group
+            label.control-label for="tabulatr_form_price"
+              span.translation_missing title="translation missing: en.Price"
+            .controls
+              input#tabulatr_form_price_from.tabulatr_filter data-tabulatr-attribute="price" data-type="from" name="product_filter[price][from]" style="width:97%" type="text" value=""
+              span.translation_missing title="translation missing: en.&ndash;"
+              input#tabulatr_form_price_to.tabulatr_filter data-tabulatr-attribute="price" data-type="to" name="product_filter[price][to]" style="width:97%" type="text" value=""
+          .control-group
+            label.control-label for="tabulatr_form_active"
+              span.translation_missing title="translation missing: en.Active"
+            .controls
+              input#tabulatr_form_active.tabulatr_filter data-tabulatr-attribute="active" data-type="like" name="product_filter[active][like]" style="width:97%" type="text" value=""
+          .control-group
+            label.control-label for="tabulatr_form_vendor_product_name"
+              span.translation_missing title="translation missing: en.Product by vendor"
+            .controls
+              input#tabulatr_form_vendor_product_name.tabulatr_filter data-tabulatr-attribute="vendor_product_name" data-type="like" name="product_filter[vendor_product_name][like]" style="width:97%" type="text" value=""
+          .control-group
+            label.control-label for="tabulatr_form_updated_at"
+              span.translation_missing title="translation missing: en.Updated At"
+            .controls
+              input#tabulatr_form_updated_at.tabulatr_filter data-tabulatr-attribute="updated_at" data-type="like" name="product_filter[updated_at][like]" style="width:97%" type="text" value=""
+          .control-group
+            label.control-label for="tabulatr_form_vendor_name"
+              span.translation_missing title="translation missing: en.Vendor\r\n       Name"
+                | Vendor
+                | Name
+            .controls
+              input#tabulatr_form_vendor_name.tabulatr_filter data-tabulatr-attribute="name" data-type="normal" name="product_filter[__association][vendor.name]" style="width:97%" type="text" value=""
+          .control-group
+            label.control-label for="tabulatr_form_tags_title"
+              span.translation_missing title="translation missing: en.Tags\r\n       Title"
+                | Tags
+                | Title
+            .controls
+              input#tabulatr_form_tags_title.tabulatr_filter data-tabulatr-attribute="title" data-type="like" name="product_filter[__association][tags.title][like]" style="width:97%" type="text" value=""
+          input name="product_sort" type="hidden"
+        .modal-footer
+          input.submit-table.btn.btn-primary type="submit" value="Apply"
+span#tabulatr_security_product data-hash="095318c6a034fb310a01d7fba89468114b7" data-salt="AFOmgLEUnU/NIVNkvQe11g=="

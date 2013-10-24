@@ -54,8 +54,16 @@ class Tabulatr::Renderer
       )
     end
 
+    def klassname
+      @_klassname ||= @klass.name.underscore
+    end
+
     def human_name
       header || klass.human_attribute_name(name)
+    end
+
+    def sort_param
+      "#{klassname}_sort"
     end
 
     def column?() true end
@@ -135,6 +143,10 @@ class Tabulatr::Renderer
       c = i.columns
       c.define_singleton_method :filtered_columns do
         self.select &:filter
+      end
+
+      c.define_singleton_method :class_name do
+        klass.name.underscore
       end
       c
     end

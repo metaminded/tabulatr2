@@ -15,3 +15,7 @@
     .pagination data-table="#{@klass.to_s.downcase}_table"
       ul
 
+form#product_fuzzy_search.form-inline.tabulatr-fuzzy-search.pull-right data-table="#{klass.name.underscore}_table" role="form"
+  .form-group
+    label.sr-only for="#{klass.name.underscore}_fuzzy_search_query"
+    input#product_fuzzy_search_query.form-control placeholder="Search" type="search"
