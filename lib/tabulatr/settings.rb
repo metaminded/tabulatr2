@@ -3,19 +3,6 @@ require 'whiny_hash'
 module Tabulatr
   module Settings
 
-    # Hash keeping the defaults for the table options, may be overriden in the
-    # table_for call
-    TABLE_OPTIONS = WhinyHash.new({ # WhinyHash.new({
-      :filter => true,                   # false for no filter row at all
-      :search => true,                   # show fuzzy search field
-      :paginate => false,                # true to show paginator
-      :pagesize => 20,                   # default pagesize
-      :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
-      :batch_actions => false,           # :name => value hash of batch action stuff
-      :footer_content => false,          # if given, add a <%= content_for <footer_content> %> before the </table>
-      :path => '#'                       # where to send the AJAX-requests to
-    })
-
     # Stupid hack
     SQL_OPTIONS = WhinyHash.new({
       :like => nil

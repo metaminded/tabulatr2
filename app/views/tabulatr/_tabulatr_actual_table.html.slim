@@ -2,11 +2,11 @@ table.table.tabulatr_table id=table_id data-path=table_options[:path] data-pages
   thead
     tr
      - columns.each do |column|
-       th data-tabulatr-column-name=column.full_name data-tabulatr-sorting-name=column.sort_param
+       th data-tabulatr-column-name=column.full_name data-tabulatr-sorting-name=column.sort_param align=column.align width=column.width valign=column.valign
          = column.human_name
   tbody
   tfoot
     tr.empty_row
       - columns.each do |column|
-        td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype
+        td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype align=column.align width=column.width valign=column.valign
 span.pagination_trigger data-table="#{table_id}"

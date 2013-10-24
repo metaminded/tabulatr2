@@ -42,7 +42,6 @@ require 'tabulatr/engine'
 require 'tabulatr/dummy_record'
 require 'tabulatr/settings'
 require 'tabulatr/renderer/renderer'
-require 'tabulatr/security'
 require 'tabulatr/data/data'
 require 'tabulatr/json_builder'
 require 'tabulatr/generators/railtie' if defined?(Rails)

@@ -1,4 +1,4 @@
-<%= table_for @products do |t|
+<%= static_table_for @products do |t|
   t.column :title
   t.column :title, format: :foo_me
   t.column :title, format: ->(a) { bar_me(a) }
