@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+# Copyright (c) 2010-2014 Peter Horn & Florian Thomas, Provideal GmbH
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,8 +24,11 @@
 class ActionView::Base
   # render the table in a view
   def table_for(klass, opts={}, &block)
-    tabulatr = Tabulatr::Renderer.new(klass, self, opts)
-    tabulatr.build_table(&block)
+    Tabulatr::Renderer.build_table(klass, self, opts, &block)
+  end
+
+  def static_table_for(records, opts={}, &block)
+    Tabulatr::Renderer.build_static_table(records, self, opts, &block)
   end
 end
 

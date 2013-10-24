@@ -21,28 +21,24 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::Data::Pagination
-
-  def apply_pagination(offset: 0, pagesize: nil, pages: nil, page: 1, count: nil)
-    @relation = @relation.limit(pagesize).offset(offset)
+class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
+  def human_name
+    header ||
+      klass.reflect_on_association(table_name.to_sym).klass.model_name.human + ' ' +
+      klass.reflect_on_association(table_name.to_sym).klass.human_attribute_name(name)
   end
 
-  def compute_pagination(page, pagesize)
-    count = @relation.count
-    page ||= 1
-    pagesize, page = pagesize.to_i, page.to_i
+  def coltype() 'association' end
+  def column?() false end
+  def association?() true end
 
-    pages = (count/pagesize.to_f).ceil
-    page = [page, pages].min
-
-    {
-      offset: [0,((page-1)*pagesize).to_i].max,
-      pagesize: pagesize,
-      pages: pages,
-      page: page,
-      count: count
-    }
+  def principal_value(record)
+    v = record.send(table_name)
+    if v && v.respond_to?(:to_a) && map
+      v.map(&:"#{name}")
+    else
+      v.try(name)
+    end
   end
+
 end
-
-Tabulatr::Data.send :include, Tabulatr::Data::Pagination

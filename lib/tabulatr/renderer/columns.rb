@@ -21,28 +21,19 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::Data::Pagination
+class Tabulatr::Renderer::Columns < ::Array
 
-  def apply_pagination(offset: 0, pagesize: nil, pages: nil, page: 1, count: nil)
-    @relation = @relation.limit(pagesize).offset(offset)
+  def initialize(klass)
+    super()
+    @klass = klass
   end
 
-  def compute_pagination(page, pagesize)
-    count = @relation.count
-    page ||= 1
-    pagesize, page = pagesize.to_i, page.to_i
-
-    pages = (count/pagesize.to_f).ceil
-    page = [page, pages].min
-
-    {
-      offset: [0,((page-1)*pagesize).to_i].max,
-      pagesize: pagesize,
-      pages: pages,
-      page: page,
-      count: count
-    }
+  def filtered_columns
+    self.select &:filter
   end
+
+  def class_name
+    @klass.name.underscore
+  end
+
 end
-
-Tabulatr::Data.send :include, Tabulatr::Data::Pagination

@@ -1,3 +1,24 @@
+//  Copyright (c) 2010-2014 Peter Horn & Florian Thomas, Provideal GmbH
+//
+//  Permission is hereby granted, free of charge, to any person obtaining
+//  a copy of this software and associated documentation files (the
+//  "Software"), to deal in the Software without restriction, including
+//  without limitation the rights to use, copy, modify, merge, publish,
+//  distribute, sublicense, and/or sell copies of the Software, and to
+//  permit persons to whom the Software is furnished to do so, subject to
+//  the following conditions:
+//
+//  The above copyright notice and this permission notice shall be
+//  included in all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+//  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+//  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+//  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+//  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+//  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 Tabulatr = {
   moreResults: true,
   storePage: false,
@@ -110,9 +131,10 @@ Tabulatr = {
   },
 
   insertTabulatrData: function(response){
-    columns = [];
-    tableId = response.meta.table_id;
-    tableName = tableId.split('_')[0];
+    var columns = [];
+    var tableId = response.meta.table_id;
+    var tableName = tableId.split('_')[0];
+    var tbody = $('#'+ tableId +' tbody');
     if(!response.meta.append){
       if(Tabulatr.storePage){
         $('#'+ tableId +' tbody tr').hide();
@@ -130,75 +152,27 @@ Tabulatr = {
       }else{
         Tabulatr.moreResults = true;
       }
-      $('#'+ tableId +' th').each(function(ix,el){
-        var column_name = $(el).data('tabulatr-column-name');
-        var association = $(el).data('tabulatr-association');
-        var column_type = $(el).data('tabulatr-column-type');
-        var action = $(el).data('tabulatr-action');
-        var callback_methods = $(el).data('tabulatr-methods').split(',');
-        columns.push({ name: column_name,
-                       methods: callback_methods,
-                       type: column_type,
-                       association: association,
-                       action: action });
-      });
-      $('.empty_row').remove();
 
-
+      // insert the actual data
       for(var i = 0; i < response.data.length; i++){
-        $tr = $('<tr data-page="'+ response.meta.page +'"></tr>');
-        var td = '';
-        var column;
-        for(var c = 0; c < columns.length; c++){
-          column = columns[c];
-          if(column.association === undefined){
-            var value = response.data[i][column.name];
-          }else{
-            try{
-              var assoc = response.data[i][column.association];
-              if(Array.isArray(assoc)){
-                var arry = [];
-                for(var j = 0; j < assoc.length; j++){
-                  arry.push(assoc[j][column.name]);
-                }
-                var value = arry.join(', ');
-              }else{
-                var value = response.data[i][column.association][column.name];
-              }
-            }catch(e){
-              var value = '';
-            }
+        var data = response.data[i];
+        var id = data.id;
+        var tr = $('tr.empty_row').clone();
+        tr.removeClass('empty_row');
+        tr.attr('data-page', response.meta.page);
+        tr.attr('data-id', id);
+        tr.find('td').each(function(i,td_raw) {
+          var td = $(td_raw);
+          var coltype = td.data('tabulatr-type');
+          var name = td.data('tabulatr-column-name');
+          var cont = data[name]
+          if(coltype === 'checkbox') {
+            cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
           }
-          var formatters = column.methods;
-          $td = $('<td></td>');
-          if(column.type == 'checkbox'){
-            $td.html(Tabulatr.makeCheckboxFor(response.data[i]));
-          }else if(column.type == 'action'){
-            $td.html(Tabulatr.makeAction(column.action, response.data[i]));
-          }else{
-            if(value === false){
-              value = "false"; // because false won't be displayed
-            }
-            $td.html(value);
-            for(var j = 0; j < formatters.length; j++){
-              var fn = Tabulatr[formatters[j]];
-              if(typeof fn === 'function'){
-                try{
-                  var result = fn(value, $td, $tr, response.data[i]);
-                  if(result != null && result !== undefined){
-                    $td.html(result);
-                    value = result;
-                  }
-                }catch(e){
-                  $td.html('<span class="error">#ERROR</span>');
-                }
-              }
-            }
-          }
-          td += $td[0].outerHTML;
-        }
-        $tr.append(td);
-        $('#'+ tableId +' tbody').append($tr);
+          td.html(cont);
+
+        });
+        tbody.append(tr);
       }
     }
     var count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
@@ -207,12 +181,6 @@ Tabulatr = {
     count_string = count_string.replace(/%\{per_page\}/,
       response.meta.pagesize);
     $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
-
-  },
-
-  makeCheckboxFor: function(data){
-    return "<input type='checkbox' value='"+ data.id +
-    "' class='tabulatr-checkbox' />";
   },
 
   replacer: function(match, attribute, offset, string){
@@ -226,7 +194,7 @@ Tabulatr = {
   },
 
   createParameterString: function(hash, tableId){
-    tableName = tableId.split('_')[0];
+    var tableName = tableId.split('_')[0];
     if(hash === undefined){
       hash = {};
       hash.append = false;
@@ -240,8 +208,10 @@ Tabulatr = {
       }
     }
     if(hash.pagesize === undefined){
-      var pagesize = $('.tabulatr-per-page[data-table='+ tableId +'] a.active').data('items-per-page');
-      if(pagesize == null){ pagesize = 10; }
+      var pagesize = $('table#'+ tableId).data('pagesize');
+      if(pagesize == null) {
+        console.log('Tabulatr: No pagesize specified')
+      }
     }
     if(hash.page === undefined){
       hash.page = Math.floor($('#'+ tableId +' tbody tr[class!=empty_row]').length/pagesize) + 1;
@@ -250,13 +220,13 @@ Tabulatr = {
       }
     }
     hash.pagesize = pagesize;
-    hash.arguments = $.map($('#'+ tableId +' th'), function(n){ return $(n).data('tabulatr-column-name') })
-                      .filter(function(n){return n}).join();
-    hash.hash = $('#tabulatr_security_'+ tableName).data('hash');
-    hash.salt = $('#tabulatr_security_'+ tableName).data('salt');
+    hash.arguments = $.map($('#'+ tableId +' th'), function(n){
+      return $(n).data('tabulatr-column-name')
+    }).filter(function(n){return n}).join();
     hash.table_id = tableId;
     hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
-    var form_array = $('.tabulatr_filter_form[data-table='+ tableId +']').serializeArray();
+    var form_array = $('.tabulatr_filter_form[data-table="'+ tableId +'"]')
+      .find('input:visible,select:visible').serializeArray();
     for(var i = 0; i < form_array.length; i++){
       hash[form_array[i].name] = form_array[i].value;
     }
@@ -332,9 +302,12 @@ $(document).on('ready page:load', function(){
   });
 
   $('.batch-action-inputs').click(function(){
-    params = {page: 1};
-    params[$(this).attr('name')] = $(this).val();
-    var tableId = $(this).closest('table').attr('id');
+    var a = $(this);
+    var name = a.data('do-batch-action-name');
+    var key = a.data('do-batch-action');
+    var tableId = a.data('table-id');
+    var params = {page: 1};
+    params[name] = key;
     params['tabulatr_checked'] = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
     $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
@@ -358,24 +331,6 @@ $(document).on('ready page:load', function(){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
     Tabulatr.updateTable({page: 1, append: false}, tableId, true);
-    var ary = $(this).serializeArray();
-    $('#'+ tableId +' th').removeClass('tabulatr_filtered_column');
-    $('#'+ tableId +' i.icon-remove-sign').remove();
-    for(var i = 0; i < ary.length; i++){
-      if(ary[i].value != ""){
-        var name = ary[i].name.replace(/\[(like|checkbox|from|to)\]/, '');
-        name = name.replace(/(:|\.|\[|\])/g,'\\$1');
-        // var attr = $(this).find("input[name="+ name +"]").data('tabulatr-attribute');
-        var $col = $('#'+ tableId +' th[data-tabulatr-form-name^='+ name +']');
-        if($col.length > 0){
-          $col.addClass('tabulatr_filtered_column');
-          // icon-remove-sign
-          $col.append('<i class="icon-remove-sign glyphicon glyphicon-remove-sign '+
-            'tabulatr_remove_filter" ></i>');
-        }
-      }
-    }
-    $('#tabulatr_filter_dialog_'+ tableId.split('_')[0]).modal('hide');
     return false;
   });
 
@@ -481,4 +436,41 @@ $(document).on('click', '.pagination a', function(){
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
   Tabulatr.updateTable({append: false, page: a.data('page')}, tableId);
   return false;
+});
+
+
+// TODO: We absolutely need to clean that up!
+
+$(document).on('click', 'a[data-show-table-filter]', function(){
+  var a = $(this);
+  var nam = a.data('show-table-filter');
+  $('div[data-filter-column-name="'+nam+'"]').show('blind');
+  $('div[data-filter-column-name="_submit"]').show('blind');
+
+  a.hide();
+  return false;
+})
+
+$(document).on('click', 'a[data-hide-table-filter]', function(){
+  var a = $(this);
+  var nam = a.data('hide-table-filter');
+  var t = $('div[data-filter-column-name="'+nam+'"]');
+  t.hide('blind');
+  t.find('input[type=text]').val("");
+  $('a[data-show-table-filter="'+nam+'"]').show();
+  if ($('div[data-filter-column-name]:visible').length <= 2)
+    $('div[data-filter-column-name="_submit"]').hide('blind');
+  return false;
+})
+
+$(document).on('change', 'select[data-tabulatr-date-filter]', function() {
+  var select = $(this);
+  var option = select.find('option:selected');
+  var val = option.val();
+  console.log(val);
+  if (val === 'from_to') {
+    select.parents('.controls').find(".from_to").show().removeClass('hidden');
+  } else {
+    select.parents('.controls').find(".from_to").hide().val('');
+  }
 });

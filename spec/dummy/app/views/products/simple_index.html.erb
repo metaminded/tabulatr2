@@ -1,10 +1,11 @@
-<%= table_for Product, :paginate => @pagination do |t|
+<%= table_for Product, :paginate => true,
+  batch_actions: {a: "Hallo", b: "Du da!"} do |t|
   t.checkbox
   t.column :title, sortable: true
   t.column :price, filter: :range
   t.column :active
   t.column :vendor_product_name, header: 'Product by vendor'
-  t.column :updated_at
+  t.column :updated_at, filter: :date
   t.association :vendor, :name, filter: :exact
   t.association :tags, :title
 end %>

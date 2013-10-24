@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+# Copyright (c) 2010-2014 Peter Horn & Florian Thomas, Provideal GmbH
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -20,6 +20,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
+
 module Tabulatr
   def self.config &block
     yield self
@@ -39,16 +40,10 @@ module Tabulatr
 end
 
 require 'tabulatr/engine'
-require 'tabulatr/dummy_record'
-require 'tabulatr/settings'
-require 'tabulatr/renderer/row_builder'
-require 'tabulatr/renderer/search'
-require 'tabulatr/renderer/table'
-require 'tabulatr/security'
+require 'tabulatr/renderer/renderer'
 require 'tabulatr/data/data'
 require 'tabulatr/json_builder'
 require 'tabulatr/generators/railtie' if defined?(Rails)
-require 'whiny_hash'
 
 #--
 # Mainly Monkey Patching...

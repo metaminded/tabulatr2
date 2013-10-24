@@ -1,5 +1,5 @@
 #--
-# Copyright (c) 2010-2011 Peter Horn, Provideal GmbH
+# Copyright (c) 2010-2014 Peter Horn & Florian Thomas, Provideal GmbH
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -21,35 +21,36 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-module Tabulatr::Formattr
-  ALLOWED_METHODS = [:euro, :dollar, :percent, :lamp]
-  #include ActionView::TagHelpers
-  
-  def self.format(nam, val)
-    nam = nam.to_sym
-    if ALLOWED_METHODS.member?(nam)
-      self.send nam, val
-    else
-      "[Requested unautorized format '#{nam}' for '#{val}'.]" 
+class Tabulatr::Renderer
+  class ColumnsFromBlock
+    attr_accessor :columns, :klass
+
+    def initialize(klass)
+      @klass = klass
+      @columns ||= Columns.new(klass)
+    end
+
+    def column(name, opts={}, &block)
+      @columns << Column.from(opts.merge(klass: klass, name: name), &block)
+    end
+
+    def association(table_name, name, opts={}, &block)
+      @columns << Association.from(opts.merge(klass: klass, name: name, table_name: table_name), &block)
+    end
+
+    def checkbox(opts={})
+      @columns << Checkbox.from(opts.merge(klass: klass, filter: false, sortable: false))
+    end
+
+    def action(opts={}, &block)
+      @columns << Action.from(opts.merge(klass: klass, filter: false, sortable: false), &block)
+    end
+
+    def self.process(klass, &block)
+      i = self.new(klass)
+      yield(i)
+      c = i.columns
+      c
     end
   end
-  
-  def self.euro(x)
-    ("%.2f&thinsp;&euro;" % x).gsub(".", ",")
-  end
-  
-  def self.dollar(x)
-    "$&thinsp;%.2f" % x
-  end
-  
-  def self.percent(x)
-    ("%.2f&thinspace;%%" % 100.0*x).gsub(".", ",")
-  end
-  
-  def self.lamp(x, mapping)
-    s = mapping[x].to_s
-    return "?" unless %w{g y r n}.member?(s)
-    image_tag("tabulatr/#{s}state.gif").html_safe
-  end
-  
 end

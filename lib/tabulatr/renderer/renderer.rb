@@ -1,125 +1,91 @@
+#--
+# Copyright (c) 2010-2014 Peter Horn & Florian Thomas, Provideal GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#++
+
 class Tabulatr::Renderer
 
-  include ActionView::Helpers::TagHelper
-  include ActionView::Helpers::FormTagHelper
-  include ActionView::Helpers::FormOptionsHelper
-  include ActionView::Helpers::TranslationHelper
-  include ActionView::Helpers::RecordTagHelper
-
-  include Tabulatr::Renderer::Paginator
-  include Tabulatr::Renderer::RowBuilder
-  include Tabulatr::Renderer::HeaderCell
-  include Tabulatr::Renderer::EmptyCell
-  include Tabulatr::Renderer::DataCell
-  include Tabulatr::Renderer::FilterCell
-  include Tabulatr::Renderer::FilterDialog
-  include Tabulatr::Renderer::FilterIcon
-  include Tabulatr::Renderer::BatchActions
-  include Tabulatr::Renderer::Search
-  include Tabulatr::Renderer::Table
-  include Tabulatr::Renderer::Count
-
-
-  def initialize(klass_or_record, view=nil, toptions={})
-    if klass_or_record.is_a?(Class) && klass_or_record < ActiveRecord::Base
-      @klass = klass_or_record
-      @records = nil
-    elsif klass_or_record.respond_to?(:each)
-      @records = klass_or_record
-      @klass = @records.first.try(:class)
-      toptions = toptions.merge!(:filter => false, :paginate => false, :sortable => false)
-    else
-      raise "Give a model-class or an collection to `table_for'"
-    end
+  def initialize(klass, view,
+      filter: true,          # false for no filter row at all
+      search: true,          # show fuzzy search field
+      paginate: false,       # true to show paginator
+      pagesize: 20,          # default pagesize
+      sortable: true,        # true to allow sorting (can be specified for every sortable column)
+      batch_actions: false,  # :name => value hash of batch action stuff
+      footer_content: false, # if given, add a <%= content_for <footer_content> %> before the </table>
+      path: '#')             # where to send the AJAX-requests to
+    @klass = klass
     @view = view
-    @table_options = Tabulatr::Settings::TABLE_OPTIONS.merge(toptions)
-    @record = nil
-    @row_mode = false
-    @classname = @klass.to_s.downcase.gsub("/","_")
-    @attributes = @val = []
+    @table_options = {
+      filter: filter,
+      search: search,
+      paginate: paginate,
+      pagesize: pagesize,
+      sortable: sortable,
+      batch_actions: batch_actions,
+      footer_content: footer_content,
+      path: path
+    }
+    @classname = @klass.name.underscore
   end
 
   def build_table(&block)
-    return nil if @records && @records.blank?
-    @val = []
-    unless @records
-      render_table_controls('table-controls', :before_table_controls)
-    end
+    @columns = ColumnsFromBlock.process @klass, &block
 
-    render_element(:table, &block)
-
-    unless @records
-      render_table_controls('table-controls', :after_table_controls)
-
-      render_filter_dialog &block
-      sec_hash = Tabulatr::Security.sign(@attributes.join(','))
-      make_tag(:span, :id => "tabulatr_security_#{@klass.to_s.downcase}",
-        :'data-salt' => sec_hash.split('-')[1],
-        :'data-hash' => sec_hash.split('-')[2]){}
-    end
-    @val.join("").html_safe
+    @view.render(partial: '/tabulatr/tabulatr_table', locals: {
+      columns: @columns,
+      table_options: @table_options,
+      klass: @klass,
+      classname: @classname
+    })
   end
 
-  def render_element(element, &block)
-    case element
-    when :filter then render_filter_icon
-    when :paginator then render_paginator
-    when :search then render_search
-    when :count then render_count
-    when :table then render_table &block
-    else
-      if element.is_a?(String)
-        concat(element)
-      else
-        raise "unknown element '#{element}'"
-      end
-    end
+  def build_static_table(records, &block)
+    @columns = ColumnsFromBlock.process @klass, &block
+
+    @view.render(partial: '/tabulatr/tabulatr_static_table', locals: {
+      columns: @columns,
+      table_options: @table_options,
+      klass: @klass,
+      classname: @classname,
+      records: records
+    })
   end
 
-private
-
-  def readable_name_for(name, relation=nil)
-    if relation
-      "#{@klass.human_attribute_name(relation).titlecase}
-       #{@klass.reflect_on_association(relation).klass.
-          human_attribute_name(name).titlecase}"
-    else
-      @klass.human_attribute_name(name).titlecase
-    end
+  def self.build_static_table(records, view, toptions={}, &block)
+    return '' unless records.present?
+    klass = records.first.class
+    new(klass, view, toptions).build_static_table(records, &block)
   end
 
-  # either append to the internal string buffer or use
-  # ActionView#concat to output if an instance is available.
-  def concat(s, html_escape=false)
-    if s.present? then @val << (html_escape ? h(s) : s) end
+  def self.build_table(klass, view, toptions={}, &block)
+    new(klass, view, toptions).build_table(&block)
   end
 
-  def h(s)
-    ERB::Util.h(s)
-  end
-
-  def render_table_controls div_class, before_or_after
-    make_tag(:div,  :class => div_class) do
-      @table_options[before_or_after].each do |element|
-        render_element(element)
-      end
-    end if @table_options[before_or_after].present? # </div>
-  end
-
-  # stringly produce a tag w/ some options
-  def make_tag(name, hash={}, &block)
-    attrs = hash ? tag_options(hash) : ''
-    if block_given?
-      if name
-        concat("<#{name}#{attrs}>")
-        yield
-        concat("</#{name}>")
-      else
-        yield
-      end
-    else
-      concat("<#{name}#{attrs} />")
-    end
-    nil
-  end
 end
+
+require_relative './column'
+require_relative './association'
+require_relative './action'
+require_relative './checkbox'
+require_relative './columns'
+require_relative './columns_from_block'
+
