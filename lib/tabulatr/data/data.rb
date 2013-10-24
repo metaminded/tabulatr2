@@ -13,7 +13,6 @@ class Tabulatr::Data
   end
 
   def data_for_table(params, &block)
-    # check_request_signature!(params)
 
     @batch_actions = block if block_given?
 
@@ -54,10 +53,6 @@ class Tabulatr::Data
     end
 
     found
-  end
-
-  def check_request_signature!(params)
-    Tabulatr::Security.validate!("#{params[:arguments]}-#{params[:salt]}-#{params[:hash]}")
   end
 
   def execute_batch_actions batch_param, selected_ids
