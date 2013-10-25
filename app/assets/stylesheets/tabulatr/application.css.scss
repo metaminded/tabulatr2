@@ -83,6 +83,27 @@ div[data-filter-column-name] {
   display:none;
 }
 
+th.tabulatr-sortable {
+  cursor: pointer;
+
+  &.sorted {
+
+    &[data-sorted=asc] {
+      &:after {
+        content: " \25B2";
+        margin-left: 5px;
+      }
+    }
+
+    &[data-sorted=desc] {
+      &:after {
+        content: " \25BC";
+        margin-left: 5px;
+      }
+    }
+  }
+}
+
 .tabulatr-table-controls-wrapper {
   display: block;
   padding-top: 10px;

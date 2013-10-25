@@ -48,7 +48,12 @@ class Tabulatr::Renderer
   end
 
   def build_table(&block)
-    @columns = ColumnsFromBlock.process @klass, &block
+    if block_given?
+      @columns = ColumnsFromBlock.process @klass, &block
+    else
+      tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
+      @columns = tdc.table_columns
+    end
 
     @view.render(partial: '/tabulatr/tabulatr_table', locals: {
       columns: @columns,

@@ -50,18 +50,18 @@ module Tabulatr
 
       def split_column_name_from_table column_name
         if column_with_table?(column_name)
-          column_name.split('.')
+          column_name.split(/\.|:/)
         else
           column_name
         end
       end
 
       def column_with_table? column_name
-        column_name['.']
+        column_name['.'] || column_name[':']
       end
 
       def complete_column_name table, column
-        t = "#{table}.#{column}"
+        t = "#{table.tableize}.#{column}"
         raise "SECURITY violation, field name is '#{t}'" unless /^[\d\w]+(\.[\d\w]+)?$/.match t
         t
       end

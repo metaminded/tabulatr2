@@ -23,7 +23,7 @@
 
 module Tabulatr::Data::DSL
 
-  def column(name, sort_sql: nil, filter_sql: nil, sql: nil, &block)
+  def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
     @columns ||= HashWithIndifferentAccess.new
     @columns[name.to_sym] = {
       name: name,
@@ -31,9 +31,13 @@ module Tabulatr::Data::DSL
       filter_sql: filter_sql || sql,
       output: block
     }
+
+    @table_columns ||= Tabulatr::Renderer::Columns.new(nil)
+    @table_columns << Tabulatr::Renderer::Column.from(table_column_options.merge(name: name))
   end
 
-  def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, &block)
+  def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
+    @table_columns ||= Tabulatr::Renderer::Columns.new
     @assocs ||= HashWithIndifferentAccess.new
     @assocs[assoc.to_sym] ||= {}
     @assocs[assoc.to_sym][name.to_sym] = {
@@ -42,12 +46,16 @@ module Tabulatr::Data::DSL
       filter_sql: filter_sql || sql,
       output: block
     }
+
+    @table_columns ||= Tabulatr::Renderer::Columns.new(nil)
+    @table_columns << Tabulatr::Renderer::Association.from(table_column_options.merge(name: name, table_name: assoc))
   end
 
   def search(*args, &block)
     raise "either column or block" if args.present? && block_given?
     @search = args.presence || block
   end
+
 end
 
 Tabulatr::Data.send :extend, Tabulatr::Data::DSL

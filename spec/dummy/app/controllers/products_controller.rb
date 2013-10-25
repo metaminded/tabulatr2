@@ -41,4 +41,8 @@ class ProductsController < ApplicationController
       raise e
     end
   end
+
+  def implicit_columns
+    tabulatr_for Product
+  end
 end

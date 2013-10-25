@@ -199,14 +199,6 @@ Tabulatr = {
       hash = {};
       hash.append = false;
     }
-    if($('#'+ tableId +' i.sorted').length == 1){
-      hash[tableName + '_sort'] = $('#'+ tableId +' i.sorted').closest('th').data('tabulatr-sorting-name');
-      if($('#'+ tableId +' i.sorted').data('sort') == 'asc'){
-        hash[tableName + '_sort'] += ' desc';
-      }else{
-        hash[tableName + '_sort'] += ' asc';
-      }
-    }
     if(hash.pagesize === undefined){
       var pagesize = $('table#'+ tableId).data('pagesize');
       if(pagesize == null) {
@@ -226,7 +218,7 @@ Tabulatr = {
     hash.table_id = tableId;
     hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
     var form_array = $('.tabulatr_filter_form[data-table="'+ tableId +'"]')
-      .find('input:visible,select:visible').serializeArray();
+      .find('input:visible,select:visible,input[type=hidden]').serializeArray();
     for(var i = 0; i < form_array.length; i++){
       hash[form_array[i].name] = form_array[i].value;
     }
@@ -240,46 +232,27 @@ Tabulatr = {
 
 $(document).on('ready page:load', function(){
 
-  $('.tabulatr-sort').click(function(){
-    orientation = $(this).data('sort');
-    direction = {
-      desc: {
-        opposite: 'asc', ownClasses: 'glyphicon-arrow-down icon-arrow-down', oppositeClasses: 'glyphicon-arrow-up icon-arrow-up'
-      },
-      asc: {
-        opposite: 'desc', ownClasses: 'glyphicon-arrow-up icon-arrow-up', oppositeClasses: 'glyphicon-arrow-down icon-arrow-down'
-      }
-    };
-    var tableId = $(this).parents('table').attr('id');
+  $('th.tabulatr-sortable').click(function(){
+    var th = $(this);
+    var sort_by = th.data('tabulatr-column-name');
+    var dir = th.attr('data-sorted');
+    var table = th.parents('table');
+    var tableId = table.attr('id');
     var tableName = tableId.split('_')[0];
-    var sort_by = $(this).closest('th').data('tabulatr-sorting-name');
-    var isSorted = $(this).hasClass('sorted');
-    var $sortedColumn = $('.tabulatr-sort.sorted:first');
-    $($(this).parents('tr').find('.tabulatr-sort')).removeClass('sorted');
-    $(this).addClass('sorted');
-    if(isSorted){
-      $(this).removeClass(direction[orientation].oppositeClasses).addClass(direction[orientation].ownClasses);
-    }else{
-      if($sortedColumn.length > 0){
-        $sortedColumn.data('sort', 'asc');
-        $sortedColumn.removeClass(direction['asc'].oppositeClasses).addClass(direction['asc'].ownClasses);
-      }
-    }
-    $(this).data('sort', direction[orientation].opposite);
-    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName+'_sort]').val(sort_by + ' '+  orientation);
-    $($(this).parents('table').find('tbody tr')).remove();
-
-    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name=orientation]').val(orientation);
+    table.find('th.tabulatr-sortable.sorted').removeClass('sorted').removeAttr('data-sorted');
+    dir = (dir === 'asc') ? 'desc' : 'asc';
+    th.addClass('sorted').attr('data-sorted', dir);
+    $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName +'_sort]').val(sort_by + ' '+  dir);
     if(!Tabulatr.moreResults){
       Tabulatr.moreResults = true;
       if($('.pagination[data-table='+ tableId +']').length == 0){
         $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
       }
     }
+    $($(this).parents('table').find('tbody tr')).remove();
 
     $('.tabulatr_mark_all[data-table='+ tableName +']').prop('checked', false).prop('indeterminate', false);
     Tabulatr.updateTable({}, tableId);
-    $(this).data('sort', direction[orientation].opposite);
   });
 
   var cbfn = function(event, isInView, visiblePartX, visiblePartY) {

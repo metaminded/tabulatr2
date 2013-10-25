@@ -6,8 +6,8 @@ class ProductTabulatrData < Tabulatr::Data
   #   "products.title LIKE '#{query}'"
   # end
 
-  column :id
   column :title
+  column :id
   column :price do "#{price} EUR" end # <- Block evaluiert im Kontext EINES Records
   column :edit_link do link_to "edit #{title}", product_path(id) end
   # column :name,
@@ -20,7 +20,7 @@ class ProductTabulatrData < Tabulatr::Data
     "#{title} from #{vendor.try(:name)}"
   end
   column :active
-  column :updated_at do "#{updated_at.strftime('%H:%M %d.%m.%Y')}" end
+  column :updated_at, table_column_options: { filter: :date } do "#{updated_at.strftime('%H:%M %d.%m.%Y')}" end
   association :vendor, :name
   association :tags, :title do "'#{tags.map(&:title).map(&:upcase).join(', ')}'" end
 

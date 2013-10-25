@@ -20,8 +20,9 @@
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-- if table_options[:filter] && columns.filtered_columns.present?
-  form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
+form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
+  input name="#{classname}_sort" type="hidden"
+  - if table_options[:filter] && columns.filtered_columns.present?
     - columns.filtered_columns.each do |column|
       - name = column.full_name
       .control-group.form-group data-filter-column-name=name

@@ -33,6 +33,10 @@ class Tabulatr::Data
     @includes   = Set.new()
     @cname      = @base.name.downcase
     @batch_actions = nil
+    table_columns.klass = @base
+    table_columns.map do |col|
+      col.klass = @base
+    end
   end
 
   def data_for_table(params, &block)
@@ -83,6 +87,10 @@ class Tabulatr::Data
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       @batch_actions.yield(Invoker.new(batch_param, selected_ids))
     end
+  end
+
+  def table_columns
+    self.class.instance_variable_get("@table_columns")
   end
 
   #--

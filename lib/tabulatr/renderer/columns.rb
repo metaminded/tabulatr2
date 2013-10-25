@@ -23,6 +23,8 @@
 
 class Tabulatr::Renderer::Columns < ::Array
 
+  attr_accessor :klass
+
   def initialize(klass)
     super()
     @klass = klass

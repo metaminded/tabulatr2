@@ -31,6 +31,7 @@ if Object.const_defined? "ActiveRecord"
         klaz = self.respond_to?(:klass) ? self.klass : self
         "#{klaz.name}TabulatrData".constantize.new(self)
       rescue NameError => e
+        puts e.message
         # TODO: Better message
         raise "No class `#{klaz.name}TabulatrData' defined. Explanation here."
       end
