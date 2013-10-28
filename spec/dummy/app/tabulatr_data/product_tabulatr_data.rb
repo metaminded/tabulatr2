@@ -8,8 +8,8 @@ class ProductTabulatrData < Tabulatr::Data
 
   column :title
   column :id
-  column :price do "#{price} EUR" end # <- Block evaluiert im Kontext EINES Records
-  column :edit_link do link_to "edit #{title}", product_path(id) end
+  column :price do "#{record.price} EUR" end # <- Block evaluiert im Kontext EINES Records
+  column :edit_link do link_to "edit #{record.title}", product_path(record) end
   # column :name,
   #   sort: "firstname || ' ' || lastname"
   #   filter: "firstname || ' ' || lastname"
@@ -17,11 +17,13 @@ class ProductTabulatrData < Tabulatr::Data
   #     "#{firstname} #{lastname}"
   # end
   column :vendor_product_name, sort_sql: "products.title || '' || vendors.name", filter_sql: "products.title || '' || vendors.name" do
-    "#{title} from #{vendor.try(:name)}"
+    "#{record.title} from #{record.vendor.try(:name)}"
   end
   column :active
-  column :updated_at, table_column_options: { filter: :date } do "#{updated_at.strftime('%H:%M %d.%m.%Y')}" end
+  column :updated_at, table_column_options: { filter: :date } do "#{record.updated_at.strftime('%H:%M %d.%m.%Y')}" end
   association :vendor, :name
-  association :tags, :title do "'#{tags.map(&:title).map(&:upcase).join(', ')}'" end
+  association :tags, :title do |r|
+    "'#{r.tags.map(&:title).map(&:upcase).join(', ')}'"
+  end
 
 end

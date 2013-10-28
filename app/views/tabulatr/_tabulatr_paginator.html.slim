@@ -20,8 +20,5 @@
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 - if table_options[:paginate] == true || ((table_options[:paginate].is_a?(Fixnum)) && klass.count > table_options[:paginate])
-  - if Tabulatr.bootstrap_paginator.to_s == 'create_ul_paginator'
-    ul.pagination data-table=table_id
-  - elsif Tabulatr.bootstrap_paginator.to_s == 'create_div_paginator'
     .pagination data-table=table_id
-      ul
+      ul.pagination data-table=table_id
