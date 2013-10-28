@@ -104,6 +104,18 @@ th.tabulatr-sortable {
   }
 }
 
+table.tabulatr_table {
+  td, th {
+    &[align=right] {
+      text-align: right;
+    }
+
+    &[align=center] {
+      text-align: center;
+    }
+  }
+}
+
 .tabulatr-table-controls-wrapper {
   display: block;
   padding-top: 10px;
@@ -138,3 +150,4 @@ th.tabulatr-sortable {
     display: block;
   }
 }
+

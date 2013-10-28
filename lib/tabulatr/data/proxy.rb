@@ -21,9 +21,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Data::Proxy
+class Data::Proxy < ActionView::Base
 
-  def initialize(record)
+  attr_accessor :record
+
+  def initialize(record=nil)
     self.class._init
     @record = record
   end
@@ -36,7 +38,4 @@ class Data::Proxy
     include Rails.application.routes.url_helpers
   end
 
-  def method_missing(*args)
-    @record.send *args
-  end
 end
