@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'tabulatr2', path: './', require: 'tabulatr'
+gem 'tabulatr2', path: './'
 
 gem 'jquery-rails'
 gem 'slim'

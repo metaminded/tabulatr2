@@ -7,7 +7,7 @@
 
 Require tabulatr2 in your Gemfile:
 ```ruby
-gem 'tabulatr2', github: 'provideal/tabulatr2', require: 'tabulatr'
+gem 'tabulatr2', github: 'provideal/tabulatr2'
 ```
 After that run `bundle install`.
 
@@ -82,7 +82,7 @@ class ProductTabulatrData < Tabulatr::Data
                         filter_sql: "vendors.street || '' || vendors.zipcode || '' vendors.city" do
          "#{vendor.house_number} #{vendor.street}, #{vendor.zipcode} #{vendor.city}"
   end
-  column :edit_link do 
+  column :edit_link do
     link_to "edit #{title}", product_path(id)
   end
   column :updated_at do
@@ -114,7 +114,7 @@ _Hint:_ If you want to prefilter your table, you can do that too! Just pass an `
 
 ### View
 
-In the view we can use all the attributes which are defined in our `ProductTabulatrData` class. 
+In the view we can use all the attributes which are defined in our `ProductTabulatrData` class.
 
 ```erb
   <%= table_for Product do |t|
