@@ -148,6 +148,10 @@ table.tabulatr_table {
 
   .tabulatr-filter-dialog-wrapper {
     display: block;
+
+    .submit-table{
+      z-index: 2;
+    }
   }
 }
 
