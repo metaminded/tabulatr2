@@ -87,7 +87,7 @@ class Tabulatr::Renderer::Column
     end
     val = principal_value(record) or return ''
 
-    if format.present? && val.respond_to?(:to_a)
+    if format.present? && val.respond_to?(:to_ary)
       val.map do |v|
         case format
         when Symbol then view.send(format, v)
@@ -103,6 +103,8 @@ class Tabulatr::Renderer::Column
       when Proc   then format.(val)
       else val
       end
+    else
+      val
     end
   end
 
