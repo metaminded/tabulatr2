@@ -48,10 +48,10 @@ class Tabulatr::Renderer
   end
 
   def build_table(&block)
+    tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
     if block_given?
       @columns = ColumnsFromBlock.process @klass, &block
     else
-      tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
       @columns = tdc.table_columns
     end
 
@@ -59,7 +59,8 @@ class Tabulatr::Renderer
       columns: @columns,
       table_options: @table_options,
       klass: @klass,
-      classname: @classname
+      classname: @classname,
+      tabulatr_data: tdc
     })
   end
 

@@ -36,8 +36,9 @@
   .tabulatr-info-string-wrapper data-table-id=table_id
     = render '/tabulatr/tabulatr_info_string', opts
 
-  .tabulatr-fuzzy-search-field-wrapper data-table-id=table_id
-    = render '/tabulatr/tabulatr_fuzzy_search_field', opts
+  - if tabulatr_data.search?
+    .tabulatr-fuzzy-search-field-wrapper data-table-id=table_id
+      = render '/tabulatr/tabulatr_fuzzy_search_field', opts
 
   .tabulatr-filter-dialog-wrapper data-table-id=table_id
     = render '/tabulatr/tabulatr_filter_dialog', opts
