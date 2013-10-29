@@ -26,7 +26,7 @@ class Tabulatr::Renderer::Column
 
   attr_accessor *%i{name header width align valign wrap type th_html filter_html
     filter checkbox_value checkbox_label filter_width range_filter_symbol
-    sortable format_methods table_name block klass format map}
+    sortable table_name block klass format map}
 
   def self.from(
     name: nil,

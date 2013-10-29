@@ -45,18 +45,13 @@ module Tabulatr::Data::Formatting
     if opts[:output]
       view.instance_exec(record, &opts[:output])
     else
-      record.send(name)
+      opts[:table_column].value_for(record, view)
     end
   end
 
   def format_association(record, table_name, name, opts, view)
     return view.instance_exec(record, &opts[:output]) if opts[:output]
-    assoc = record.class.reflect_on_association(table_name.to_sym)
-    val = if assoc.collection?
-      record.try(table_name).try(:map, &name).join(', ')
-    else
-      record.try(table_name).try(:send, name)
-    end
+    opts[:table_column].value_for(record, view)
   end
 
 
