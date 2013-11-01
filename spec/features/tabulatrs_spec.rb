@@ -183,15 +183,15 @@ describe "Tabulatr" do
         fill_in("product_filter[price][to]", :with => 10)
         click_button("Apply")
       end
-      page.should have_content('foo')
-      page.should_not have_content('bar')
+      page.find(".tabulatr_table tbody tr[data-id='#{Product.first.id}']").should have_content('foo')
+      page.has_no_css?(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
       within('.tabulatr_filter_form') do
         fill_in("product_filter[price][from]", :with => 12)
         fill_in("product_filter[price][to]", :with => 19)
         click_button("Apply")
       end
-      page.should have_content('bar')
-      page.should_not have_content('foo')
+      page.should have_selector(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
+      page.should have_no_selector(".tabulatr_table tbody tr[data-id='#{Product.first.id}']")
     end
   end
 
