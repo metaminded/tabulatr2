@@ -26,17 +26,17 @@ class Tabulatr::Renderer::Column
 
   attr_accessor *%i{name header width align valign wrap type th_html filter_html
     filter checkbox_value checkbox_label filter_width range_filter_symbol
-    sortable table_name block klass format map}
+    sortable table_name block klass format map classes}
 
   def self.from(
     name: nil,
     table_name: nil,
     header: nil,
+    classes: nil,
     width: false,
     align: false,
     valign: false,
     wrap: true,
-    type: :string,
     th_html: false,
     filter_html: false,
     filter: true,
@@ -52,11 +52,11 @@ class Tabulatr::Renderer::Column
       name: name,
       table_name: table_name,
       header: header,
+      classes: classes,
       width: width,
       align: align,
       valign: valign,
       wrap: wrap,
-      type: type,
       th_html: th_html,
       filter_html: filter_html,
       filter: filter,

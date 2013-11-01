@@ -24,7 +24,9 @@ table.table.tabulatr_table id=table_id data-path=table_options[:path] data-pages
   thead
     tr
      - columns.each do |column|
-       th data-tabulatr-column-name=column.full_name align=column.align width=column.width valign=column.valign class="#{column.sortable ? 'tabulatr-sortable' : ''}"
+       - classes = column.sortable ? ['tabulatr-sortable'] : []
+       - classes = [classes, column.classes].flatten.compact.join(' ')
+       th data-tabulatr-column-name=column.full_name align=column.align width=column.width valign=column.valign class=classes
          = column.human_name
   tbody
   tfoot
