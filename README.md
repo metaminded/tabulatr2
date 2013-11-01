@@ -7,7 +7,7 @@
 
 Require tabulatr2 in your Gemfile:
 ```ruby
-gem 'tabulatr2', github: 'provideal/tabulatr2'
+gem 'tabulatr2'
 ```
 After that run `bundle install`.
 

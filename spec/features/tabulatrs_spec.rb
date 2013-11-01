@@ -23,14 +23,15 @@ describe "Tabulatr" do
 
     it "contains buttons" do
       visit simple_index_products_path
-      ['Filter'].each do |n|
-        page.should have_content(n)
+      ['.tabulatr-filter-menu-wrapper', '.tabulatr-batch-actions-menu-wrapper',
+        '.tabulatr-paginator-wrapper'].each do |n|
+        expect(find(n).visible?)
       end
     end
 
     it "contains column headers" do
       visit simple_index_products_path
-      ['Title','Price','Active','Updated At'].each do |n|
+      ['Title','Price','Active','Updated at'].each do |n|
         find('.tabulatr_table thead').should have_content(n)
       end
     end
@@ -57,7 +58,7 @@ describe "Tabulatr" do
       end
     end
 
-    it "contains the actual data multiple", js: true do
+    it "contains the actual data multiple times", js: true do
       9.times do |i|
         product = Product.create!(:title => names[i], :active => i.even?, :price => 11.0+i,
           :vendor => i.even? ? @vendor1 : @vendor2)
@@ -72,7 +73,7 @@ describe "Tabulatr" do
         product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
           :vendor => i.even? ? @vendor1 : @vendor2)
         visit simple_index_products_path
-        page.should_not have_content(n)
+        page.should_not have_content(/\s+#{n}\s+/)
         page.should_not have_content((30.0+i).to_s)
       end
     end
@@ -128,19 +129,24 @@ describe "Tabulatr" do
         Product.create!(:title => n, :active => true, :price => 10.0)
       end
       visit simple_index_products_path
-      find("a[href='#tabulatr_filter_dialog_product']").click()
-      within("#tabulatr_filter_dialog_product") do
-        fill_in("product_filter[title][like]", :with => "ore")
+      find(".tabulatr-filter-menu-wrapper a.btn").click
+      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
+        find_link('Title').click
       end
-      click_button("Apply")
+      expect(find('.dropdown-menu').visible?)
+      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+      within(".tabulatr_filter_form") do
+        fill_in("product_filter[title][like]", with: "ore")
+        expect(find('#title_from').visible?)
+        click_button("Apply")
+      end
       page.should have_content("lorem")
       page.should have_content("labore")
       page.should have_content("dolore")
-      find("a[href='#tabulatr_filter_dialog_product']").click()
-      within("#tabulatr_filter_dialog_product") do
+      within(".tabulatr_filter_form") do
         fill_in("product_filter[title][like]", :with => "loreem")
+        click_button("Apply")
       end
-      click_button("Apply")
       page.should_not have_content("lorem")
       page.should_not have_content("labore")
       page.should_not have_content("dolore")
@@ -150,9 +156,15 @@ describe "Tabulatr" do
       Product.create!([{title: 'foo', vendor: @vendor1},
                        {title: 'bar', vendor: @vendor2}])
       visit simple_index_products_path
-      find('.icon-filter').trigger('click')
-      fill_in("product_filter[__association][vendor.name]", :with => 'producer')
-      click_button("Apply")
+      find(".tabulatr-filter-menu-wrapper a.btn").click
+      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
+        find_link('Vendor Name').click
+      end
+      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+      within(".tabulatr_filter_form") do
+        fill_in("product_filter[vendor:name]", with: "producer")
+        click_button("Apply")
+      end
       page.should have_content(@vendor2.name)
       page.should_not have_content(@vendor1.name)
     end
@@ -161,18 +173,23 @@ describe "Tabulatr" do
       n = names.length
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])
       visit simple_index_products_path
-      find('.icon-filter').trigger('click')
-      within('form.tabulatr_filter_form') do
+      find(".tabulatr-filter-menu-wrapper a.btn").click
+      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
+        find_link('Price').click
+      end
+      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+      within('.tabulatr_filter_form') do
         fill_in("product_filter[price][from]", :with => 4)
         fill_in("product_filter[price][to]", :with => 10)
+        click_button("Apply")
       end
-      click_button("Apply")
       page.should have_content('foo')
       page.should_not have_content('bar')
-      find('.icon-filter').trigger('click')
-      fill_in("product_filter[price][from]", :with => 12)
-      fill_in("product_filter[price][to]", :with => 19)
-      click_button("Apply")
+      within('.tabulatr_filter_form') do
+        fill_in("product_filter[price][from]", :with => 12)
+        fill_in("product_filter[price][to]", :with => 19)
+        click_button("Apply")
+      end
       page.should have_content('bar')
       page.should_not have_content('foo')
     end
@@ -188,12 +205,16 @@ describe "Tabulatr" do
       (1..10).each do |i|
         page.should have_content names[i-1]
       end
-      find("#product_sort_title").click
+      within('.tabulatr_table thead') do
+        find('th[data-tabulatr-column-name=title]').click
+      end
       snames = names.sort
       (1..10).each do |i|
         page.should have_content snames[i-1]
       end
-      find("#product_sort_title").click
+      within('.tabulatr_table thead') do
+        find('th[data-tabulatr-column-name=title]').click
+      end
       (1..10).each do |i|
         page.should have_content snames[-i]
       end
@@ -214,44 +235,28 @@ describe "Tabulatr" do
         page.should have_content(product.title)
         page.should have_content(product.title.upcase)
         page.should have_content(product.price)
-        find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.vendor.name)
-        find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.title)
-        find(".tabulatr_table tbody #product_#{product.id}").should have_content("foo#{product.title}foo")
-        find(".tabulatr_table tbody #product_#{product.id}").should have_content("bar#{product.title}bar")
-        find(".tabulatr_table tbody #product_#{product.id}").should have_content("%08.4f" % product.price)
-        find(".tabulatr_table tbody #product_#{product.id}").should have_content(product.tags.count)
+        page.should have_content(product.vendor.name)
+        page.should have_content(product.title)
+        page.should have_content("foo#{product.title}foo")
+        page.should have_content("bar#{product.title}bar")
+        page.should have_content("%08.4f" % product.price)
+        page.should have_content(product.tags.count)
         product.tags.each do |tag|
-          find(".tabulatr_table tbody #product_#{product.id}").should have_content(tag.title)
-          find(".tabulatr_table tbody #product_#{product.id}").should have_content("foo#{tag.title}foo")
-          find(".tabulatr_table tbody #product_#{product.id}").should have_content("bar#{tag.title}bar")
+          page.should have_content(tag.title)
+          page.should have_content("foo#{tag.title}foo")
+          page.should have_content("bar#{tag.title}bar")
         end
       end
     end
   end
 
   describe "Batch actions", js: true do
-    it "shows the actions" do
-      visit with_batch_actions_products_path
-      find(".tabulatr-wrench").should have_content('Batch actions')
-    end
 
     it "hides the actions if there are none" do
-      visit simple_index_products_path
-      page.should have_no_selector('.tabulatr-wrench')
+      visit one_item_per_page_with_pagination_products_path
+      page.should have_no_selector('.tabulatr-batch-actions-menu-wrapper a')
     end
 
-    it 'is initially not active' do
-      visit with_batch_actions_products_path
-      page.should have_selector('.tabulatr-wrench.disabled')
-    end
-
-    it 'becomes active when a checkbox is checked' do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
-      visit with_batch_actions_products_path
-      find('.tabulatr-checkbox').trigger('click')
-      page.should have_no_selector('.tabulatr-wrench.disabled')
-      page.should have_selector('.tabulatr-wrench')
-    end
 
     it 'executes the action when clicked' do
       product1 = Product.create!(:title => names[0], :active => true, :price => 10.0)
@@ -261,8 +266,10 @@ describe "Tabulatr" do
       visit with_batch_actions_products_path
       find(".tabulatr-checkbox[value='#{product1.id}']").trigger('click')
       find(".tabulatr-checkbox[value='#{product3.id}']").trigger('click')
-      find('.tabulatr-wrench').trigger('click')
-      find("a[name='product_batch\\[destroy\\]']").trigger('click')
+      find('.tabulatr-batch-actions-menu-wrapper a').click
+      within('.dropdown.open') do
+        click_link 'Delete'
+      end
       page.has_css?(".tabulatr_table tbody tr", :count => 1)
     end
   end
