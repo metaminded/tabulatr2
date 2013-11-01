@@ -31,7 +31,7 @@ class Tabulatr::Renderer::Column
   def self.from(
     name: nil,
     table_name: nil,
-    header: false,
+    header: nil,
     width: false,
     align: false,
     valign: false,
