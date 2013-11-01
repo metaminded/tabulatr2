@@ -25,15 +25,14 @@
 # the information of the params hash as created by a Tabulatr table
 if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
-    def self.tabulatr(tabulatr_data_class = nil)
-      return tabulatr_data_class.new(self) if tabulatr_data_class
+    def self.tabulatr(relation, tabulatr_data_class = nil)
+      return tabulatr_data_class.new(relation) if tabulatr_data_class
       begin
-        klaz = self.respond_to?(:klass) ? self.klass : self
-        "#{klaz.name}TabulatrData".constantize.new(self)
+        "#{self.name}TabulatrData".constantize.new(relation)
       rescue NameError => e
         puts e.message
         # TODO: Better message
-        raise "No class `#{klaz.name}TabulatrData' defined. Explanation here."
+        raise "No class `#{self.name}TabulatrData' defined. Explanation here."
       end
     end
   end
