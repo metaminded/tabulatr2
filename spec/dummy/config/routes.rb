@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       get :stupid_array
       get :with_batch_actions
       get :implicit_columns
+      get :with_styling
     end
   end
 

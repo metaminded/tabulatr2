@@ -26,7 +26,7 @@ class Tabulatr::Renderer::Column
 
   attr_accessor *%i{name header width align valign wrap type th_html filter_html
     filter checkbox_value checkbox_label filter_width range_filter_symbol
-    sortable table_name block klass format map classes}
+    sortable table_name block klass format map classes cell_style header_style}
 
   def self.from(
     name: nil,
@@ -36,7 +36,7 @@ class Tabulatr::Renderer::Column
     width: false,
     align: false,
     valign: false,
-    wrap: true,
+    wrap: nil,
     th_html: false,
     filter_html: false,
     filter: true,
@@ -46,6 +46,8 @@ class Tabulatr::Renderer::Column
     format: nil,
     map: true,
     klass: nil,
+    cell_style: {},
+    header_style: {},
     &block)
     b = block_given? ? block : nil
     self.new(
@@ -66,8 +68,10 @@ class Tabulatr::Renderer::Column
       format: format,
       map: map,
       klass: klass,
-      block: b
-    )
+      block: b,
+      cell_style: cell_style,
+      header_style: header_style
+    ).apply_styles!
   end
 
   def klassname() @_klassname ||= @klass.name.underscore end
@@ -80,6 +84,24 @@ class Tabulatr::Renderer::Column
   def association?() false end
   def checkbox?() false end
   def action?() false end
+
+  def apply_styles!
+    # raise cell_style.inspect
+    self.cell_style = style_options.merge(self.cell_style).map{|e| e.join(':')}.join(';')
+    self.header_style = style_options.merge(self.header_style).map{|e| e.join(':')}.join(';')
+    self
+  end
+
+  def style_options
+    default_style_attributes = {
+      :'text-align' => align,
+      width: width,
+      :'vertical-align' => valign,
+      :'white-space' => wrap
+    }.select{|k,v| v}
+
+    default_style_attributes || {}
+  end
 
   def value_for(record, view)
     if block

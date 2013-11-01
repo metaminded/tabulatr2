@@ -1,0 +1,10 @@
+<%= table_for Product, :paginate => true do |t|
+  t.checkbox
+  t.column :title, sortable: true, width: '60px', align: 'left', valign: 'top', wrap: 'nowrap', cell_style: {:'background-color' => 'green'}, header_style: {color: 'orange'}
+  t.column :price, filter: :range
+  t.column :active, sortable: false
+  t.column :vendor_product_name, header: 'Product by vendor'
+  t.column :updated_at, filter: :date
+  t.association :vendor, :name, filter: :exact
+  t.association :tags, :titletd
+end %>

@@ -273,4 +273,19 @@ describe "Tabulatr" do
       page.has_css?(".tabulatr_table tbody tr", :count => 1)
     end
   end
+
+  describe "Column options", js: true do
+    it 'applys the given style' do
+      p = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      visit with_styling_products_path
+      cell   = find(".tabulatr_table tbody td[data-tabulatr-column-name='title']")
+      header = find(".tabulatr_table thead th[data-tabulatr-column-name='title']")
+      cell_without_style   = find(".tabulatr_table tbody td[data-tabulatr-column-name='price']")
+      header_without_style = find(".tabulatr_table thead th[data-tabulatr-column-name='price']")
+      expect(cell[:style]).to eql 'text-align:left;width:60px;vertical-align:top;white-space:nowrap;background-color:green'
+      expect(header[:style]).to eql 'text-align:left;width:60px;vertical-align:top;white-space:nowrap;color:orange'
+      expect(cell_without_style[:style]).to be_empty
+      expect(header_without_style[:style]).to be_empty
+    end
+  end
 end

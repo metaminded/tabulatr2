@@ -42,6 +42,10 @@ class ProductsController < ApplicationController
     end
   end
 
+  def with_styling
+    tabulatr_for Product
+  end
+
   def implicit_columns
     tabulatr_for Product
   end

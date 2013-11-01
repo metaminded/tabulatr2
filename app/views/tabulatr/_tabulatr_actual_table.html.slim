@@ -26,7 +26,7 @@ table.table.tabulatr_table id=table_id data-path=table_options[:path] data-pages
      - columns.each do |column|
        - classes = column.sortable ? ['tabulatr-sortable'] : []
        - classes = [classes, column.classes].flatten.compact.join(' ')
-       th data-tabulatr-column-name=column.full_name align=column.align width=column.width valign=column.valign class=classes
+       th data-tabulatr-column-name=column.full_name style=column.header_style class=classes
          = column.human_name
   tbody
   tfoot
@@ -34,6 +34,6 @@ table.table.tabulatr_table id=table_id data-path=table_options[:path] data-pages
       - columns.each do |column|
         - classes = column.sortable ? ['tabulatr-sortable'] : []
         - classes = [classes, column.classes].flatten.compact.join(' ')
-        td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype align=column.align width=column.width valign=column.valign class=classes
+        td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.cell_style class=classes
 span.pagination_trigger data-table="#{table_id}"
 
