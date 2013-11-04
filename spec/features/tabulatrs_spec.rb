@@ -166,7 +166,7 @@ describe "Tabulatr" do
         click_button("Apply")
       end
       page.should have_content(@vendor2.name)
-      page.should_not have_content(@vendor1.name)
+      page.should have_no_content(@vendor1.name)
     end
 
     it "filters with range", js: true do
@@ -192,6 +192,27 @@ describe "Tabulatr" do
       end
       page.should have_selector(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
       page.should have_no_selector(".tabulatr_table tbody tr[data-id='#{Product.first.id}']")
+    end
+
+    it 'removes the filters', js: true do
+      Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 5}])
+      visit simple_index_products_path
+      find(".tabulatr-filter-menu-wrapper a.btn").click
+      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
+        find_link('Title').click
+      end
+      expect(find('.dropdown-menu').visible?)
+      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+      within(".tabulatr_filter_form") do
+        fill_in("product_filter[title][like]", with: "foo")
+        expect(find('#title_from').visible?)
+        click_button("Apply")
+      end
+      expect(page).to have_content('foo')
+      expect(page).to have_no_content('bar')
+      find("a[data-hide-table-filter='title']").click
+      expect(page).to have_content('foo')
+      expect(page).to have_content('bar')
     end
   end
 
