@@ -44,6 +44,10 @@ class Tabulatr::Data
     @batch_actions = block if block_given?
 
     execute_batch_actions(batch_params(params), check_params(params))
+
+    # count
+    total = @relation.count
+
     # prepare the query
     apply_filters(filter_params params)
     apply_search(search_param params)
@@ -60,7 +64,6 @@ class Tabulatr::Data
 
     append = params[:append].present? ? Tabulatr::Utility.string_to_boolean(params[:append]) : false
 
-    total = @relation.unscope(:where, :limit, :offset).count
 
     # prepare result for rendering
     found.define_singleton_method(:__pagination) do
