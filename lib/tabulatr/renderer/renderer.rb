@@ -31,7 +31,8 @@ class Tabulatr::Renderer
       sortable: true,        # true to allow sorting (can be specified for every sortable column)
       batch_actions: false,  # :name => value hash of batch action stuff
       footer_content: false, # if given, add a <%= content_for <footer_content> %> before the </table>
-      path: '#')             # where to send the AJAX-requests to
+      path: '#',             # where to send the AJAX-requests to
+      order_by: nil)         # default order
     @klass = klass
     @view = view
     @table_options = {
@@ -42,7 +43,8 @@ class Tabulatr::Renderer
       sortable: sortable,
       batch_actions: batch_actions,
       footer_content: footer_content,
-      path: path
+      path: path,
+      order_by: order_by
     }
     @classname = @klass.name.underscore
   end

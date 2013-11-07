@@ -26,9 +26,9 @@
 if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
     def self.tabulatr(relation, tabulatr_data_class = nil)
-      return tabulatr_data_class.new(relation) if tabulatr_data_class
+      tabulatr_data_class = "#{self.name}TabulatrData".constantize unless tabulatr_data_class
       begin
-        "#{self.name}TabulatrData".constantize.new(relation)
+        td = tabulatr_data_class.new(relation)
       rescue NameError => e
         puts e.message
         # TODO: Better message

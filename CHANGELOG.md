@@ -1,3 +1,7 @@
+## 0.8.5
+
+* Added `order_by` option to `table_for` for default sorting.
+
 ## 0.8.3
 
 * New table_column_options `cell_style` and `header_style`
