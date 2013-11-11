@@ -105,7 +105,9 @@ class Tabulatr::Renderer::Column
 
   def value_for(record, view)
     if block
-      return view.instance_exec(record, &block)
+      r = view.instance_exec(record, &block)
+      r = r.join(' ').html_safe if r.is_a?(Array)
+      return r
     end
     val = principal_value(record) or return ''
 
