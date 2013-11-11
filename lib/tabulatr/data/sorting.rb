@@ -39,7 +39,7 @@ module Tabulatr::Data::Sorting
       raise "asasa" unless ['asc', 'desc'].member?(orientation.downcase)
       @relation = @relation.order("#{nn} #{orientation}")
     else
-      @relation = @relation.order(default_order || "#{@table_name}.#{@base.primary_key} asc")
+      @relation = @relation.order(default_order || "#{@table_name}.#{@base.primary_key} desc")
     end
   end
 
