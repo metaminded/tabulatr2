@@ -1,5 +1,7 @@
 ## 0.8.7
 
+* fixed bug in association call
+
 * support namespaced rails models
 
 ## 0.8.5

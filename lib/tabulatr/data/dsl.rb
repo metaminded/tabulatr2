@@ -39,7 +39,6 @@ module Tabulatr::Data::DSL
   end
 
   def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
-    @table_columns ||= Tabulatr::Renderer::Columns.new
     @assocs ||= HashWithIndifferentAccess.new
     @assocs[assoc.to_sym] ||= {}
     @table_columns ||= Tabulatr::Renderer::Columns.new(nil)
