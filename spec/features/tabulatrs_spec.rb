@@ -223,8 +223,9 @@ describe "Tabulatr" do
       end
       Product.count.should > 10
       visit simple_index_products_path
+      l = names.count
       (1..10).each do |i|
-        page.should have_content names[i-1]
+        page.should have_content names[l-i]
       end
       within('.tabulatr_table thead') do
         find('th[data-tabulatr-column-name=title]').click
