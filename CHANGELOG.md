@@ -1,3 +1,7 @@
+## 0.8.7
+
+* support namespaced rails models
+
 ## 0.8.5
 
 * Added `order_by` option to `table_for` for default sorting.

@@ -278,8 +278,8 @@ $(document).on('ready page:load', function(){
   };
 
   $('.tabulatr_table').each(function(ix, el){
-    if($('.pagination[data-table='+ $(el).attr('id') +']').length == 0){
-      $('.pagination_trigger[data-table='+ $(el).attr('id') +']').bind('inview', cbfn);
+    if($('.pagination[data-table="'+ $(el).attr('id') +'"]').length == 0){
+      $('.pagination_trigger[data-table="'+ $(el).attr('id') +'"]').bind('inview', cbfn);
     }
   });
 
