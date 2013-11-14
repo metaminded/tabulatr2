@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
                   "Tries to do for tables what formtastic and simple_form did "+
                   "for forms."
   s.authors     = ['Peter Horn', 'René Sprotte', 'Florian Thomas']
-
+  s.license       = 'MIT'
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.rdoc_options  = ['--charset=UTF-8']
