@@ -25,11 +25,6 @@ module Tabulatr
   def self.config &block
     yield self
   end
-
-  mattr_accessor :bootstrap_paginator, instance_accessor: false do
-    'create_ul_paginator'
-  end
-
 end
 
 require 'tabulatr/engine'

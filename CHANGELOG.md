@@ -1,5 +1,7 @@
 ## 0.8.8
 
+* get rid of `bootstrap_paginator` option and initializer
+
 * get rid of `security_tokens`
 
 ## 0.8.7

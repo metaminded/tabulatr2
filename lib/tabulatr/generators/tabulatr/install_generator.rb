@@ -34,18 +34,8 @@ module Tabulatr
         template 'tabulatr_data.rb', File.join('app/tabulatr_data/', class_path, "#{file_name}_tabulatr_data.rb")
       end
 
-      def copy_initializer_file
-        copy_file "tabulatr.rb", "config/initializers/tabulatr.rb"
-      end
-
       def copy_translation_file
         copy_file "tabulatr.yml", "config/locales/tabulatr.yml"
-      end
-
-      def bootstrap
-        unless yes?('Do you use Bootstrap version 3 ?')
-          gsub_file 'config/initializers/tabulatr.rb', 'create_ul_paginator', 'create_div_paginator'
-        end
       end
 
       private
