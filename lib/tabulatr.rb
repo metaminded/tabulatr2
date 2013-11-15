@@ -30,13 +30,6 @@ module Tabulatr
     'create_ul_paginator'
   end
 
-  def self.secret_tokens=(secret_tokens)
-    @@secret_tokens = secret_tokens
-  end
-
-  def self.secret_tokens
-    @@secret_tokens ||= []
-  end
 end
 
 require 'tabulatr/engine'

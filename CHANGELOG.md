@@ -1,3 +1,7 @@
+## 0.8.8
+
+* get rid of `security_tokens`
+
 ## 0.8.7
 
 * fixed bug in association call

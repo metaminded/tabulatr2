@@ -23,22 +23,6 @@ You can also run the generator for a new model, if you just run the standard Rai
 
 `rails g resource Product title:string vendor:references description:text`
 
-### Security
-
-Tabulatr2 tries to do its best to secure your application. Specifically its secured against
-an attacker who tries to change the parameters of the table and include e.g. a `password` field.
-
-**Important:** But in order to make it so secure you have to alter the two `secret_tokens`
-in your `config/initializers/tabulatr.rb` file to different values.
-
-```ruby
-Tabulatr.config do |c|
-  c.secret_tokens = ['???', '???']
-end
-```
-
-
-
 ## Usage
 
 ### Models
