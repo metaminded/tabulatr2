@@ -1,5 +1,9 @@
 ## 0.8.8
 
+* new Generator:
+  `tabulatr:install` - now only for creating I18n file
+  `tabulatr:table MODEL` - for creating MODELTabulatrData class
+
 * get rid of `bootstrap_paginator` option and initializer
 
 * get rid of `security_tokens`

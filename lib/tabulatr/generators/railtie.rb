@@ -26,6 +26,7 @@ module ActiveModel
     initializer 'generators' do |app|
       require 'rails/generators'
       require 'tabulatr/generators/tabulatr/install_generator'
+      require 'tabulatr/generators/tabulatr/table_generator'
       Rails::Generators.configure!(app.config.generators)
       require 'tabulatr/generators/resource_override'
     end

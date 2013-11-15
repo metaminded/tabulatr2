@@ -28,7 +28,7 @@ module Rails
   module Generators
     class ResourceGenerator
       def add_tabulatr_data
-        invoke 'tabulatr:install'
+        invoke 'tabulatr:table'
       end
     end
   end
