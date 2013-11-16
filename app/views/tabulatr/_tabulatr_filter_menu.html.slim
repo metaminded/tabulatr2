@@ -22,8 +22,8 @@
 - if table_options[:filter] && columns.filtered_columns.present?
   .dropdown
     a.btn.btn-default data-toggle="dropdown" href="#"
-      i.icon-filter.glyphicon.glyphicon-filter'
-      i.icon-caret-down.glyphicon.glyphicon-caret-down
+      i.icon-filter.glyphicon.glyphicon-filter.fa.fa-filter'
+      i.icon-caret-down.glyphicon.glyphicon-caret-down.fa.fa-caret-down
     ul.dropdown-menu role="menu" aria-labelledby="dLabel"
       - columns.filtered_columns.each do |column|
         li
