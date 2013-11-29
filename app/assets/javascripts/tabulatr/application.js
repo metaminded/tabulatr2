@@ -264,18 +264,6 @@ $(document).on('ready page:load', function(){
     Tabulatr.updateTable({}, tableId);
   });
 
-  var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
-    if (isInView) {
-      // element is now visible in the viewport
-      if (visiblePartY == 'top') {
-        // top part of element is visible
-      } else if (visiblePartY == 'bottom') {
-        // bottom part of element is visible
-      } else {
-        Tabulatr.updateTable({append: true}, $(event.currentTarget).data('table'));
-      }
-    }
-  };
 
   $('.tabulatr_table').each(function(ix, el){
     if($('.pagination[data-table="'+ $(el).attr('id') +'"]').length == 0){
@@ -454,3 +442,17 @@ $(document).on('change', 'select[data-tabulatr-date-filter]', function() {
     select.parents('.controls').find(".from_to").hide().val('');
   }
 });
+
+
+var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
+  if (isInView) {
+    // element is now visible in the viewport
+    if (visiblePartY == 'top') {
+      // top part of element is visible
+    } else if (visiblePartY == 'bottom') {
+      // bottom part of element is visible
+    } else {
+      Tabulatr.updateTable({append: true}, $(event.currentTarget).data('table'));
+    }
+  }
+};
