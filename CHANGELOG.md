@@ -1,3 +1,8 @@
+## 0.8.9
+
+* fix sorting, filtering, searching and batch_actions for tables whose class
+  is camelCased.
+
 ## 0.8.8
 
 * new Generator:

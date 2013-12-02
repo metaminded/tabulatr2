@@ -19,9 +19,11 @@
 /  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-- table_id = "#{klass.to_s.gsub(/::/, '--').downcase}_table"
+- formatted_name = "#{klass.to_s.gsub(/::/, '--').downcase}"
+- table_id = "#{formatted_name}_table"
 - opts = { columns: columns, table_options: table_options, \
-    klass: klass, classname: classname, table_id: table_id }
+    klass: klass, classname: classname, table_id: table_id,
+    formatted_name: formatted_name }
 
 .tabulatr-table-controls-wrapper data-table-id=table_id
   .tabulatr-filter-menu-wrapper data-table-id=table_id

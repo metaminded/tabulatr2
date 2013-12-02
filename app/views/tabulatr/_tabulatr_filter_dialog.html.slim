@@ -21,12 +21,12 @@
 
 
 form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
-  input name="#{classname}_sort" type="hidden" value=table_options[:order_by]
+  input name="#{formatted_name}_sort" type="hidden" value=table_options[:order_by]
   - if table_options[:filter] && columns.filtered_columns.present?
     - columns.filtered_columns.each do |column|
       - name = column.full_name
       .control-group.form-group data-filter-column-name=name
-        - iname = "#{classname}_filter[#{name}]"
+        - iname = "#{formatted_name}_filter[#{name}]"
         - filter_name = "tabulatr_form_#{name}"
 
         label.control-label.col-md-3 for=filter_name
@@ -54,7 +54,7 @@ form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote=
               input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}" name="#{iname}"
           - elsif column.filter == :date
             .col-md-3
-              select.form-control name="#{iname}[date][simple]" data-tabulatr-date-filter="#{classname}_#{name}_filter"
+              select.form-control name="#{iname}[date][simple]" data-tabulatr-date-filter="#{formatted_name}_#{name}_filter"
                 option= I18n.t("tabulatr.date_filter.none")
                 option value="today"= I18n.t("tabulatr.date_filter.today")
                 option value="yesterday"= I18n.t("tabulatr.date_filter.yesterday")
@@ -65,12 +65,12 @@ form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote=
                 option value="from_to"= I18n.t("tabulatr.date_filter.from_to")
             .col-md-1
             .col-md-3
-              input.tabulatr_filter.form-control.date-picker.hidden.from_to type="text" id="#{classname}_#{name}_filter_from" name="#{iname}[date][from]"
+              input.tabulatr_filter.form-control.date-picker.hidden.from_to type="text" id="#{formatted_name}_#{name}_filter_from" name="#{iname}[date][from]"
             .col-md-1.text-center
               .span.from_to.hidden
                 |&mdash;
             .col-md-3
-              input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{classname}_#{name}_filter_to" name="#{iname}[date][to]"
+              input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{formatted_name}_#{name}_filter_to" name="#{iname}[date][to]"
           - else
             .col-md-11
               input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
