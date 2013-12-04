@@ -14,14 +14,8 @@ After that run `bundle install`.
 Also add `//= require tabulatr` to your application js file and `*= require tabulatr` to your CSS asset
 pipeline.
 
-If you want to create a `tabulatr` table for an existing model run
-`rails g tabulatr:install product`.
-
-This will generate a `ProductTabulatrData` class in `app/tabulatr_data/product_tabulatr_data.rb` for you.
-
-You can also run the generator for a new model, if you just run the standard Rails `resource` generator.
-
-`rails g resource Product title:string vendor:references description:text`
+Now run the Install generator via
+`rails g tabulatr install`
 
 ## Usage
 
@@ -79,6 +73,13 @@ end
 ```
 The search method is used for a fuzzy search field.
 
+You can automatically generate a new TabulatrData-Class by running 
+`rails g tabulatr:table MODELNAME`.
+
+This will generate a `MODELNAMETabulatrData` class in `app/tabulatr_data/MODELNAME_data.rb` for you.
+
+This generator also gets executed if you just run the standard Rails `resource` generator.
+
 ## Controller
 
 In `ProductsController#index` we have:
@@ -111,6 +112,11 @@ In the view we can use all the attributes which are defined in our `ProductTabul
     t.column :edit_link
   end %>
 ```
+For a shorter version you can write
+```erb
+<%= table_for Product %>
+```
+which will use all the columns from `ProductTabulatrData`.
 
 To add a checkbox column just add
 ```erb
@@ -178,49 +184,63 @@ These options should be specified at the view level as parameters to the `table_
 They change the appearance and behaviour of the table.
 
 ```ruby
-  # which controls to be rendered above and below the table and in which order
-  :before_table_controls => [:filter, :paginator],
-  :after_table_controls => [],
+  filter: true,          # false for no filter row at all
+  search: true,          # show fuzzy search field
+  paginate: false,       # true to show paginator
+  pagesize: 20,          # default pagesize
+  sortable: true,        # true to allow sorting (can be specified for every sortable column)
+  batch_actions: false,  # :name => value hash of batch action stuff
+  footer_content: false, # if given, add a <%= content_for <footer_content> %> before the </table>
+  path: '#',             # where to send the AJAX-requests to
+  order_by: nil          # default order
+```
 
-  :table_html => false,              # a hash with html attributes for the table
-  :header_html => false,             # a hash with html attributes for the header trs
-  :filter_html => false,             # a hash with html attributes for the filter trs
-  :filter => true,                   # false for no filter row at all
-  :paginate => false,                # true to show paginator, false for endless scrolling.
-                                     # number for limit of items to show via pagination
-  :sortable => true,                 # true to allow sorting (can be specified for every sortable column)
-  :batch_actions => false,           # :name => value hash of batch action stuff
-  :path => '#'                       # where to send the AJAX-requests to
+#### Example:
+```erb
+<%= table_for Product, {order_by: 'price desc', pagesize: 50} %>
 ```
 
 ### Column Options
 
+You can specify these options either in your `TabulatrData` class or to
+the columns in the block of `table_for`.
+
 ```ruby
-  :header => false,                   # a string to write into the header cell
-  :width => false,                    # the width of the cell
-  :align => false,                    # horizontal alignment
-  :valign => false,                   # vertical alignment
-  :wrap => true,                      # wraps
-  :type => :string,                   # :integer, :date
-  :th_html => false,                  # a hash with html attributes for the header cell
-  :filter_html => false,              # a hash with html attributes for the filter cell
-  :filter => true,                    # false for no filter field,
-                                       # container for options_for_select
-                                       # String from options_from_collection_for_select or the like
-                                       # :range for range spec
-                                       # :checkbox for a 0/1 valued checkbox
-  :checkbox_value => '1',             # value if checkbox is checked
-  :checkbox_label => '',              # text behind the checkbox
-  :filter_width => '97%',             # width of the filter <input>
-  :range_filter_symbol => '&ndash;',  # put between the <inputs> of the range filter
-  :sortable => true,                  # if set, sorting-stuff is added to the header cell
-  :format_methods => []               # javascript method to execute on this column
+  header: nil,           # override content of header cell
+  classes: nil,          # CSS classes for this column
+  width: false,
+  align: false,
+  valign: false,
+  wrap: nil,
+  th_html: false,
+  filter_html: false,
+  filter: true,          # whether this column should be filterable
+  checkbox_value: '1',
+  checkbox_label: '',
+  sortable: true,        # whethter this column should be sortable
+  format: nil,
+  map: true,
+  cell_style: {},        # CSS style for all body cells of this column
+  header_style: {}       # CSS style for all header cells of this column
 ```
 
+#### Example:
+```erb
+# in the view
+<%= table_for Product do |t|
+  t.column(:title, header_style: {color: 'red'})
+  # ...
+%>
+
+# or in TabulatrData
+class ProductTabulatrData < Tabulatr::Data
+  column(:title, table_column_options: {header_style: {color: 'red'}})
+end
+```
 
 ## Dependencies
 
-We use [whiny_hash](http://github.com/provideal/whiny_hash) to handle the options in a fail-early-manner.
+We use [Bootstrap from Twitter](http://getbootstrap.com) in order to make the table look pretty decent.
 
 ## Known Bugs
 
@@ -230,11 +250,6 @@ This is a problem particulary when using WEBrick, because WEBricks URIs must not
 And this limit is hard-coded IIRC. So – If you run into this limitation –
 please consider using another server.
 (Thanks to [stepheneb](https://github.com/stepheneb) for calling my attention back to this.)
-
-## Other, new bugs
-
-There are roughly another 997 bugs in Tabulatr2, although we do some testing.
-If you hunt them, please file an issue.
 
 ## Contributing
 
