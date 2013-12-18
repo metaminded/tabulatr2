@@ -376,7 +376,7 @@ $(document).on('ready page:load', function(){
     Tabulatr.updateTable({page: 1}, tableId, true);
   });
 
-  if($('.tabulatr_table').length > 0){
+  if($('.tabulatr_table:not(".tabulatr_static_table")').length > 0){
     if(typeof(Storage) !== undefined){
       var count = localStorage.tabulatr_page_display_count;
       if(count !== undefined){
@@ -385,7 +385,7 @@ $(document).on('ready page:load', function(){
           addClass('active');
       }
     }
-    $('.tabulatr_table').each(function(ix, el){
+    $('.tabulatr_table:not(".tabulatr_static_table")').each(function(ix, el){
       Tabulatr.updateTable({}, $(el).attr('id'));
     });
   }
