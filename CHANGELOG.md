@@ -1,6 +1,10 @@
 ## 0.9
 
+* Added `id` of record as `data-id` of table row in static table if
+  id is available.
+
 * Added `columns` keyword argument to `table_for`
+
 * Added `checkbox` to the TabulatrData DSL
 
 ## 0.8.9
