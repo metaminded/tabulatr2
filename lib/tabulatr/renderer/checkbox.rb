@@ -29,7 +29,7 @@ class Tabulatr::Renderer::Checkbox < Tabulatr::Renderer::Column
   def coltype() 'checkbox' end
   def column?() false end
   def checkbox?() true end
-
+  def full_name() 'checkbox' end
   def value_for(record, view)
     nil
   end

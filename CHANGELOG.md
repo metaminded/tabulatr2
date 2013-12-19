@@ -1,6 +1,7 @@
 ## 0.9
 
 * Added `columns` keyword argument to `table_for`
+* Added `checkbox` to the TabulatrData DSL
 
 ## 0.8.9
 

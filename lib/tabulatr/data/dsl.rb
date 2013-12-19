@@ -59,6 +59,12 @@ module Tabulatr::Data::DSL
     @search = args.presence || block
   end
 
+  def checkbox(table_column_options: {})
+    @table_columns ||= []
+    box = Tabulatr::Renderer::Checkbox.from(table_column_options.merge(klass: @base, filter: false, sortable: false))
+    @table_columns << box
+  end
+
 end
 
 Tabulatr::Data.send :extend, Tabulatr::Data::DSL
