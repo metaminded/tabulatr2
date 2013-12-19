@@ -22,8 +22,8 @@
 
 form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
   input name="#{formatted_name}_sort" type="hidden" value=table_options[:order_by]
-  - if table_options[:filter] && columns.filtered_columns.present?
-    - columns.filtered_columns.each do |column|
+  - if table_options[:filter] && columns.select(&:filter).present?
+    - columns.select(&:filter).each do |column|
       - name = column.full_name
       .control-group.form-group data-filter-column-name=name
         - iname = "#{formatted_name}_filter[#{name}]"

@@ -26,7 +26,7 @@ module Tabulatr::Data::DSL
   def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
     @columns ||= HashWithIndifferentAccess.new
     table_column = Tabulatr::Renderer::Column.from(table_column_options.merge(name: name, klass: @base))
-    @table_columns ||= Tabulatr::Renderer::Columns.new(nil)
+    @table_columns ||= []
     @table_columns << table_column
 
     @columns[name.to_sym] = {
@@ -41,7 +41,7 @@ module Tabulatr::Data::DSL
   def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
     @assocs ||= HashWithIndifferentAccess.new
     @assocs[assoc.to_sym] ||= {}
-    @table_columns ||= Tabulatr::Renderer::Columns.new(nil)
+    @table_columns ||= []
     table_column = Tabulatr::Renderer::Association.from(table_column_options.merge(name: name, table_name: assoc, klass: @base))
     @table_columns << table_column
 

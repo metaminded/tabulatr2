@@ -27,7 +27,7 @@ class Tabulatr::Renderer
 
     def initialize(klass)
       @klass = klass
-      @columns ||= Columns.new(klass)
+      @columns ||= []
     end
 
     def column(name, opts={}, &block)

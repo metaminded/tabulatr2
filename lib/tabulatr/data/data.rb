@@ -33,7 +33,6 @@ class Tabulatr::Data
     @includes   = Set.new()
     @cname      = @base.name.downcase
     @batch_actions = nil
-    table_columns.klass = @base
     table_columns.map do |col|
       col.klass = @base
     end

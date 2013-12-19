@@ -19,12 +19,12 @@
 /  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-- if table_options[:filter] && columns.filtered_columns.present?
+- if table_options[:filter] && columns.select(&:filter).present?
   .dropdown
     a.btn.btn-default data-toggle="dropdown" href="#"
       i.icon-filter.glyphicon.glyphicon-filter.fa.fa-filter'
       i.icon-caret-down.glyphicon.glyphicon-caret-down.fa.fa-caret-down
     ul.dropdown-menu role="menu" aria-labelledby="dLabel"
-      - columns.filtered_columns.each do |column|
+      - columns.select(&:filter).each do |column|
         li
           = link_to column.human_name, '#', "data-show-table-filter" => column.full_name

@@ -23,8 +23,8 @@
 
 class ActionView::Base
   # render the table in a view
-  def table_for(klass, opts={}, &block)
-    Tabulatr::Renderer.build_table(klass, self, opts, &block)
+  def table_for(klass, columns: [], **opts, &block)
+    Tabulatr::Renderer.build_table(klass, self, opts, columns, &block)
   end
 
   def static_table_for(records, opts={}, &block)

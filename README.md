@@ -73,7 +73,7 @@ end
 ```
 The search method is used for a fuzzy search field.
 
-You can automatically generate a new TabulatrData-Class by running 
+You can automatically generate a new TabulatrData-Class by running
 `rails g tabulatr:table MODELNAME`.
 
 This will generate a `MODELNAMETabulatrData` class in `app/tabulatr_data/MODELNAME_data.rb` for you.
@@ -100,6 +100,22 @@ _Hint:_ If you want to prefilter your table, you can do that too! Just pass an `
 ### View
 
 In the view we can use all the attributes which are defined in our `ProductTabulatrData` class.
+To display all the columns defined in the `ProductTabulatrData` class we
+just need to put the following statement in our view:
+
+```erb
+<%= table_for Product %>
+```
+If you just want do display a subset of the defined columns or show them in a
+different order you can provide them as arguments to the `columns` key:
+
+```erb
+<%= table_for Product, columns: [:vendor_address, 'vendor:name', {tags: :title}]%>
+```
+Note that you can write associations as a string with colon between association
+name and method or as a hash as you can see above.
+
+An other option is to provide the columns in a block:
 
 ```erb
   <%= table_for Product do |t|
@@ -112,11 +128,6 @@ In the view we can use all the attributes which are defined in our `ProductTabul
     t.column :edit_link
   end %>
 ```
-For a shorter version you can write
-```erb
-<%= table_for Product %>
-```
-which will use all the columns from `ProductTabulatrData`.
 
 To add a checkbox column just add
 ```erb

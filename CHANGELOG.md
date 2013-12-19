@@ -1,3 +1,7 @@
+## 0.9
+
+* Added `columns` keyword argument to `table_for`
+
 ## 0.8.9
 
 * fix sorting, filtering, searching and batch_actions for tables whose class

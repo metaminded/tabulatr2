@@ -49,10 +49,12 @@ class Tabulatr::Renderer
     @classname = @klass.name.underscore
   end
 
-  def build_table(&block)
+  def build_table(columns, &block)
     tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
     if block_given?
       @columns = ColumnsFromBlock.process @klass, &block
+    elsif columns.any?
+      @columns = get_requested_columns(tdc.table_columns, columns)
     else
       @columns = tdc.table_columns
     end
@@ -84,8 +86,17 @@ class Tabulatr::Renderer
     new(klass, view, toptions).build_static_table(records, &block)
   end
 
-  def self.build_table(klass, view, toptions={}, &block)
-    new(klass, view, toptions).build_table(&block)
+  def self.build_table(klass, view, toptions={}, columns, &block)
+    new(klass, view, toptions).build_table(columns, &block)
+  end
+
+  private
+
+  def get_requested_columns(available_columns, requested_columns)
+    requested_columns.collect do |r|
+      r = "#{r.keys.first}:#{r.values.first}" if r.is_a?(Hash) && r.count == 1
+      available_columns.select{|column| column.full_name.to_sym == r.to_sym }
+    end.flatten
   end
 
 end
@@ -94,6 +105,5 @@ require_relative './column'
 require_relative './association'
 require_relative './action'
 require_relative './checkbox'
-require_relative './columns'
 require_relative './columns_from_block'
 
