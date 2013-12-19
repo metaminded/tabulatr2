@@ -65,6 +65,11 @@ module Tabulatr::Data::DSL
     @table_columns << box
   end
 
+  def row &block
+    raise 'Please pass a block to row if you want to use it.' unless block_given?
+    @row = block
+  end
+
 end
 
 Tabulatr::Data.send :extend, Tabulatr::Data::DSL

@@ -37,6 +37,7 @@ module Tabulatr::Data::Formatting
           h[table_name][name] = format_association(record, table_name, name, opts, view)
         end
       end # @assocs each
+      h[:_row_config] = format_row(view, @row)
       h
     end # @relation map
   end # apply_formats
@@ -54,7 +55,14 @@ module Tabulatr::Data::Formatting
     opts[:table_column].value_for(record, view)
   end
 
-
+  def format_row(view, row)
+    row_config = Row.new
+    view.instance_exec(view.record, row_config.attributes, &row) if row.is_a?(Proc)
+    view.record.define_singleton_method(:_row_config) do
+      row_config.attributes
+    end
+    row_config.attributes
+  end
 end
 
 Tabulatr::Data.send :include, Tabulatr::Data::Formatting

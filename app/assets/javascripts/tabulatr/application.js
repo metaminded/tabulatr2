@@ -159,6 +159,11 @@ Tabulatr = {
         var id = data.id;
         var tr = $('tr.empty_row').clone();
         tr.removeClass('empty_row');
+        if(data._row_config.data){
+          tr.data(data._row_config.data);
+          delete data._row_config.data;
+        }
+        tr.attr(data._row_config);
         tr.attr('data-page', response.meta.page);
         tr.attr('data-id', id);
         tr.find('td').each(function(i,td_raw) {

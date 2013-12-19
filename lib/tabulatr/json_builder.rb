@@ -37,6 +37,7 @@ module Tabulatr::JsonBuilder
         attrs.each do |at|
           insert_attribute_in_hash(at, f, tmp)
         end
+        tmp['_row_config'] = f['_row_config']
         result << tmp
       end
       { data: result, meta: data.__pagination }

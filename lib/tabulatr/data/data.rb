@@ -33,6 +33,7 @@ class Tabulatr::Data
     @includes   = Set.new()
     @cname      = @base.name.downcase
     @batch_actions = nil
+    @row = self.class.instance_variable_get('@row')
     table_columns.map do |col|
       col.klass = @base
     end
@@ -138,4 +139,5 @@ require_relative './invoker'
 require_relative './sorting'
 require_relative './pagination'
 require_relative './formatting'
+require_relative './row'
 require_relative './proxy'

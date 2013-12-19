@@ -1,5 +1,21 @@
 ## 0.9
 
+* Added `row` to the TabulatrData DSL to provide HTML attributes for the
+  table_row of each record.
+
+  Example:
+  ```
+  row do |record, row_config|
+    if record.super_important?
+      row_config[:class] = 'important';
+    end
+    row_config[:data] = {
+      href: edit_user_path(record.id),
+      vip: record.super_important?
+    }
+  end
+  ```
+
 * Added `id` of record as `data-id` of table row in static table if
   id is available.
 
