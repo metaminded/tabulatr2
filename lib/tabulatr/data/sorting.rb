@@ -36,7 +36,7 @@ module Tabulatr::Data::Sorting
         table_name = @base.reflect_on_association(klass.to_sym).try(:table_name)
       end
       nn = build_column_name(col_name, table_name: table_name, assoc_name: assoc_name, use_for: :sort)
-      raise "asasa" unless ['asc', 'desc'].member?(orientation.downcase)
+      raise "Invalid sorting orientation" unless ['asc', 'desc'].member?(orientation.downcase)
       @relation = @relation.order("#{nn} #{orientation}")
     else
       @relation = @relation.order(default_order || "#{@table_name}.#{@base.primary_key} desc")
