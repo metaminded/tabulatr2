@@ -87,7 +87,7 @@ describe "Tabulatr" do
       end
       product.save
       visit count_tags_products_path
-      page.should have_content 3
+      page.find('tbody td[data-tabulatr-column-name="tags:count"]').should have_content 3
     end
   end
 
