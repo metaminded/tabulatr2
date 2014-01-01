@@ -28,5 +28,6 @@ class ProductTabulatrData < Tabulatr::Data
   association :tags, :title do |r|
     "'#{r.tags.map(&:title).map(&:upcase).join(', ')}'"
   end
+  association :tags, :count
 
 end

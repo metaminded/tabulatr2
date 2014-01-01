@@ -76,18 +76,19 @@ module Tabulatr::JsonBuilder
       #   r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
       # end
       begin
+        raise Tabulatr::RequestDataNotIncludedError.raise_error(rel, f) if !f.has_key?(rel)
+        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, rel) if !f[rel].has_key?(action)
         r["#{at[:relation]}:#{at[:action]}"] = f[rel][action]
-      rescue NoMethodError => e
-        raise $!, "You requested '#{at[:action]}' on '#{at[:relation]}' but
-          there was no such method included in your TabulatrData", $!.backtrace
+      rescue TypeError, NoMethodError => e
+        Tabulatr::RequestDataNotIncludedError.raise_error(at[:action], at[:relation])
       end
     else
       begin
         action = at[:action].to_sym
+        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f) if !f.has_key?(action) && action != :checkbox
         r[at[:action]] = f[action]
-      rescue NoMethodError => e
-        raise $!, "You requested '#{at[:action]}' but
-          there was no such method included in your TabulatrData", $!.backtrace
+      rescue TypeError, NoMethodError => e
+        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f)
       end
     end
     r

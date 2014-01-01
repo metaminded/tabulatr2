@@ -34,7 +34,7 @@ class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
 
   def principal_value(record)
     v = record.send(table_name)
-    if v && v.respond_to?(:to_a) && map
+    if v && v.respond_to?(:to_a) && map && name != :count
       v.map(&:"#{name}")
     else
       v.try(name)
