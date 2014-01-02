@@ -25,84 +25,78 @@ Tabulatr = {
   currentData: null,
   locked: false,
 
-  updatePagination: function(currentPage, numPages, tableId){
-    var ul = $('.pagination[data-table='+ tableId +'] > ul');
-    if(ul.length == 0){
-      // bootstrap 3
-      ul = $('.pagination[data-table='+ tableId +']');
+  createPaginationListItem: function(page, active){
+    var $page = $('<li><a href="" data-page="'+ page +'">'+ page +'</a></li>');
+    if(active){
+      $page.addClass('active');
     }
-    ul.html('');
+    return $page;
+  },
+
+  updatePagination: function(currentPage, numPages, tableId){
+    var $paginatorUl = $('.pagination[data-table='+ tableId +'] > ul');
+
+    $paginatorUl.html('');
     if(numPages < 13){
       for(var i = 1; i <= numPages; i++){
-        var cls = '';
-        if(i == currentPage){
-          cls = 'active';
-        }
-        ul.append('<li class="'+ cls +'"><a href="#" data-page="'+ i+'">'+
-          i +'</a></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(i, (i == currentPage)));
       }
     }else{
       if(currentPage > 1){
-        ul.append('<li><a href="#" data-page="1">1</a></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(1, false));
       }
 
       var between = Math.floor((1 + currentPage) / 2);
       if(between > 1 && between < currentPage - 2){
-        ul.append('<li><span>...</span></li>');
-        ul.append('<li><a href="#" data-page="'+ between +'">'+ between +'</a></li');
+        $paginatorUl.append('<li><span>...</span></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(between, false));
       }
 
       if(currentPage > 4){
-        ul.append('<li><span>...</span></li>');
+        $paginatorUl.append('<li><span>...</span></li>');
       }
 
       if(currentPage > 3){
-        ul.append('<li><a href="#" data-page="'+ (currentPage - 2) +'">'+
-          (currentPage-2) +'</a></li>');
-        ul.append('<li><a href="#" data-page="'+ (currentPage - 1) +'">'+
-          (currentPage-1) +'</a></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage-2, false));
+        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage-1, false));
       }
 
-      ul.append('<li class="active"><a href="#" data-page="'+ currentPage +'">'+
-        currentPage +'</a></li>');
+      $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage, true));
 
       if(currentPage < numPages - 1){
-        ul.append('<li><a href="#" data-page="'+ (currentPage+1) +'">'+
-          (currentPage+1) +'</a></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage+1, false));
       }
 
       if(currentPage < numPages - 2){
-        ul.append('<li><a href="#" data-page="'+ (currentPage+2) +'">'+
-          (currentPage+2) +'</a></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage+2, false));
       }
 
       if(currentPage < numPages - 3){
-        ul.append('<li><span>...</span></li>');
+        $paginatorUl.append('<li><span>...</span></li>');
       }
 
       between = Math.floor((currentPage + numPages) / 2);
 
       if(between > currentPage + 3 && between < numPages - 1){
-        ul.append('<li><a href="#" data-page="'+ between +'">'+
-          between +'</a></li>');
-        ul.append('<li><span>...</span></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(between, false));
+        $paginatorUl.append('<li><span>...</span></li>');
       }
       if(currentPage < numPages){
-        ul.append('<li><a href="#" data-page="'+ numPages +'">'+
-          numPages +'</a></li>');
+        $paginatorUl.append(Tabulatr.createPaginationListItem(numPages, false));
       }
     }
 
   },
 
   updateTable: function(hash, tableId, forceReload) {
+    var $table = $('#'+ tableId);
     if(hash.page !== undefined && !forceReload){
       //old page should be stored
       Tabulatr.storePage = true;
       // check if this page was already loaded
-      if($('#'+ tableId + ' tbody tr[data-page='+ hash.page +']').length > 0){
-        $('#'+ tableId + ' tbody tr').hide();
-        $('#'+ tableId + ' tbody tr[data-page='+ hash.page +']').show();
+      if($table.find('tbody tr[data-page='+ hash.page +']').length > 0){
+        $table.find('tbody tr').hide();
+        $table.find('tbody tr[data-page='+ hash.page +']').show();
 
         Tabulatr.updatePagination(hash.page,
           $('.pagination[data-table='+ tableId +'] a:last').data('page'),
@@ -131,9 +125,7 @@ Tabulatr = {
   },
 
   insertTabulatrData: function(response){
-    var columns = [];
     var tableId = response.meta.table_id;
-    var tableName = tableId.split('_')[0];
     var tbody = $('#'+ tableId +' tbody');
     if(!response.meta.append){
       if(Tabulatr.storePage){
@@ -142,7 +134,7 @@ Tabulatr = {
         $('#'+ tableId +' tbody').html('');
       }
     }
-    if(response.data.length == 0){
+    if(response.data.length === 0){
       Tabulatr.moreResults = false;
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
     }else{
@@ -170,7 +162,7 @@ Tabulatr = {
           var td = $(td_raw);
           var coltype = td.data('tabulatr-type');
           var name = td.data('tabulatr-column-name');
-          var cont = data[name]
+          var cont = data[name];
           if(coltype === 'checkbox') {
             cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
           }
@@ -199,7 +191,7 @@ Tabulatr = {
   },
 
   submitFilterForm: function(tableId){
-    if($('.pagination[data-table='+ tableId +']').length == 0){
+    if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
@@ -213,11 +205,9 @@ Tabulatr = {
       hash = {};
       hash.append = false;
     }
-    if(hash.pagesize === undefined){
-      var pagesize = $('table#'+ tableId).data('pagesize');
-      if(pagesize == null) {
-        console.log('Tabulatr: No pagesize specified')
-      }
+    var pagesize = hash.pagesize;
+    if(pagesize === undefined){
+      pagesize = $('table#'+ tableId).data('pagesize');
     }
     if(hash.page === undefined){
       hash.page = Math.floor($('#'+ tableId +' tbody tr[class!=empty_row]').length/pagesize) + 1;
@@ -227,8 +217,8 @@ Tabulatr = {
     }
     hash.pagesize = pagesize;
     hash.arguments = $.map($('#'+ tableId +' th'), function(n){
-      return $(n).data('tabulatr-column-name')
-    }).filter(function(n){return n}).join();
+      return $(n).data('tabulatr-column-name');
+    }).filter(function(n){return n; }).join();
     hash.table_id = tableId;
     hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
     var form_array = $('.tabulatr_filter_form[data-table="'+ tableId +'"]')
@@ -242,7 +232,7 @@ Tabulatr = {
   localDate: function(value, $td, $tr, obj){
     return new Date(value).toLocaleString();
   }
-}
+};
 
 $(document).on('ready page:load', function(){
 
@@ -259,7 +249,7 @@ $(document).on('ready page:load', function(){
     $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName +'_sort]').val(sort_by + ' '+  dir);
     if(!Tabulatr.moreResults){
       Tabulatr.moreResults = true;
-      if($('.pagination[data-table='+ tableId +']').length == 0){
+      if($('.pagination[data-table='+ tableId +']').length === 0){
         $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
       }
     }
@@ -271,7 +261,7 @@ $(document).on('ready page:load', function(){
 
 
   $('.tabulatr_table').each(function(ix, el){
-    if($('.pagination[data-table="'+ $(el).attr('id') +'"]').length == 0){
+    if($('.pagination[data-table="'+ $(el).attr('id') +'"]').length === 0){
       $('.pagination_trigger[data-table="'+ $(el).attr('id') +'"]').bind('inview', cbfn);
     }
   });
@@ -283,7 +273,7 @@ $(document).on('ready page:load', function(){
     var tableId = a.data('table-id');
     var params = {page: 1};
     params[name] = key;
-    params['tabulatr_checked'] = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
+    params.tabulatr_checked = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
     $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
     Tabulatr.updateTable(params, tableId, true);
@@ -291,7 +281,7 @@ $(document).on('ready page:load', function(){
 
   $('form.tabulatr-fuzzy-search').submit(function(){
     var tableId = $(this).data('table');
-    if($('.pagination[data-table='+ tableId +']').length == 0){
+    if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
@@ -299,7 +289,7 @@ $(document).on('ready page:load', function(){
     return false;
   });
 
-  $('form.tabulatr_filter_form').submit(function(ev){
+  $('form.tabulatr_filter_form').submit(function(){
     var tableId = $(this).data('table');
     Tabulatr.submitFilterForm(tableId);
     return false;
@@ -318,7 +308,7 @@ $(document).on('ready page:load', function(){
     }
     var tableId = $(this).closest('.tabulatr_table').attr('id');
     $(this).remove();
-    if($('.pagination[data-table='+ tableId +']').length == 0){
+    if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
     Tabulatr.updateTable({}, tableId);
@@ -372,7 +362,7 @@ $(document).on('ready page:load', function(){
     $(this).addClass('active');
     var tableId = $(this).closest('div').data('table');
     Tabulatr.moreResults = true;
-    if($('.pagination[data-table='+ tableId +']').length == 0){
+    if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
     if(typeof(Storage) !== undefined){
@@ -420,7 +410,7 @@ $(document).on('click', 'a[data-show-table-filter]', function(){
 
   a.hide();
   return false;
-})
+});
 
 $(document).on('click', 'a[data-hide-table-filter]', function(){
   var a = $(this);
@@ -435,7 +425,7 @@ $(document).on('click', 'a[data-hide-table-filter]', function(){
   var tableId = $(this).parents('form').data('table');
   Tabulatr.submitFilterForm(tableId);
   return false;
-})
+});
 
 $(document).on('change', 'select[data-tabulatr-date-filter]', function() {
   var select = $(this);
