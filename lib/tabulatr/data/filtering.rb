@@ -62,24 +62,17 @@ module Tabulatr::Data::Filtering
   end
 
   def apply_condition(n,v)
-    like ||= Tabulatr::Utility.like_statement
     if v.is_a?(String)
-      @relation = @relation.where("#{n} = ?", v) unless v.blank?
+      apply_string_condition("#{n} = ?", v)
     elsif v.is_a?(Hash)
-      if v[:like].present?
-        @relation = @relation.where("#{n} #{like} ?", "%#{v[:like]}%")
-      elsif v[:date].present?
-        apply_date_condition(n, v[:date])
-      else
-        @relation = @relation.where("#{n} >= ?", "#{v[:from]}") if v[:from].present?
-        @relation = @relation.where("#{n} <= ?", "#{v[:to]}") if v[:to].present?
-      end
+      apply_hash_condition(n, v)
     else
       raise "Wrong filter type: #{v.class}"
     end
   end
 
   def apply_date_condition(n, cond)
+    return unless cond.present?
     today = Date.today
     case cond[:simple]
     when 'none' then return
@@ -88,12 +81,24 @@ module Tabulatr::Data::Filtering
     when 'this_week' then since = today.at_beginning_of_week
     when 'last_7_days' then since = today - 7.day
     when 'this_month' then since = today.at_beginning_of_month
-    when 'last_30_days' then since = today. - 30.day
+    when 'last_30_days' then since = today - 30.day
     when 'from_to'
       since = Date.parse(cond[:from]) if cond[:from].present?
       @relation = @relation.where("#{n} <= ?", Date.parse(cond[:to])) if cond[:to].present?
     end
     @relation = @relation.where("#{n} >= ?", since) if since.present?
+  end
+
+  def apply_string_condition(replacement_string, value)
+     @relation = @relation.where(replacement_string, value) if value.present?
+  end
+
+  def apply_hash_condition(column_name, hash)
+    like ||= Tabulatr::Utility.like_statement
+    apply_string_condition("#{column_name} #{like} ?", "%#{hash[:like]}%") if hash[:like].present?
+    apply_date_condition(column_name, hash[:date])
+    apply_string_condition("#{column_name} >= ?", "#{hash[:from]}")
+    apply_string_condition("#{column_name} <= ?", "#{hash[:to]}")
   end
 
 end
