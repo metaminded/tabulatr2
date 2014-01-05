@@ -19,11 +19,17 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Tabulatr = {
-  moreResults: true,
-  storePage: false,
-  currentData: null,
-  locked: false,
+function Tabulatr(id){
+  this.id = id;
+  this.name = '';
+  this.moreResults = true;
+  this.currentData = null;
+  this.locked = false;
+}
+
+var tabulatr_tables;
+Tabulatr.prototype = {
+  constructor: Tabulatr,
 
   createPaginationListItem: function(page, active){
     var $page = $('<li><a href="" data-page="'+ page +'">'+ page +'</a></li>');
@@ -33,23 +39,23 @@ Tabulatr = {
     return $page;
   },
 
-  updatePagination: function(currentPage, numPages, tableId){
-    var $paginatorUl = $('.pagination[data-table='+ tableId +'] > ul');
+  updatePagination: function(currentPage, numPages){
+    var $paginatorUl = $('.pagination[data-table='+ this.id +'] > ul');
 
     $paginatorUl.html('');
     if(numPages < 13){
       for(var i = 1; i <= numPages; i++){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(i, (i == currentPage)));
+        $paginatorUl.append(this.createPaginationListItem(i, (i == currentPage)));
       }
     }else{
       if(currentPage > 1){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(1, false));
+        $paginatorUl.append(this.createPaginationListItem(1, false));
       }
 
       var between = Math.floor((1 + currentPage) / 2);
       if(between > 1 && between < currentPage - 2){
         $paginatorUl.append('<li><span>...</span></li>');
-        $paginatorUl.append(Tabulatr.createPaginationListItem(between, false));
+        $paginatorUl.append(this.createPaginationListItem(between, false));
       }
 
       if(currentPage > 4){
@@ -57,18 +63,18 @@ Tabulatr = {
       }
 
       if(currentPage > 3){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage-2, false));
-        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage-1, false));
+        $paginatorUl.append(this.createPaginationListItem(currentPage-2, false));
+        $paginatorUl.append(this.createPaginationListItem(currentPage-1, false));
       }
 
-      $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage, true));
+      $paginatorUl.append(this.createPaginationListItem(currentPage, true));
 
       if(currentPage < numPages - 1){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage+1, false));
+        $paginatorUl.append(this.createPaginationListItem(currentPage+1, false));
       }
 
       if(currentPage < numPages - 2){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(currentPage+2, false));
+        $paginatorUl.append(this.createPaginationListItem(currentPage+2, false));
       }
 
       if(currentPage < numPages - 3){
@@ -78,18 +84,18 @@ Tabulatr = {
       between = Math.floor((currentPage + numPages) / 2);
 
       if(between > currentPage + 3 && between < numPages - 1){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(between, false));
+        $paginatorUl.append(this.createPaginationListItem(between, false));
         $paginatorUl.append('<li><span>...</span></li>');
       }
       if(currentPage < numPages){
-        $paginatorUl.append(Tabulatr.createPaginationListItem(numPages, false));
+        $paginatorUl.append(this.createPaginationListItem(numPages, false));
       }
     }
 
   },
 
-  updateTable: function(hash, tableId, forceReload) {
-    var $table = $('#'+ tableId);
+  updateTable: function(hash, forceReload) {
+    var $table = $('#'+ this.id);
     if(hash.page !== undefined && !forceReload){
       //old page should be stored
       Tabulatr.storePage = true;
@@ -98,20 +104,24 @@ Tabulatr = {
         $table.find('tbody tr').hide();
         $table.find('tbody tr[data-page='+ hash.page +']').show();
 
-        Tabulatr.updatePagination(hash.page,
-          $('.pagination[data-table='+ tableId +'] a:last').data('page'),
-          tableId);
+        this.updatePagination(hash.page,
+          $('.pagination[data-table='+ this.id +'] a:last').data('page'),
+          this.id);
         return;
       }
     }else{
-      Tabulatr.storePage = false;
+      this.storePage = false;
     }
-    if(Tabulatr.locked){ return; }
-    Tabulatr.locked = true;
-    jQuery.get($('table#'+ tableId).data('path') + '.json',
-        Tabulatr.createParameterString(hash, tableId),
-        Tabulatr.handleResponse
-      );
+    if(this.locked){ return; }
+    this.locked = true;
+    var curTable = this;
+    $.ajax({
+      context: this,
+      type: 'GET',
+      url: $('table#'+ this.id).data('path') + '.json',
+      data: this.createParameterString(hash, this.id),
+      success: this.handleResponse
+    });
   },
 
   checkIfCheckboxesAreMarked: function(){
@@ -119,30 +129,30 @@ Tabulatr = {
   },
 
   handleResponse: function(response) {
-    Tabulatr.insertTabulatrData(response);
-    Tabulatr.updatePagination(response.meta.page, response.meta.pages, response.meta.table_id);
-    Tabulatr.locked = false;
+    this.insertTabulatrData(response);
+    this.updatePagination(response.meta.page, response.meta.pages, response.meta.table_id);
+    this.locked = false;
   },
 
   insertTabulatrData: function(response){
     var tableId = response.meta.table_id;
     var tbody = $('#'+ tableId +' tbody');
     if(!response.meta.append){
-      if(Tabulatr.storePage){
+      if(this.storePage){
         $('#'+ tableId +' tbody tr').hide();
       }else{
         $('#'+ tableId +' tbody').html('');
       }
     }
     if(response.data.length === 0){
-      Tabulatr.moreResults = false;
+      this.moreResults = false;
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
     }else{
       if(response.data.length < response.meta.pagesize){
-        Tabulatr.moreResults = false;
+        this.moreResults = false;
         $('.pagination_trigger[data-table='+ tableId + ']').unbind('inview');
       }else{
-        Tabulatr.moreResults = true;
+        this.moreResults = true;
       }
 
       // insert the actual data
@@ -181,47 +191,47 @@ Tabulatr = {
   },
 
   replacer: function(match, attribute, offset, string){
-    return Tabulatr.currentData[attribute];
+    return this.currentData[attribute];
   },
 
 
   makeAction: function(action, data){
-    Tabulatr.currentData = data;
-    return unescape(action).replace(/{{([\w:]+)}}/g, Tabulatr.replacer);
+    this.currentData = data;
+    return unescape(action).replace(/{{([\w:]+)}}/g, this.replacer);
   },
 
-  submitFilterForm: function(tableId){
-    if($('.pagination[data-table='+ tableId +']').length === 0){
-      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
-      $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
+  submitFilterForm: function(){
+    if($('.pagination[data-table='+ this.id +']').length === 0){
+      $('.pagination_trigger[data-table='+ this.id +']').unbind('inview', cbfn);
+      $('.pagination_trigger[data-table='+ this.id +']').bind('inview', cbfn);
     }
-    Tabulatr.updateTable({page: 1, append: false}, tableId, true);
+    this.updateTable({page: 1, append: false}, true);
     return false;
   },
 
-  createParameterString: function(hash, tableId){
-    var tableName = tableId.split('_')[0];
+  createParameterString: function(hash){
+    var tableName = this.id.split('_')[0];
     if(hash === undefined){
       hash = {};
       hash.append = false;
     }
     var pagesize = hash.pagesize;
     if(pagesize === undefined){
-      pagesize = $('table#'+ tableId).data('pagesize');
+      pagesize = $('table#'+ this.id).data('pagesize');
     }
     if(hash.page === undefined){
-      hash.page = Math.floor($('#'+ tableId +' tbody tr[class!=empty_row]').length/pagesize) + 1;
+      hash.page = Math.floor($('#'+ this.id +' tbody tr[class!=empty_row]').length/pagesize) + 1;
       if(!isFinite(hash.page)){
         hash.page = 1;
       }
     }
     hash.pagesize = pagesize;
-    hash.arguments = $.map($('#'+ tableId +' th'), function(n){
+    hash.arguments = $.map($('#'+ this.id +' th'), function(n){
       return $(n).data('tabulatr-column-name');
     }).filter(function(n){return n; }).join();
-    hash.table_id = tableId;
+    hash.table_id = this.id;
     hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
-    var form_array = $('.tabulatr_filter_form[data-table="'+ tableId +'"]')
+    var form_array = $('.tabulatr_filter_form[data-table="'+ this.id +'"]')
       .find('input:visible,select:visible,input[type=hidden]').serializeArray();
     for(var i = 0; i < form_array.length; i++){
       hash[form_array[i].name] = form_array[i].value;
@@ -232,9 +242,12 @@ Tabulatr = {
   localDate: function(value, $td, $tr, obj){
     return new Date(value).toLocaleString();
   }
-};
+
+}
+
 
 $(document).on('ready page:load', function(){
+  tabulatr_tables = [];
 
   $('th.tabulatr-sortable').click(function(){
     var th = $(this);
@@ -242,13 +255,19 @@ $(document).on('ready page:load', function(){
     var dir = th.attr('data-sorted');
     var table = th.parents('table');
     var tableId = table.attr('id');
-    var tableName = tableId.split('_')[0];
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    var tableName = table_obj.id.split('_')[0];
     table.find('th.tabulatr-sortable.sorted').removeClass('sorted').removeAttr('data-sorted');
     dir = (dir === 'asc') ? 'desc' : 'asc';
     th.addClass('sorted').attr('data-sorted', dir);
     $('.tabulatr_filter_form[data-table='+ tableId +'] input[name='+ tableName +'_sort]').val(sort_by + ' '+  dir);
-    if(!Tabulatr.moreResults){
-      Tabulatr.moreResults = true;
+    if(!table_obj.moreResults){
+      table_obj.moreResults = true;
       if($('.pagination[data-table='+ tableId +']').length === 0){
         $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
       }
@@ -256,7 +275,7 @@ $(document).on('ready page:load', function(){
     $($(this).parents('table').find('tbody tr')).remove();
 
     $('.tabulatr_mark_all[data-table='+ tableName +']').prop('checked', false).prop('indeterminate', false);
-    Tabulatr.updateTable({}, tableId);
+    table_obj.updateTable({});
   });
 
 
@@ -276,7 +295,13 @@ $(document).on('ready page:load', function(){
     params.tabulatr_checked = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
     $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
-    Tabulatr.updateTable(params, tableId, true);
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.updateTable(params, true);
   });
 
   $('form.tabulatr-fuzzy-search').submit(function(){
@@ -285,13 +310,25 @@ $(document).on('ready page:load', function(){
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
-    Tabulatr.updateTable({page: 1, append: false}, tableId, true);
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.updateTable({page: 1, append: false}, true);
     return false;
   });
 
   $('form.tabulatr_filter_form').submit(function(){
     var tableId = $(this).data('table');
-    Tabulatr.submitFilterForm(tableId);
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.submitFilterForm();
     return false;
   });
 
@@ -311,18 +348,30 @@ $(document).on('ready page:load', function(){
     if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
-    Tabulatr.updateTable({}, tableId);
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.updateTable({});
     return false;
   });
 
   $('.tabulatr_mark_all').click(function(){
     var tableId = $(this).data('table');
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
     if($(this).is(':checked')){
       $('#'+ tableId +' tr[data-page]:visible input[type=checkbox]').prop('checked', true);
       $('#'+ tableId +' .tabulatr-wrench').removeClass('disabled');
     }else{
       $('#'+ tableId +' tr[data-page]:visible input[type=checkbox]').prop('checked', false);
-      if(Tabulatr.checkIfCheckboxesAreMarked()){
+      if(table_obj.checkIfCheckboxesAreMarked()){
         $('#'+ tableId +' .tabulatr-wrench').removeClass('disabled');
       }else{
         $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
@@ -332,6 +381,12 @@ $(document).on('ready page:load', function(){
 
   $('.tabulatr_table').on('click', 'input.tabulatr-checkbox', function(){
     var tableId = $(this).closest('.tabulatr_table').attr('id');
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
     if($(this).is(':checked')){
       if($('#'+ tableId +' tr[data-page]:visible input[type=checkbox]').not(':checked').length > 0){
         $('.tabulatr_mark_all[data-table='+ tableId +']').prop("indeterminate", true);
@@ -347,7 +402,7 @@ $(document).on('ready page:load', function(){
       }else{
         $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
         $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
-        if(Tabulatr.checkIfCheckboxesAreMarked()){
+        if(table_obj.checkIfCheckboxesAreMarked()){
           $('#'+ tableId +' .tabulatr-wrench').removeClass('disabled');
         }else{
           $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
@@ -361,14 +416,20 @@ $(document).on('ready page:load', function(){
     $(this).closest('div').find('a').removeClass('active');
     $(this).addClass('active');
     var tableId = $(this).closest('div').data('table');
-    Tabulatr.moreResults = true;
+    var table_obj = undefined;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id == tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.moreResults = true;
     if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
     if(typeof(Storage) !== undefined){
       localStorage.tabulatr_page_display_count = $(this).data('items-per-page');
     }
-    Tabulatr.updateTable({page: 1}, tableId, true);
+    table_obj.updateTable({page: 1}, true);
   });
 
   if($('.tabulatr_table:not(".tabulatr_static_table")').length > 0){
@@ -380,8 +441,16 @@ $(document).on('ready page:load', function(){
           addClass('active');
       }
     }
+    var table_obj = undefined;
     $('.tabulatr_table:not(".tabulatr_static_table")').each(function(ix, el){
-      Tabulatr.updateTable({}, $(el).attr('id'));
+      var tableId = $(el).attr('id');
+      tabulatr_tables.push(new Tabulatr(tableId));
+      for(var i = 0; i < tabulatr_tables.length; i++){
+        if(tabulatr_tables[i].id == tableId){
+          table_obj = tabulatr_tables[i];
+        }
+      }
+      table_obj.updateTable({});
     });
   }
 });
@@ -395,7 +464,13 @@ $(document).on('click', '.pagination a', function(){
   var tableId = $(a).closest('.pagination').data('table');
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
-  Tabulatr.updateTable({append: false, page: a.data('page')}, tableId);
+  var table_obj = undefined;
+  for(var i = 0; i < tabulatr_tables.length; i++){
+    if(tabulatr_tables[i].id == tableId){
+      table_obj = tabulatr_tables[i];
+    }
+  }
+  table_obj.updateTable({append: false, page: a.data('page')});
   return false;
 });
 
@@ -404,8 +479,8 @@ $(document).on('click', '.pagination a', function(){
 
 $(document).on('click', 'a[data-show-table-filter]', function(){
   var a = $(this);
-  var nam = a.data('show-table-filter');
-  $('div[data-filter-column-name="'+nam+'"]').show('blind');
+  var name = a.data('show-table-filter');
+  $('div[data-filter-column-name="'+ name +'"]').show('blind');
   $('div[data-filter-column-name="_submit"]').show('blind');
 
   a.hide();
@@ -423,7 +498,13 @@ $(document).on('click', 'a[data-hide-table-filter]', function(){
     $('div[data-filter-column-name="_submit"]').hide('blind');
 
   var tableId = $(this).parents('form').data('table');
-  Tabulatr.submitFilterForm(tableId);
+  var table_obj = undefined;
+  for(var i = 0; i < tabulatr_tables.length; i++){
+    if(tabulatr_tables[i].id == tableId){
+      table_obj = tabulatr_tables[i];
+    }
+  }
+  table_obj.submitFilterForm();
   return false;
 });
 
@@ -447,7 +528,14 @@ var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
     } else if (visiblePartY == 'bottom') {
       // bottom part of element is visible
     } else {
-      Tabulatr.updateTable({append: true}, $(event.currentTarget).data('table'));
+      var tableId = $(event.currentTarget).data('table');
+      var table_obj = undefined;
+      for(var i = 0; i < tabulatr_tables.length; i++){
+        if(tabulatr_tables[i].id == tableId){
+          table_obj = tabulatr_tables[i];
+        }
+      }
+      table_obj.updateTable({append: true});
     }
   }
 };
