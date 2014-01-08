@@ -1,3 +1,7 @@
+## 0.9.1
+
+* does not complain when no id is manually provided in TabulatrData
+
 ## 0.9
 
 * Added `row` to the TabulatrData DSL to provide HTML attributes for the

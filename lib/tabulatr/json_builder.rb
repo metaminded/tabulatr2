@@ -29,7 +29,6 @@ module Tabulatr::JsonBuilder
           each_serializer: klass
         }).as_json
     else
-      id_included = false
       attrs = build_hash_from requested_attributes, id
       result = []
       data.each do |f|
@@ -77,7 +76,7 @@ module Tabulatr::JsonBuilder
       # end
       begin
         raise Tabulatr::RequestDataNotIncludedError.raise_error(rel, f) if !f.has_key?(rel)
-        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, rel) if !f[rel].has_key?(action)
+        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, rel) if !f[rel].has_key?(action) && action != :id
         r["#{at[:relation]}:#{at[:action]}"] = f[rel][action]
       rescue TypeError, NoMethodError => e
         Tabulatr::RequestDataNotIncludedError.raise_error(at[:action], at[:relation])
@@ -85,7 +84,7 @@ module Tabulatr::JsonBuilder
     else
       begin
         action = at[:action].to_sym
-        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f) if !f.has_key?(action) && action != :checkbox
+        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f) if !f.has_key?(action) && [:checkbox, :id].exclude?(action)
         r[at[:action]] = f[action]
       rescue TypeError, NoMethodError => e
         raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f)
