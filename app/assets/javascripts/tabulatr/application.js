@@ -98,7 +98,7 @@ Tabulatr.prototype = {
     var $table = $('#'+ this.id);
     if(hash.page !== undefined && !forceReload){
       //old page should be stored
-      Tabulatr.storePage = true;
+      this.storePage = true;
       // check if this page was already loaded
       if($table.find('tbody tr[data-page='+ hash.page +']').length > 0){
         $table.find('tbody tr').hide();
