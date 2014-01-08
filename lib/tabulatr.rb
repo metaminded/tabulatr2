@@ -25,6 +25,10 @@ module Tabulatr
   def self.config &block
     yield self
   end
+
+  mattr_accessor :spinner
+
+  self.spinner = :standard
 end
 
 require 'tabulatr/engine'

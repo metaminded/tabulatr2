@@ -1,5 +1,15 @@
 ## 0.9.1
 
+* Show spinner when data is loading. Type of spinner can be overriden via
+  `Tabulatr.spinner` option. Possible values are :standard and :pacman.
+
+  Example:
+  ```
+    Tabulatr.config do |tc|
+      tc.spinner = :pacman
+    end
+  ```
+
 * does not complain when no id is manually provided in TabulatrData
 
 ## 0.9

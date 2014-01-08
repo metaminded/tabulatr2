@@ -115,12 +115,14 @@ Tabulatr.prototype = {
     if(this.locked){ return; }
     this.locked = true;
     var curTable = this;
+    this.showLoadingSpinner();
     $.ajax({
       context: this,
       type: 'GET',
       url: $('table#'+ this.id).data('path') + '.json',
       data: this.createParameterString(hash, this.id),
-      success: this.handleResponse
+      success: this.handleResponse,
+      complete: this.hideLoadingSpinner
     });
   },
 
@@ -241,6 +243,14 @@ Tabulatr.prototype = {
 
   localDate: function(value, $td, $tr, obj){
     return new Date(value).toLocaleString();
+  },
+
+  showLoadingSpinner: function(){
+    $('.tabulatr-spinner-box[data-table='+ this.id +']').show();
+  },
+
+  hideLoadingSpinner: function(){
+    $('.tabulatr-spinner-box[data-table='+ this.id +']').hide();
   }
 
 }

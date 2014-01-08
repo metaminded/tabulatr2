@@ -35,5 +35,7 @@ table.table.tabulatr_table id=table_id data-path=table_options[:path] data-pages
         - classes = column.sortable ? ['tabulatr-sortable'] : []
         - classes = [classes, column.classes].flatten.compact.join(' ')
         td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.cell_style class=classes
+.tabulatr-spinner-box data-table=table_id
+  = image_tag "#{Tabulatr.spinner}-loader.gif"
 span.pagination_trigger data-table="#{table_id}"
 
