@@ -137,7 +137,7 @@ describe "Tabulatr" do
       find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
       within(".tabulatr_filter_form") do
         fill_in("product_filter[title][like]", with: "ore")
-        expect(find('#title_from').visible?)
+        expect(find('#title_like').visible?)
         click_button("Apply")
       end
       page.should have_content("lorem")
@@ -205,7 +205,7 @@ describe "Tabulatr" do
       find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
       within(".tabulatr_filter_form") do
         fill_in("product_filter[title][like]", with: "foo")
-        expect(find('#title_from').visible?)
+        expect(find('#title_like').visible?)
         click_button("Apply")
       end
       expect(page).to have_content('foo')

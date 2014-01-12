@@ -51,7 +51,7 @@ form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote=
             = column.checkbox_label
           - elsif column.filter == :exact
             .col-md-11
-              input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}" name="#{iname}"
+              input.tabulatr_filter.form-control type="text" id="#{name}_exact" data-tabulatr-attribute="#{name}" name="#{iname}"
           - elsif column.filter == :date
             .col-md-3
               select.form-control name="#{iname}[date][simple]" data-tabulatr-date-filter="#{formatted_name}_#{name}_filter"
@@ -73,7 +73,7 @@ form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote=
               input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{formatted_name}_#{name}_filter_to" name="#{iname}[date][to]"
           - else
             .col-md-11
-              input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
+              input.tabulatr_filter.form-control type="text" id="#{name}_like" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
           .col-md-1
             = link_to "✕", '#', 'data-hide-table-filter' => name, class: 'form-control btn btn-danger btn-mini'
 
