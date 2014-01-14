@@ -100,8 +100,8 @@ Tabulatr.prototype = {
       //old page should be stored
       this.storePage = true;
       // check if this page was already loaded
+      $table.find('tbody tr').hide();
       if($table.find('tbody tr[data-page='+ hash.page +']').length > 0){
-        $table.find('tbody tr').hide();
         $table.find('tbody tr[data-page='+ hash.page +']').show();
 
         this.updatePagination(hash.page,
