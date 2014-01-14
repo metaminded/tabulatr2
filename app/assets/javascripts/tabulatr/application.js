@@ -469,7 +469,7 @@ $(document).on('click', '.pagination a', function(){
   var a = $(this);
   if(a.parent().hasClass('active') ||
      a.parent().hasClass('disabled')){
-    return;
+    return false;
   }
   var tableId = $(a).closest('.pagination').data('table');
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
