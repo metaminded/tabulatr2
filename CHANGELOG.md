@@ -1,3 +1,8 @@
+## 0.9.2
+
+* Fixed bug which caused a reload of the website when clicking on the current
+  table page again.
+
 ## 0.9.1
 
 * Show spinner when data is loading. Type of spinner can be overriden via
