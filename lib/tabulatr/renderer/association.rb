@@ -23,9 +23,7 @@
 
 class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
   def human_name
-    header ||
-      klass.reflect_on_association(table_name.to_sym).klass.model_name.human + ' ' +
-      klass.reflect_on_association(table_name.to_sym).klass.human_attribute_name(name)
+    header || klass.model_name.human + ' ' + klass.human_attribute_name(name)
   end
 
   def coltype() 'association' end

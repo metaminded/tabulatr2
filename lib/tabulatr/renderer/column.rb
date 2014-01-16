@@ -136,4 +136,17 @@ class Tabulatr::Renderer::Column
     record.send name
   end
 
+  def determine_appropriate_filter!
+    case self.klass.columns_hash[self.name.to_s].try(:type)
+    when :integer, :float, :decimal
+      self.filter = :exact
+    when :string, :text
+      self.filter = :like
+    when :date, :time, :datetime, :timestamp
+      self.filter = :date
+    when :boolean
+      self.filter = :checkbox
+    end
+  end
+
 end
