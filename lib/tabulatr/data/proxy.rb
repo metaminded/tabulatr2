@@ -25,9 +25,13 @@ class Data::Proxy < ActionView::Base
 
   attr_accessor :record
 
-  def initialize(record=nil)
+  def initialize(record=nil, locals: {})
     self.class._init
     @record = record
+    locals.each do |nam, val|
+      raise "cowardly refusing to override `#{nam}'" if respond_to? nam
+      define_singleton_method nam do val end
+    end
   end
 
   def self._init

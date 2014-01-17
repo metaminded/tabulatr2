@@ -40,7 +40,7 @@ class Tabulatr::Data
     end
   end
 
-  def data_for_table(params, &block)
+  def data_for_table(params, locals: locals, &block)
 
     @batch_actions = block if block_given?
 
@@ -61,10 +61,9 @@ class Tabulatr::Data
     # TODO: batch actions and checked ids
 
     # get the records
-    found = apply_formats()
+    found = apply_formats(locals: locals)
 
     append = params[:append].present? ? Tabulatr::Utility.string_to_boolean(params[:append]) : false
-
 
     # prepare result for rendering
     found.define_singleton_method(:__pagination) do

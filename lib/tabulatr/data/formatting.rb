@@ -23,8 +23,8 @@
 
 module Tabulatr::Data::Formatting
 
-  def apply_formats()
-    view = Data::Proxy.new
+  def apply_formats(locals: {})
+    view = Data::Proxy.new(locals: locals)
     return @relation.map do |record|
       view.record = record
       h = HashWithIndifferentAccess.new
