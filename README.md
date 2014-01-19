@@ -226,8 +226,6 @@ the columns in the block of `table_for`.
   th_html: false,
   filter_html: false,
   filter: true,          # whether this column should be filterable
-  checkbox_value: '1',
-  checkbox_label: '',
   sortable: true,        # whethter this column should be sortable
   format: nil,
   map: true,

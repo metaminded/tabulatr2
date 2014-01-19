@@ -15,6 +15,10 @@ en:
       this_month: This Month
       last_30_days: Last 30 Days
       from_to: From - To
+    boolean_filter:
+      both: All
+      yes: Yes
+      no: No
 
 de:
   tabulatr:
@@ -33,3 +37,7 @@ de:
       this_month: Dieser Monat
       last_30_days: Letzte 30 Tage
       from_to: Von - Bis
+    boolean_filter:
+      both: Alle
+      yes: Ja
+      no: Nein

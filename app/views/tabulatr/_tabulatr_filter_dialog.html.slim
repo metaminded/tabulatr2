@@ -47,8 +47,12 @@ form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote=
             .col-md-5
               input.tabulatr_filter.form-control type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"
           - elsif column.filter == :checkbox
-            = check_box_tag(iname, column.checkbox_value, false, {})
-            = column.checkbox_label
+            .col-md-11
+              = select_tag(iname, options_for_select([ \
+                  [t('tabulatr.boolean_filter.both'), ""],
+                  [t('tabulatr.boolean_filter.no'), "false"],
+                  [t('tabulatr.boolean_filter.yes'), "true"]] \
+                ), class: 'form-control')
           - elsif column.filter == :exact
             .col-md-11
               input.tabulatr_filter.form-control type="text" id="#{name}_exact" data-tabulatr-attribute="#{name}" name="#{iname}"

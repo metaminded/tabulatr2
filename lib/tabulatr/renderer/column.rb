@@ -25,7 +25,7 @@ class Tabulatr::Renderer::Column
   include ActiveModel::Model
 
   attr_accessor *%i{name header width align valign wrap type th_html filter_html
-    filter checkbox_value checkbox_label filter_width range_filter_symbol
+    filter filter_width range_filter_symbol
     sortable table_name block klass format map classes cell_style header_style}
 
   def self.from(
@@ -40,8 +40,6 @@ class Tabulatr::Renderer::Column
     th_html: false,
     filter_html: false,
     filter: true,
-    checkbox_value: '1',
-    checkbox_label: '',
     sortable: true,
     format: nil,
     map: true,
@@ -62,8 +60,6 @@ class Tabulatr::Renderer::Column
       th_html: th_html,
       filter_html: filter_html,
       filter: filter,
-      checkbox_value: checkbox_value,
-      checkbox_label: checkbox_label,
       sortable: sortable,
       format: format,
       map: map,
