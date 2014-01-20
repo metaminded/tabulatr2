@@ -40,7 +40,7 @@ class Tabulatr::Data
     end
   end
 
-  def data_for_table(params, locals: locals, &block)
+  def data_for_table(params, locals: {}, &block)
 
     @batch_actions = block if block_given?
 
