@@ -7,7 +7,7 @@ gem 'slim'
 
 group :development do
   gem 'better_errors'
-  gem 'binding_of_caller' unless RUBY_ENGINE = 'jruby'
+  gem 'binding_of_caller', platforms: :ruby
 end
 
 
