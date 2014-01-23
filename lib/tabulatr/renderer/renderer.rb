@@ -80,6 +80,10 @@ class Tabulatr::Renderer
     })
   end
 
+  def generate_id
+    "#{@klass.to_s.gsub(/::/, '--').downcase}_table_#{SecureRandom.uuid}"
+  end
+
   def self.build_static_table(records, view, toptions={}, &block)
     return '' unless records.present?
     klass = records.first.class
