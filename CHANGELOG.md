@@ -1,3 +1,19 @@
+## 0.9.3
+ * Tabulatr is now stopped from retrieving data in endless pagination mode when all data
+   is already on the client.
+
+ * Automatically determine appropriate filter types for the columns
+
+ * Boolean filter is now a `select` field with `yes`, `no`, `both` options
+
+ * User can pass in additional variables to the TabulatrData-Class via the
+   `locals` argument.
+
+  Example:
+  ```
+  tabulatr_for Product, locals: {current_user: current_user}
+  ```
+
 ## 0.9.2
 
 * Fixed bug which caused a reload of the website when clicking on the current
