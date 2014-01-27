@@ -130,6 +130,10 @@ Tabulatr.prototype = {
     return $('tr[data-page] input[type=checkbox]:checked').length > 0;
   },
 
+  currentCount: function(){
+    return $('#'+ this.id +' tbody tr.tabulatr-row').length;
+  },
+
   handleResponse: function(response) {
     this.insertTabulatrData(response);
     this.updatePagination(response.meta.page, response.meta.pages, response.meta.table_id);
@@ -150,11 +154,9 @@ Tabulatr.prototype = {
       this.moreResults = false;
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
     }else{
-      if(response.data.length < response.meta.pagesize){
+      if(this.currentCount() + response.data.length >= response.meta.count){
         this.moreResults = false;
         $('.pagination_trigger[data-table='+ tableId + ']').unbind('inview');
-      }else{
-        this.moreResults = true;
       }
 
       // insert the actual data
