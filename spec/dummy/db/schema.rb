@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130730132348) do
+ActiveRecord::Schema.define(version: 20140128140114) do
 
   create_table "products", force: true do |t|
     t.integer  "vendor_id"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20130730132348) do
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "publish_at"
   end
 
   add_index "products", ["vendor_id"], name: "index_products_on_vendor_id"

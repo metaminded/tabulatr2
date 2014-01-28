@@ -78,17 +78,30 @@ module Tabulatr::Data::Filtering
     today = Date.today
     case cond[:simple]
     when 'none' then return
-    when 'today' then since = today
-    when 'yesterday' then since = today - 1.day
-    when 'this_week' then since = today.at_beginning_of_week
-    when 'last_7_days' then since = today - 7.day
-    when 'this_month' then since = today.at_beginning_of_month
-    when 'last_30_days' then since = today - 30.day
+    when 'today'
+      since = today
+      to = today.at_end_of_day
+    when 'yesterday'
+      since = today - 1.day
+      to = since.at_end_of_day
+    when 'this_week'
+      since = today.at_beginning_of_week.beginning_of_day
+      to = today.at_end_of_week.end_of_day
+    when 'last_7_days'
+      since = (today - 6.day).beginning_of_day
+      to = today.at_end_of_day
+    when 'this_month'
+      since = today.at_beginning_of_month.beginning_of_day
+      to = today.at_end_of_month.end_of_day
+    when 'last_30_days'
+      since = (today - 29.day).beginning_of_day
+      to = today.at_end_of_day
     when 'from_to'
       since = Date.parse(cond[:from]) if cond[:from].present?
-      @relation = @relation.where("#{n} <= ?", Date.parse(cond[:to])) if cond[:to].present?
+      to = Date.parse(cond[:to]) if cond[:to].present?
     end
     @relation = @relation.where("#{n} >= ?", since) if since.present?
+    @relation = @relation.where("#{n} <= ?", to) if to.present?
   end
 
   def apply_string_condition(replacement_string, value)
