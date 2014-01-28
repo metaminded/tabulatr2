@@ -1,4 +1,9 @@
+## 0.9.4
+
+ * Added missing translations to the install generator.
+
 ## 0.9.3
+
  * Tabulatr is now stopped from retrieving data in endless pagination mode when all data
    is already on the client.
 
