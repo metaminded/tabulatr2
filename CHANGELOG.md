@@ -1,5 +1,7 @@
 ## 0.9.4
 
+ * Fixed date filters
+
  * Added missing translations to the install generator.
 
 ## 0.9.3
