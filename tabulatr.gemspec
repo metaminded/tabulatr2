@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.rdoc_options  = ['--charset=UTF-8']
 
 
-  s.add_runtime_dependency('rails', '>= 4.0.0')
-  s.add_dependency('slim', '>= 2.0.1')
-  s.add_runtime_dependency('activerecord_outer_joins', '~> 0.0.1')
+  s.add_runtime_dependency('rails', '~> 4.0.0', '>= 4.0.0')
+  s.add_dependency('slim', '~> 2.0.0', '>= 2.0.0')
 end
