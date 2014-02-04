@@ -3,6 +3,12 @@
 [![Code Climate](https://codeclimate.com/github/provideal/tabulatr2.png)](https://codeclimate.com/github/provideal/tabulatr2)
 [![Travis CI](https://api.travis-ci.org/provideal/tabulatr2.png)](https://travis-ci.org/provideal/tabulatr2)
 
+## Requirements
+
+* Ruby 2.0.0 or higher
+* Rails 4.0.0 or higher
+* [Bootstrap from Twitter](http://getbootstrap.com)
+
 ## Installation
 
 Require tabulatr2 in your Gemfile:
@@ -14,103 +20,186 @@ After that run `bundle install`.
 Also add `//= require tabulatr` to your application js file and `*= require tabulatr` to your CSS asset
 pipeline.
 
-Now run the Install generator via
-`rails g tabulatr install`
+In order to get the provided `i18n` language files run
+`rails g tabulatr:install`
+
+## The DSL
+
+`Tabulatr` provides an easy to use DSL to define the data to be used in your table. It is defined in `TabulatrData`
+classes. If you have a `User` model you would create a `UserTabulatrData` class.
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+end
+```
+
+Instead of creating this class by hand you can also generate a `TabulatrData` for a given class by running
+`rails g tabulatr:table User`
+
+### Columns
+
+Let's say you want to display each user's `first_name` and `last_name` attribute:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  column :first_name
+  column :last_name
+end
+```
+That's it. It'll work, but let's assume you would like to display the full name in one single column. No worries! `Tabulatr` got you covered:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  column :full_name, table_column_options: {header: 'The full name'} do |user|
+    link_to "#{user.first_name} #{user.last_name}", user
+  end
+end
+```
+As you can see you just need to provide a block to the `column` call and you can format the cell into whatever you want.
+You can even use all those fancy Rails helpers!
+
+Unfortunately, we can't sort and filter this column right now because `Tabulatr` would look for a `full_name` column in
+your DB table but there is no such thing. Bummer! Enter `sort_sql` and `filter_sql`:
+
+#### Sorting / Filtering
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  column :full_name, sort_sql: "users.first_name || '' || users.last_name",
+                   filter_sql: "users.first_name || '' || users.last_name"
+end
+```
+
+With these two options you can provide whatever SQL you would like to have executed when filtering or sorting
+this particular column. If instead you want to disable sorting and filtering at all, you can do that too:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  column :full_name, table_column_options: {sortable: false, filter: false} 
+end
+```
+
+Also you are able to change generated filter form field for this column. Say for example you want to have an `exact`
+filter instead of a `LIKE` filter:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  column :first_name, table_column_options: {filter: :exact}
+end
+```
+
+Following is a table with all the standard mappings for filter fields, which means these filters get created if you
+don't overwrite it:
+
+Data type | Generated form field / SQL
+--------- | -------------------------
+integer, float, decimal | String input field, exact match
+string, text            | String input field, LIKE match
+date, time, datetime, timestamp | Select field, with options like 'last 30 days', 'today', ...
+boolean                         | Select field, options are 'Yes', 'No' and 'Both'
+
+
+### Associations
+
+To display associations you would use the `association` method with the association name and the attribute on the 
+association as it's first two arguments:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  association :citizenship, :name
+end
+```
+
+Associations take the same arguments as the `column` method:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  association :citizenship, :name do
+    record.citizenship.name.upcase
+  end
+  
+  association :posts, :text, table_column_options: {filter: false, sortable: false} do |user|
+    user.posts.count
+  end
+end
+```
+
+### Checkbox
+
+To provide a checkbox for each row which is needed by batch actions just call `checkbox`:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+ checkbox
+end
+```
+
+### Search
+
+The DSL provides you with a `search` method to define a custom fuzzy search method which is not bound
+to a specific column.
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  search do |query|
+   "users.first_name LIKE '#{query}' OR users.last_name LIKE '#{query}' OR users.address LIKE '#{query}'"
+  end
+  
+  # This call could also be written as:
+  # search :first_name, :last_name, :address
+end
+```
+
+### Row formatting
+
+To provide row specific HTML-Attributes call `row`:
+
+```ruby
+row do |record, row_config|
+  if record.super_important?
+    row_config[:class] = 'important';
+  end
+  row_config[:data] = {
+    href: edit_user_path(record.id),
+    vip: record.super_important?
+  }
+end
+```
 
 ## Usage
 
-### Models
+Great, we have defined all the required `columns` in the TabulatrData DSL, but how do we display the table now?
 
-We suppose we have these three models:
-```ruby
-class Tag < ActiveRecord::Base
-  has_and_belongs_to_many :products
-end
-```
-```ruby
-class Product < ActiveRecord::Base
-  belongs_to :vendor
-  has_and_belongs_to_many :tags
-end
-```
-```ruby
-class Vendor < ActiveRecord::Base
-  has_many :products
-end
-```
-
-and we want to display information about products in the `ProductsController#index` action.
-
-## ProductTabulatrData
-
-In this class we define which information should be available for the table and how it is formatted.
-```ruby
-class ProductTabulatrData < Tabulatr::Data
-
-  search :vendor_address, :title
-
-  # search do |query|
-  #   "products.title LIKE '#{query}'"
-  # end
-
-  column :id
-  column :title { title.capitalize }
-  column :price do "#{price} EUR" end
-  column :vendor_address, sort_sql: "vendors.zipcode || '' || vendors.city",
-                        filter_sql: "vendors.street || '' || vendors.zipcode || '' vendors.city" do
-         "#{vendor.house_number} #{vendor.street}, #{vendor.zipcode} #{vendor.city}"
-  end
-  column :edit_link do
-    link_to "edit #{title}", product_path(id)
-  end
-  column :updated_at do
-    "#{updated_at.strftime('%H:%M %Y/%m/%d')}"
-  end
-  association :vendor, :name
-  association :tags, :title do "'#{tags.map(&:title).map(&:upcase).join(', ')}'" end
-
-end
-```
-The search method is used for a fuzzy search field.
-
-You can automatically generate a new TabulatrData-Class by running
-`rails g tabulatr:table MODELNAME`.
-
-This will generate a `MODELNAMETabulatrData` class in `app/tabulatr_data/MODELNAME_data.rb` for you.
-
-This generator also gets executed if you just run the standard Rails `resource` generator.
-
-## Controller
-
-In `ProductsController#index` we have:
+In `UsersController#index` we write:
 
 ```ruby
   def index
-    tabulatr_for Product
+    tabulatr_for User
   end
 ```
+This call responds to an HTML-Request by rendering the associated `view` and for a JSON-Request by
+fetching the requested records.
+
 
 _Hint:_ If you want to prefilter your table, you can do that too! Just pass an `ActiveRecord::Relation` to `tabulatr_for`:
 ```ruby
   def index
-    tabulatr_for Product.where(active: true)
+    tabulatr_for User.where(active: true)
   end
 ```
 
-### View
-
-In the view we can use all the attributes which are defined in our `ProductTabulatrData` class.
-To display all the columns defined in the `ProductTabulatrData` class we
+In the view we can use all the attributes which are defined in our `UserTabulatrData` class.
+To display all the columns defined in the `UserTabulatrData` class we
 just need to put the following statement in our view:
 
 ```erb
-<%= table_for Product %>
+<%= table_for User %>
 ```
 If you just want do display a subset of the defined columns or show them in a
 different order you can provide them as arguments to the `columns` key:
 
 ```erb
-<%= table_for Product, columns: [:vendor_address, 'vendor:name', {tags: :title}]%>
+<%= table_for User, columns: [:full_name, 'citizenship:name', {posts: :text}]%>
 ```
 Note that you can write associations as a string with colon between association
 name and method or as a hash as you can see above.
@@ -118,13 +207,11 @@ name and method or as a hash as you can see above.
 An other option is to provide the columns in a block:
 
 ```erb
-  <%= table_for Product do |t|
-    t.column :title
-    t.column :price
-    t.association :vendor, :name
-    t.column :vendor_address
-    t.column :updated_at
-    t.association :tags, :title
+  <%= table_for User do |t|
+    t.column :full_name
+    t.column :active
+    t.association :citizenship, :name
+    t.association :posts, :text
     t.column :edit_link
   end %>
 ```
@@ -138,20 +225,20 @@ To add a select box with batch-actions (actions that should be performed on all 
 we add an option to the table_for:
 
 ```erb
-  <%= table_for Product, batch_actions: {'foo' => 'Foo', 'delete' => "Delete"} do |t|
+  <%= table_for User, batch_actions: {'foo' => 'Foo', 'delete' => "Delete"} do |t|
     ...
   end %>
 ```
 
-To handle the actual batch action, we have to add a block to the `find_for_table` call in the controller:
+To handle the actual batch action, we have to add a block to the `tabulatr_for` call in the controller:
 
 ```ruby
-  tabulatr_for Product do |batch_actions|
+  tabulatr_for User do |batch_actions|
     batch_actions.delete do |ids|
       ids.each do |id|
-        Product.find(id).destroy
+        User.find(id).destroy
       end
-      redirect_to index_select_products_path()
+      redirect_to root_path()
       return
     end
     batch_actions.foo do |ids|
@@ -208,7 +295,7 @@ They change the appearance and behaviour of the table.
 
 #### Example:
 ```erb
-<%= table_for Product, {order_by: 'price desc', pagesize: 50} %>
+<%= table_for User, {order_by: 'last_name desc', pagesize: 50} %>
 ```
 
 ### Column Options
@@ -236,29 +323,16 @@ the columns in the block of `table_for`.
 #### Example:
 ```erb
 # in the view
-<%= table_for Product do |t|
-  t.column(:title, header_style: {color: 'red'})
+<%= table_for User do |t|
+  t.column(:first_name, header_style: {color: 'red'})
   # ...
 %>
 
 # or in TabulatrData
-class ProductTabulatrData < Tabulatr::Data
-  column(:title, table_column_options: {header_style: {color: 'red'}})
+class UserTabulatrData < Tabulatr::Data
+  column(:first_name, table_column_options: {header_style: {color: 'red'}})
 end
 ```
-
-## Dependencies
-
-We use [Bootstrap from Twitter](http://getbootstrap.com) in order to make the table look pretty decent.
-
-## Known Bugs
-
-### Request-URI Too Large error
-
-This is a problem particulary when using WEBrick, because WEBricks URIs must not exceed 2048 characters.
-And this limit is hard-coded IIRC. So – If you run into this limitation –
-please consider using another server.
-(Thanks to [stepheneb](https://github.com/stepheneb) for calling my attention back to this.)
 
 ## Contributing
 
@@ -274,21 +348,6 @@ please consider using another server.
 * Feel free to send a pull request if you think others (me, for example) would like to have your change
   incorporated into future versions of tabulatr.
 
-## MIT License
+## License
 
-Copyright (c) 2010-2013 Peter Horn, Provideal GmbH</a>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-and associated documentation files (the "Software"), to deal in the Software without restriction,
-including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial
-portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
-AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
-OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[MIT](LICENSE)
