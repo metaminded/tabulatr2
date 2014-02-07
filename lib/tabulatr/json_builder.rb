@@ -62,34 +62,32 @@ module Tabulatr::JsonBuilder
   end
 
   def self.insert_attribute_in_hash at, f, r={}
+    action = at[:action].to_sym
+    relation = at[:relation].try(:to_sym)
     if at.has_key? :relation
-      rel = at[:relation].to_sym
-      action = at[:action].to_sym
-      # if f.class.reflect_on_association(at[:relation].to_sym).collection?
-      #   if at[:action].to_sym == :count
-      #     r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).count
-      #   else
-      #     r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).map(&at[:action].to_sym).join(', ')
-      #   end
-      # else
-      #   r["#{at[:relation]}:#{at[:action]}"] = f.try(at[:relation]).try(at[:action])
-      # end
-      begin
-        raise Tabulatr::RequestDataNotIncludedError.raise_error(rel, f) if !f.has_key?(rel)
-        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, rel) if !f[rel].has_key?(action) && action != :id
-        r["#{at[:relation]}:#{at[:action]}"] = f[rel][action]
-      rescue TypeError, NoMethodError => e
-        Tabulatr::RequestDataNotIncludedError.raise_error(at[:action], at[:relation])
-      end
+      check_if_attribute_is_in_hash(f, relation)
+      check_if_attribute_is_in_hash(f[relation], action) if action != :id
+      set_value_at_key(r, f[relation][action], "#{at[:relation]}:#{at[:action]}")
     else
-      begin
-        action = at[:action].to_sym
-        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f) if !f.has_key?(action) && [:checkbox, :id].exclude?(action)
-        r[at[:action]] = f[action]
-      rescue TypeError, NoMethodError => e
-        raise Tabulatr::RequestDataNotIncludedError.raise_error(action, f)
-      end
+      check_if_attribute_is_in_hash(f, action) if [:checkbox, :id].exclude?(action)
+      set_value_at_key(r, f[action], at[:action])
     end
     r
+  end
+
+  private
+
+  def self.check_if_attribute_is_in_hash hash, key
+    if !hash.has_key?(key)
+      raise Tabulatr::RequestDataNotIncludedError.raise_error(key, hash)
+    end
+  end
+
+  def self.set_value_at_key hash, value, key
+    begin
+      hash[key] = value
+    rescue TypeError, NoMethodError => e
+      raise Tabulatr::RequestDataNotIncludedError.raise_error(key, value)
+    end
   end
 end
