@@ -1,3 +1,7 @@
+## 0.9.5
+
+ * Add 'mark all' checkbox in header row again
+
 ## 0.9.4
 
  * Fixed date filters

@@ -22,8 +22,10 @@
 #++
 
 class Tabulatr::Renderer::Checkbox < Tabulatr::Renderer::Column
+  include ActionView::Helpers::FormTagHelper
+
   def human_name
-    nil
+    check_box_tag('mark_all', '1', false, class: 'tabulatr_mark_all').html_safe
   end
 
   def coltype() 'checkbox' end

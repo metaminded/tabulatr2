@@ -371,7 +371,7 @@ $(document).on('ready page:load', function(){
   });
 
   $('.tabulatr_mark_all').click(function(){
-    var tableId = $(this).data('table');
+    var tableId = $(this).parents('table').prop('id');
     var table_obj = undefined;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
@@ -392,7 +392,9 @@ $(document).on('ready page:load', function(){
   });
 
   $('.tabulatr_table').on('click', 'input.tabulatr-checkbox', function(){
-    var tableId = $(this).closest('.tabulatr_table').attr('id');
+    var $table = $(this).closest('.tabulatr_table');
+    var tableId = $table.attr('id');
+    var $markAllCheckbox = $table.find('.tabulatr_mark_all');
     var table_obj = undefined;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
@@ -401,19 +403,19 @@ $(document).on('ready page:load', function(){
     }
     if($(this).is(':checked')){
       if($('#'+ tableId +' tr[data-page]:visible input[type=checkbox]').not(':checked').length > 0){
-        $('.tabulatr_mark_all[data-table='+ tableId +']').prop("indeterminate", true);
+        $markAllCheckbox.prop("indeterminate", true);
       }else{
-        $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
-        $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', true);
+        $markAllCheckbox.prop('indeterminate', false);
+        $markAllCheckbox.prop('checked', true);
       }
       $('#'+ tableId +' .tabulatr-wrench').removeClass('disabled');
     }else{
       if($('#'+ tableId +' tr[data-page]:visible input[type=checkbox]:checked').length > 0){
-        $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', true);
+        $markAllCheckbox.prop('indeterminate', true);
         $('#'+ tableId +' .tabulatr-wrench').removeClass('disabled');
       }else{
-        $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
-        $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
+        $markAllCheckbox.prop('indeterminate', false);
+        $markAllCheckbox.prop('checked', false);
         if(table_obj.checkIfCheckboxesAreMarked()){
           $('#'+ tableId +' .tabulatr-wrench').removeClass('disabled');
         }else{
