@@ -23,7 +23,7 @@
 
 module Tabulatr::Data::Pagination
 
-  def apply_pagination(offset: 0, pagesize: nil, pages: nil, page: 1, count: nil)
+  def apply_pagination(offset: 0, pagesize: nil)
     @relation = @relation.limit(pagesize).offset(offset)
   end
 

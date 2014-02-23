@@ -56,7 +56,7 @@ class Tabulatr::Data
     join_required_tables(params)
 
     pagination = compute_pagination(params[:page], params[:pagesize])
-    apply_pagination(pagination)
+    apply_pagination(pagination.slice(:offset, :pagesize))
 
     # TODO: batch actions and checked ids
 
