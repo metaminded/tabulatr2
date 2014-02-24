@@ -119,7 +119,8 @@ Tabulatr.prototype = {
     $.ajax({
       context: this,
       type: 'GET',
-      url: $('table#'+ this.id).data('path') + '.json',
+      url: $('table#'+ this.id).data('path'),
+      contentType: 'application/json',
       data: this.createParameterString(hash, this.id),
       success: this.handleResponse,
       complete: this.hideLoadingSpinner
