@@ -38,6 +38,7 @@ module Tabulatr::Data::Formatting
         end
       end # @assocs each
       h[:_row_config] = format_row(view, @row)
+      h[:id] = record.id
       h
     end # @relation map
   end # apply_formats
