@@ -20,22 +20,23 @@
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-table.table.tabulatr_table id=table_id data-path=table_options[:path] data-pagesize=table_options[:pagesize]
-  thead
-    tr
-     - columns.each do |column|
-       - classes = column.sortable ? ['tabulatr-sortable'] : []
-       - classes = [classes, column.classes].flatten.compact.join(' ')
-       th data-tabulatr-column-name=column.full_name style=column.header_style class=classes
-         = column.human_name
-  tbody
-  tfoot
-    tr.empty_row
-      - columns.each do |column|
-        - classes = column.sortable ? ['tabulatr-sortable'] : []
-        - classes = [classes, column.classes].flatten.compact.join(' ')
-        td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.cell_style class=classes
-.tabulatr-spinner-box data-table=table_id
-  = image_tag "#{Tabulatr.spinner}-loader.gif"
+.table-responsive
+  table class=table_options[:html_class] id=table_id data-path=table_options[:path] data-pagesize=table_options[:pagesize]
+    thead
+      tr
+       - columns.each do |column|
+         - classes = column.sortable ? ['tabulatr-sortable'] : []
+         - classes = [classes, column.classes].flatten.compact.join(' ')
+         th data-tabulatr-column-name=column.full_name style=column.header_style class=classes
+           = column.human_name
+    tbody
+    tfoot
+      tr.empty_row
+        - columns.each do |column|
+          - classes = column.sortable ? ['tabulatr-sortable'] : []
+          - classes = [classes, column.classes].flatten.compact.join(' ')
+          td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.cell_style class=classes
+  .tabulatr-spinner-box data-table=table_id
+    = image_tag "#{Tabulatr.spinner}-loader.gif"
 span.pagination_trigger data-table="#{table_id}"
 

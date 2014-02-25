@@ -66,18 +66,7 @@ i.tabulatr_remove_filter:hover{
   margin-left: 10px;
 }
 
-.pagination{
-  margin: 20px;
-  vertical-align: middle;
-}
 
-.pagination_trigger{
-  width: 1px;
-  height: 1px;
-  position: relative;
-  float: left;
-  opacity: 1;
-}
 
 div[data-filter-column-name] {
   display:none;
@@ -133,6 +122,20 @@ table.tabulatr_table {
   .tabulatr-paginator-wrapper {
     display: inline-block;
     padding: 0;
+    text-align: center;
+
+    .pagination{
+      margin: 10px 0;
+      vertical-align: middle;
+    }
+
+    .pagination_trigger{
+      width: 1px;
+      height: 1px;
+      position: relative;
+      float: left;
+      opacity: 1;
+    }
   }
 
   .tabulatr-info-string-wrapper {
@@ -153,6 +156,10 @@ table.tabulatr_table {
       z-index: 2;
     }
   }
+}
+
+.tabulatr-table-controls-wrapper.row{
+  margin: 0;
 }
 
 .tabulatr-spinner-box{

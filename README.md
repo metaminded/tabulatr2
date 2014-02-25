@@ -75,7 +75,7 @@ this particular column. If instead you want to disable sorting and filtering at 
 
 ```ruby
 class UserTabulatrData < Tabulatr::Data
-  column :full_name, table_column_options: {sortable: false, filter: false} 
+  column :full_name, table_column_options: {sortable: false, filter: false}
 end
 ```
 
@@ -101,7 +101,7 @@ boolean                         | Select field, options are 'Yes', 'No' and 'Bot
 
 ### Associations
 
-To display associations you would use the `association` method with the association name and the attribute on the 
+To display associations you would use the `association` method with the association name and the attribute on the
 association as it's first two arguments:
 
 ```ruby
@@ -117,7 +117,7 @@ class UserTabulatrData < Tabulatr::Data
   association :citizenship, :name do
     record.citizenship.name.upcase
   end
-  
+
   association :posts, :text, table_column_options: {filter: false, sortable: false} do |user|
     user.posts.count
   end
@@ -144,7 +144,7 @@ class UserTabulatrData < Tabulatr::Data
   search do |query|
    "users.first_name LIKE '#{query}' OR users.last_name LIKE '#{query}' OR users.address LIKE '#{query}'"
   end
-  
+
   # This call could also be written as:
   # search :first_name, :last_name, :address
 end
@@ -290,7 +290,8 @@ They change the appearance and behaviour of the table.
   batch_actions: false,  # :name => value hash of batch action stuff
   footer_content: false, # if given, add a <%= content_for <footer_content> %> before the </table>
   path: '#',             # where to send the AJAX-requests to
-  order_by: nil          # default order
+  order_by: nil          # default order,
+  html_class: ''         # html classes for the table element
 ```
 
 #### Example:

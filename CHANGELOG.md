@@ -1,6 +1,7 @@
 ## 0.9.5
 
  * Add 'mark all' checkbox in header row again
+ * Added `html_class` option to `table_for`
 
 ## 0.9.4
 
