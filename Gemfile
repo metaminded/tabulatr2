@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'jquery-rails'
-gem 'slim'
 
 group :development do
   gem 'better_errors'
