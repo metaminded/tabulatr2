@@ -28,32 +28,18 @@ module Tabulatr::Data::Formatting
     return @relation.map do |record|
       view.record = record
       h = HashWithIndifferentAccess.new
-      @columns.each do |name, opts|
-        h[name] = format_column(record, name, opts, view)
-      end # @columns each
-      @assocs.each do |table_name, columns|
-        h[table_name] ||= {}
-        columns.each do |name, opts|
-          h[table_name][name] = format_association(record, table_name, name, opts, view)
-        end
-      end # @assocs each
+      table_columns.each do |tc|
+        h[tc.table_name] ||= HashWithIndifferentAccess.new
+        h[tc.table_name][tc.name] = format_column(record, tc.output, view)
+      end
       h[:_row_config] = format_row(view, @row)
       h[:id] = record.id
       h
     end # @relation map
   end # apply_formats
 
-  def format_column(record, name, opts, view)
-    if opts[:output]
-      view.instance_exec(record, &opts[:output])
-    else
-      opts[:table_column].value_for(record, view)
-    end
-  end
-
-  def format_association(record, table_name, name, opts, view)
-    return view.instance_exec(record, &opts[:output]) if opts[:output]
-    opts[:table_column].value_for(record, view)
+  def format_column(record, output, view)
+      view.instance_exec(record, &output)
   end
 
   def format_row(view, row)

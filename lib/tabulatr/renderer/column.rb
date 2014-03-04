@@ -26,7 +26,8 @@ class Tabulatr::Renderer::Column
 
   attr_accessor *%i{name header width align valign wrap type th_html filter_html
     filter filter_width range_filter_symbol
-    sortable table_name block klass format map classes cell_style header_style}
+    sortable table_name block klass format map classes cell_style header_style
+    sort_sql filter_sql output}
 
   def self.from(
     name: nil,
@@ -46,6 +47,9 @@ class Tabulatr::Renderer::Column
     klass: nil,
     cell_style: {},
     header_style: {},
+    sort_sql: nil,
+    filter_sql: nil,
+    output: nil,
     &block)
     b = block_given? ? block : nil
     self.new(
@@ -66,8 +70,39 @@ class Tabulatr::Renderer::Column
       klass: klass,
       block: b,
       cell_style: cell_style,
-      header_style: header_style
+      header_style: header_style,
+      sort_sql: sort_sql,
+      filter_sql: filter_sql,
+      output: output
     ).apply_styles!
+  end
+
+  def update_options(hash = {}, &block)
+    self.header = hash[:header] || self.header
+    self.classes = hash[:classes] || self.classes
+    self.width = hash[:width] || self.width
+    self.align = hash[:align] || self.align
+    self.valign = hash[:valign] || self.valign
+    self.wrap = hash[:wrap] || self.wrap
+    self.th_html = hash[:th_html] || self.th_html
+    self.filter_html = hash[:filter_html] || self.filter_html
+    self.filter = hash[:filter] || self.filter
+    self.sortable = hash[:sortable] || self.sortable
+    self.format = hash[:format] || self.format
+    self.map = hash[:map] || self.map
+    self.th_html = hash[:th_html] || self.th_html
+    self.output = block if block_given?
+    self.filter_sql = hash[:filter_sql] || self.filter_sql
+    self.sort_sql = hash[:sort_sql] || self.sort_sql
+    if self.cell_style == ''
+      self.cell_style = {}
+    end
+    self.cell_style = hash[:cell_style] || self.cell_style
+    if self.header_style == ''
+      self.header_style = {}
+    end
+    self.header_style = hash[:header_style] || self.header_style
+    self.apply_styles!
   end
 
   def klassname() @_klassname ||= @klass.name.underscore end

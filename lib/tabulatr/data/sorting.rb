@@ -25,22 +25,29 @@ module Tabulatr::Data::Sorting
 
   def apply_sorting(sortparam, default_order=nil)
     if sortparam.present?
-      sort_by, orientation = sortparam.split(' ')
-      klass = sort_by.split('.').first
-      col_name = sort_by.split('.').last
-      assoc_name = nil
-      if klass == @cname
-        table_name = @base.table_name
+      clname, orientation = sortparam.split(' ')
+      splitted = clname.split(':')
+      if splitted.count == 2
+        assoc_name = splitted[0].to_sym
+        name = splitted[1].to_sym
+        column = table_columns.find{|c| c.table_name == assoc_name && c.name == name}
       else
-        assoc_name = @base.reflect_on_association(klass.to_sym).try(:name)
-        table_name = @base.reflect_on_association(klass.to_sym).try(:table_name)
+        name = splitted[0].to_sym
+        column = table_columns.find{|c| c.name == name}
       end
-      nn = build_column_name(col_name, table_name: table_name, assoc_name: assoc_name, use_for: :sort)
-      raise "Invalid sorting orientation" unless ['asc', 'desc'].member?(orientation.downcase)
-      @relation = @relation.order("#{nn} #{orientation}")
+      sort_by(column, orientation)
     else
       @relation = @relation.order(default_order || "#{@table_name}.#{@base.primary_key} desc")
     end
+  end
+
+  def sort_by(column, orientation)
+      sort_sql = column.sort_sql
+      if sort_sql.respond_to? :call
+        @relation = sort_sql.call(@relation, orientation, "#{@table_name}.#{@base.primary_key}", @base)
+      else
+        @relation = @relation.order("#{sort_sql} #{orientation}")
+      end
   end
 
 end

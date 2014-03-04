@@ -23,6 +23,8 @@
 
 class Tabulatr::Renderer
 
+  cattr_accessor :main_klass
+
   def initialize(klass, view,
       filter: true,          # false for no filter row at all
       search: true,          # show fuzzy search field
@@ -52,9 +54,10 @@ class Tabulatr::Renderer
   end
 
   def build_table(columns, &block)
+    self.main_klass = @klass
     tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
     if block_given?
-      @columns = ColumnsFromBlock.process @klass, &block
+      @columns = ColumnsFromBlock.process @klass, tdc, &block
     elsif columns.any?
       @columns = get_requested_columns(tdc.table_columns, columns)
     else
@@ -105,9 +108,14 @@ class Tabulatr::Renderer
   private
 
   def get_requested_columns(available_columns, requested_columns)
+    main_table_name = self.class.main_klass.table_name.try(:to_sym)
     requested_columns.collect do |r|
-      r = "#{r.keys.first}:#{r.values.first}" if r.is_a?(Hash) && r.count == 1
-      available_columns.select{|column| column.full_name.to_sym == r.to_sym }
+      if r.is_a?(Hash) && r.count == 1
+        r = "#{r.keys.first}:#{r.values.first}"
+      end
+      result = available_columns.find{|column| column.full_name.to_sym == r.to_sym }
+      result = available_columns.find{|column| column.name.to_sym == r.to_sym && column.table_name == main_table_name} if result.nil?
+      result
     end.flatten
   end
 
@@ -118,4 +126,3 @@ require_relative './association'
 require_relative './action'
 require_relative './checkbox'
 require_relative './columns_from_block'
-

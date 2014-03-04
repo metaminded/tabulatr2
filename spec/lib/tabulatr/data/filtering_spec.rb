@@ -21,40 +21,46 @@ describe Tabulatr::Data::Filtering do
   end
   describe '.apply_date_condition' do
     it "filters for 'today'" do
-      @dummy.apply_date_condition('publish_at', {simple: 'today'})
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {simple: 'today'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.count).to be 1
       expect(result[0].id).to be @today.id
     end
 
     it "filters for 'yesterday'" do
-      @dummy.apply_date_condition('publish_at', {simple: 'yesterday'})
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {simple: 'yesterday'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.count).to be 1
       expect(result[0].id).to be @yesterday.id
     end
 
     it "filters for 'this week'" do
-      @dummy.apply_date_condition('publish_at', {simple: 'this_week'})
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {simple: 'this_week'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.count).to be 4
       expect(result.map(&:id).sort).to eq [@yesterday.id, @today.id, @week_one.id, @week_two.id].sort
     end
 
     it "filters for 'last 7 days'" do
-      @dummy.apply_date_condition('publish_at', {simple: 'last_7_days'})
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {simple: 'last_7_days'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id).sort).to eq ([@last_seven_days.id, @yesterday.id, @today.id, @week_one.id].sort)
     end
 
     it "filters for 'this month'" do
-      @dummy.apply_date_condition('publish_at', {simple: 'this_month'})
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {simple: 'this_month'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id).sort).to eq ([@today.id, @week_two.id, @this_month.id])
     end
 
     it "filters for 'last 30 days'" do
-      @dummy.apply_date_condition('publish_at', {simple: 'last_30_days'})
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {simple: 'last_30_days'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id).sort).to eq ([
         @last_thirty_days.id, @yesterday.id, @last_seven_days.id, @today.id,
@@ -62,7 +68,8 @@ describe Tabulatr::Data::Filtering do
     end
 
     it "filters from 'start_date' to 'end_date'" do
-      @dummy.apply_date_condition('publish_at', {
+      fake_obj = double(filter_sql: 'publish_at')
+      @dummy.apply_date_condition(fake_obj, {
         simple: 'from_to', from: '31.12.2013 15:00',
         to: '15.01.2014 00:00'})
       result = @dummy.instance_variable_get('@relation')

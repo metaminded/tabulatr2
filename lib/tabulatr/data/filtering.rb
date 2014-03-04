@@ -29,8 +29,9 @@ module Tabulatr::Data::Filtering
     if @search.is_a? Array
       query = query.strip.gsub(/['*%\s]+/, '%')
       a = @search.map do |name|
-        nn = build_column_name name, use_for: :filter
-        "(#{nn} #{like} '%#{query}%')"
+        column = table_columns.find{|c| c.name == name}
+        # nn = build_column_name name, use_for: :filter
+        "(#{column.filter_sql} #{like} '%#{query}%')"
       end
       a = a.join(' OR ')
       @relation = @relation.where(a)
@@ -46,8 +47,10 @@ module Tabulatr::Data::Filtering
     filter_params.each do |filter|
       name, value = filter
       next unless value.present?
-      nn = build_column_name name, use_for: :filter
-      apply_condition(nn, value)
+
+      table_name, method_name = name.split(':').map(&:to_sym)
+      column = table_columns.find{|c| c.table_name == table_name && c.name == method_name}
+      apply_condition(column, value)
     end
   end
 
@@ -56,16 +59,16 @@ module Tabulatr::Data::Filtering
       name, value = assoc_filter
       assoc, att = name.split(".").map(&:to_sym)
       table_name = table_name_for_association(assoc)
-      nn = build_column_name(att, table_name: table_name, assoc_name: assoc, use_for: :filter)
-      apply_condition(nn, value)
+      column = table_columns.find{|c| c.table_name = table_name && name == name}
+      apply_condition(column, value)
     end
   end
 
   def apply_condition(n,v)
     if ['true', 'false'].include?(v)
-      @relation = @relation.where(:"#{n}" => Tabulatr::Utility.string_to_boolean(v))
+      @relation = @relation.where(:"#{n.filter_sql}" => Tabulatr::Utility.string_to_boolean(v))
     elsif v.is_a?(String)
-      apply_string_condition("#{n} = ?", v)
+      apply_string_condition("#{n.filter_sql} = ?", v)
     elsif v.is_a?(Hash)
       apply_hash_condition(n, v)
     else
@@ -100,8 +103,8 @@ module Tabulatr::Data::Filtering
       since = Date.parse(cond[:from]) if cond[:from].present?
       to = Date.parse(cond[:to]) if cond[:to].present?
     end
-    @relation = @relation.where("#{n} >= ?", since) if since.present?
-    @relation = @relation.where("#{n} <= ?", to) if to.present?
+    @relation = @relation.where("#{n.filter_sql} >= ?", since) if since.present?
+    @relation = @relation.where("#{n.filter_sql} <= ?", to) if to.present?
   end
 
   def apply_string_condition(replacement_string, value)
@@ -110,10 +113,10 @@ module Tabulatr::Data::Filtering
 
   def apply_hash_condition(column_name, hash)
     like ||= Tabulatr::Utility.like_statement
-    apply_string_condition("#{column_name} #{like} ?", "%#{hash[:like]}%") if hash[:like].present?
+    apply_string_condition("#{column_name.filter_sql} #{like} ?", "%#{hash[:like]}%") if hash[:like].present?
     apply_date_condition(column_name, hash[:date])
-    apply_string_condition("#{column_name} >= ?", "#{hash[:from]}")
-    apply_string_condition("#{column_name} <= ?", "#{hash[:to]}")
+    apply_string_condition("#{column_name.filter_sql} >= ?", "#{hash[:from]}")
+    apply_string_condition("#{column_name.filter_sql} <= ?", "#{hash[:to]}")
   end
 
 end

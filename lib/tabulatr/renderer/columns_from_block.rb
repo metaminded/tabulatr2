@@ -23,19 +23,29 @@
 
 class Tabulatr::Renderer
   class ColumnsFromBlock
-    attr_accessor :columns, :klass
+    attr_accessor :columns, :klass, :table_data
 
-    def initialize(klass)
+    def initialize(klass, table_data_object)
       @klass = klass
+      @table_data = table_data_object
       @columns ||= []
     end
 
     def column(name, opts={}, &block)
-      @columns << Column.from(opts.merge(klass: klass, name: name), &block)
+      table_name = Tabulatr::Renderer.main_klass.table_name.try(:to_sym)
+      if table_data
+        @columns << fetch_column_from_table_data(table_name, name, opts, &block)
+      else
+        @columns << Column.from(opts.merge(klass: klass, table_name: table_name, name: name), &block)
+      end
     end
 
     def association(table_name, name, opts={}, &block)
-      @columns << Association.from(opts.merge(klass: klass, name: name, table_name: table_name), &block)
+      if table_data
+        @columns << fetch_column_from_table_data(table_name, name, opts, &block)
+      else
+        @columns << Association.from(opts.merge(klass: klass, name: name, table_name: table_name), &block)
+      end
     end
 
     def checkbox(opts={})
@@ -46,11 +56,18 @@ class Tabulatr::Renderer
       @columns << Action.from(opts.merge(klass: klass, filter: false, sortable: false), &block)
     end
 
-    def self.process(klass, &block)
-      i = self.new(klass)
+    def self.process(klass, table_data_object = nil, &block)
+      i = self.new(klass, table_data_object)
       yield(i)
       c = i.columns
       c
+    end
+
+    private
+
+    def fetch_column_from_table_data table_name, name, opts={}, &block
+      column = table_data.table_columns.find{|tc| tc.table_name == table_name && tc.name == name}
+      column.update_options(opts, &block)
     end
   end
 end

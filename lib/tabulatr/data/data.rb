@@ -27,9 +27,7 @@ class Tabulatr::Data
     @relation   = relation
     @base       = relation.respond_to?(:klass) ? relation.klass : relation
     @table_name = @base.table_name
-    @assocs     = self.class.instance_variable_get('@assocs') || HashWithIndifferentAccess.new
-    @columns    = self.class.instance_variable_get('@columns') || HashWithIndifferentAccess.new
-    @search     = self.class.instance_variable_get('@search') || HashWithIndifferentAccess.new
+    @search     = self.class.instance_variable_get('@search')     || HashWithIndifferentAccess.new
     @includes   = Set.new()
     @cname      = @base.name.downcase
     @batch_actions = nil
@@ -119,6 +117,7 @@ class Tabulatr::Data
     tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
           s.split(':').first
         end.uniq.map(&:to_sym))
+    tt.delete(@table_name.to_sym)
     @includes = @includes + tt
     # @relation = @relation.includes(@includes.map(&:to_sym)).references(@includes.map(&:to_sym))
     @relation = @relation.eager_load(@includes.map(&:to_sym))
@@ -132,7 +131,6 @@ class Tabulatr::Data
 
 end
 
-require_relative './column_name_builder'
 require_relative './dsl'
 require_relative './filtering'
 require_relative './invoker'

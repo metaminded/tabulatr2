@@ -136,21 +136,21 @@ describe "Tabulatr" do
       expect(find('.dropdown-menu').visible?)
       find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
       within(".tabulatr_filter_form") do
-        fill_in("product_filter[title][like]", with: "ore")
+        fill_in("product_filter[products:title][like]", with: "ore")
         expect{find('#title_like').visible?}.to be_true
         find_button("Apply").trigger('click')
       end
-      expect(page).to have_selector('td[data-tabulatr-column-name="title"]', text: 'lorem')
-      expect(page).to have_selector('td[data-tabulatr-column-name="title"]', text: 'labore')
-      expect(page).to have_selector('td[data-tabulatr-column-name="title"]', text: 'dolore')
+      expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
+      expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
+      expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'dolore')
 
       within(".tabulatr_filter_form") do
-        fill_in("product_filter[title][like]", :with => "loreem")
+        fill_in("product_filter[products:title][like]", :with => "loreem")
         find_button("Apply").trigger('click')
       end
-      expect(page).not_to have_selector('td[data-tabulatr-column-name="title"]', text: 'lorem')
-      expect(page).not_to have_selector('td[data-tabulatr-column-name="title"]', text: 'labore')
-      expect(page).not_to have_selector('td[data-tabulatr-column-name="title"]', text: 'dolore')
+      expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
+      expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
+      expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'dolore')
     end
 
     it "filters", js: true do
@@ -178,15 +178,15 @@ describe "Tabulatr" do
       end
       find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
       within('.tabulatr_filter_form') do
-        fill_in("product_filter[price][from]", :with => 4)
-        fill_in("product_filter[price][to]", :with => 10)
+        fill_in("product_filter[products:price][from]", :with => 4)
+        fill_in("product_filter[products:price][to]", :with => 10)
         find_button("Apply").trigger('click')
       end
       page.find(".tabulatr_table tbody tr[data-id='#{Product.first.id}']").should have_content('foo')
       page.has_no_css?(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
       within('.tabulatr_filter_form') do
-        fill_in("product_filter[price][from]", :with => 12)
-        fill_in("product_filter[price][to]", :with => 19)
+        fill_in("product_filter[products:price][from]", :with => 12)
+        fill_in("product_filter[products:price][to]", :with => 19)
         find_button("Apply").trigger('click')
       end
       page.should have_selector(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
@@ -203,19 +203,19 @@ describe "Tabulatr" do
       expect(find('.dropdown-menu').visible?)
       find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
       within(".tabulatr_filter_form") do
-        fill_in("product_filter[title][like]", with: "foo")
-        expect(find('#title_like').visible?)
+        fill_in("product_filter[products:title][like]", with: "foo")
+        # expect(find('#products--title_like').visible?)
         find_button("Apply").trigger('click')
       end
       # expect(page).to have_content('foo')
       # expect(page).to have_no_content('bar')
-      expect(page).not_to have_selector('td[data-tabulatr-column-name="title"]', text: 'bar')
-      expect(page).to have_selector('td[data-tabulatr-column-name="title"]', text: 'foo')
-      find("a[data-hide-table-filter='title']").trigger('click')
+      expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'bar')
+      expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'foo')
+      find("a[data-hide-table-filter='products:title']").trigger('click')
       # expect(page).to have_content('foo')
       # expect(page).to have_content('bar')
-      expect(page).to have_selector('td[data-tabulatr-column-name="title"]', text: 'bar')
-      expect(page).to have_selector('td[data-tabulatr-column-name="title"]', text: 'foo')
+      expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'bar')
+      expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'foo')
     end
   end
 
@@ -231,14 +231,14 @@ describe "Tabulatr" do
         page.should have_content names[l-i]
       end
       within('.tabulatr_table thead') do
-        find('th[data-tabulatr-column-name=title]').click
+        find('th[data-tabulatr-column-name="products:title"]').click
       end
       snames = names.sort
       (1..10).each do |i|
         page.should have_content snames[i-1]
       end
       within('.tabulatr_table thead') do
-        find('th[data-tabulatr-column-name=title]').click
+        find('th[data-tabulatr-column-name="products:title"]').click
       end
       (1..10).each do |i|
         page.should have_content snames[-i]
@@ -303,10 +303,10 @@ describe "Tabulatr" do
     it 'applys the given style' do
       p = Product.create!(:title => names[0], :active => true, :price => 10.0)
       visit with_styling_products_path
-      cell   = find(".tabulatr_table tbody td[data-tabulatr-column-name='title']")
-      header = find(".tabulatr_table thead th[data-tabulatr-column-name='title']")
-      cell_without_style   = find(".tabulatr_table tbody td[data-tabulatr-column-name='price']")
-      header_without_style = find(".tabulatr_table thead th[data-tabulatr-column-name='price']")
+      cell   = find(".tabulatr_table tbody td[data-tabulatr-column-name='products:title']")
+      header = find(".tabulatr_table thead th[data-tabulatr-column-name='products:title']")
+      cell_without_style   = find(".tabulatr_table tbody td[data-tabulatr-column-name='products:price']")
+      header_without_style = find(".tabulatr_table thead th[data-tabulatr-column-name='products:price']")
       expect(cell[:style]).to eql 'text-align:left;width:60px;vertical-align:top;white-space:nowrap;background-color:green'
       expect(header[:style]).to eql 'text-align:left;width:60px;vertical-align:top;white-space:nowrap;color:orange'
       expect(cell_without_style[:style]).to be_empty

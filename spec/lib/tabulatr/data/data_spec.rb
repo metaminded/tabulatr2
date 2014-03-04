@@ -3,8 +3,15 @@ require 'spec_helper'
 describe Tabulatr::Data do
 
   before do
-    Tabulatr::Data.any_instance.stub_chain(:table_columns, :klass=).and_return(Product)
-    Tabulatr::Data.any_instance.stub_chain(:table_columns, :map).as_null_object
+    column = Tabulatr::Renderer::Column.from(
+        name: :title,
+        klass: Product,
+        table_name: :products,
+        sort_sql: "products.title",
+        filter_sql: "products.title",
+        output: ->(record){record.send(:title)}
+    )
+    Tabulatr::Data.any_instance.stub(:table_columns).and_return([column])
   end
 
   it 'prefilters the result' do
@@ -17,24 +24,13 @@ describe Tabulatr::Data do
   it 'uses default order' do
     Product.create([{title: 'foo', price: 5}, {title: 'bar', price: 10}, {title: 'fuzz', price: 7}])
 
-    cols = {
-      title: {
-        name: 'title',
-        sort_sql: nil,
-        filter_sql: nil,
-        output: nil,
-        table_column: Tabulatr::Renderer::Column.from(name: 'title', klass: Product)
-      }
-    }
-    Tabulatr::Data.instance_variable_set('@columns', cols)
     td = Tabulatr::Data.new(Product)
-    # mod_params = example_params.merge(product_sort: 'products.title DESC')
-    # raise mod_params.inspect
-    records = td.data_for_table(HashWithIndifferentAccess.new(example_params.merge(product_sort: 'products.title DESC')))
+    records = td.data_for_table(HashWithIndifferentAccess.new(example_params.merge(product_sort: 'title DESC')))
     expect(records.count).to eql 3
     titles = ['fuzz', 'foo', 'bar']
+    # raise records.inspect
     records.each_with_index do |r, ix|
-      expect(r[:title]).to eql titles[ix]
+      expect(r[:products][:title]).to eql titles[ix]
     end
   end
 end

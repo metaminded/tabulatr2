@@ -24,34 +24,26 @@
 module Tabulatr::Data::DSL
 
   def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
-    @columns ||= HashWithIndifferentAccess.new
-    table_column = Tabulatr::Renderer::Column.from(table_column_options.merge(name: name, klass: @base))
     @table_columns ||= []
+    table_name = Tabulatr::Renderer.main_klass.table_name
+    table_column = Tabulatr::Renderer::Column.from(
+      table_column_options.merge(name: name,
+        klass: @base, sort_sql: sort_sql || sql || "#{table_name}.#{name}",
+        filter_sql: filter_sql || sql || "#{table_name}.#{name}",
+        table_name: table_name.to_sym,
+        output: block_given? ? block : ->(record){record.send(name)}))
     @table_columns << table_column
-
-    @columns[name.to_sym] = {
-      name: name,
-      sort_sql: sort_sql || sql,
-      filter_sql: filter_sql || sql,
-      output: block,
-      table_column: table_column
-    }
   end
 
   def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
-    @assocs ||= HashWithIndifferentAccess.new
-    @assocs[assoc.to_sym] ||= {}
     @table_columns ||= []
-    table_column = Tabulatr::Renderer::Association.from(table_column_options.merge(name: name, table_name: assoc, klass: @base))
+    t_name = Tabulatr::Renderer.main_klass.reflect_on_association(assoc.to_sym).try(:table_name)
+    table_column = Tabulatr::Renderer::Association.from(
+      table_column_options.merge(name: name, table_name: assoc, klass: @base,
+        sort_sql: sort_sql || sql || "#{t_name}.#{name}",
+        filter_sql: filter_sql || sql || "#{t_name}.#{name}",
+        output: block_given? ? block : ->(record){record.send(assoc).try(name)}))
     @table_columns << table_column
-
-    @assocs[assoc.to_sym][name.to_sym] = {
-      name: name,
-      sort_sql: sort_sql || sql,
-      filter_sql: filter_sql || sql,
-      output: block,
-      table_column: table_column
-    }
   end
 
   def search(*args, &block)
