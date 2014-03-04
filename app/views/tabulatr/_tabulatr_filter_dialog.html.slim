@@ -78,7 +78,7 @@ form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote=
               input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{formatted_name}_#{name}_filter_to" name="#{iname}[date][to]"
           - else
             .col-sm-11
-              input.tabulatr_filter.form-control type="text" id="#{name}_like" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
+              input.tabulatr_filter.form-control type="text" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
           .col-sm-1
             = link_to "✕", '#', 'data-hide-table-filter' => name, class: 'form-control btn btn-danger btn-mini'
 
