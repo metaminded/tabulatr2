@@ -173,8 +173,8 @@ Tabulatr.prototype = {
         tr.attr(data._row_config);
         tr.attr('data-page', response.meta.page);
         tr.attr('data-id', id);
-        tr.find('td').each(function(i,td_raw) {
-          var td = $(td_raw);
+        tr.find('td').each(function(index,element) {
+          var td = $(element);
           var coltype = td.data('tabulatr-type');
           var name = td.data('tabulatr-column-name');
           var cont = data[name];
@@ -182,7 +182,6 @@ Tabulatr.prototype = {
             cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
           }
           td.html(cont);
-
         });
         tbody.append(tr);
       }
@@ -194,6 +193,7 @@ Tabulatr.prototype = {
       response.meta.pagesize);
     $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
   },
+
 
   replacer: function(match, attribute, offset, string){
     return this.currentData[attribute];
@@ -256,8 +256,7 @@ Tabulatr.prototype = {
     $('.tabulatr-spinner-box[data-table='+ this.id +']').hide();
   }
 
-}
-
+};
 
 $(document).on('ready page:load', function(){
   tabulatr_tables = [];
@@ -268,7 +267,7 @@ $(document).on('ready page:load', function(){
     var dir = th.attr('data-sorted');
     var table = th.parents('table');
     var tableId = table.attr('id');
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -308,7 +307,7 @@ $(document).on('ready page:load', function(){
     params.tabulatr_checked = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
     $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -323,7 +322,7 @@ $(document).on('ready page:load', function(){
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview', cbfn);
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -335,7 +334,7 @@ $(document).on('ready page:load', function(){
 
   $('form.tabulatr_filter_form').submit(function(){
     var tableId = $(this).data('table');
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -361,7 +360,7 @@ $(document).on('ready page:load', function(){
     if($('.pagination[data-table='+ tableId +']').length === 0){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -373,7 +372,7 @@ $(document).on('ready page:load', function(){
 
   $('.tabulatr_mark_all').click(function(){
     var tableId = $(this).parents('table').prop('id');
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -396,7 +395,7 @@ $(document).on('ready page:load', function(){
     var $table = $(this).closest('.tabulatr_table');
     var tableId = $table.attr('id');
     var $markAllCheckbox = $table.find('.tabulatr_mark_all');
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -431,7 +430,7 @@ $(document).on('ready page:load', function(){
     $(this).closest('div').find('a').removeClass('active');
     $(this).addClass('active');
     var tableId = $(this).closest('div').data('table');
-    var table_obj = undefined;
+    var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         table_obj = tabulatr_tables[i];
@@ -456,7 +455,7 @@ $(document).on('ready page:load', function(){
           addClass('active');
       }
     }
-    var table_obj = undefined;
+    var table_obj;
     $('.tabulatr_table:not(".tabulatr_static_table")').each(function(ix, el){
       var tableId = $(el).attr('id');
       tabulatr_tables.push(new Tabulatr(tableId));
@@ -479,7 +478,7 @@ $(document).on('click', '.pagination a', function(){
   var tableId = $(a).closest('.pagination').data('table');
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
-  var table_obj = undefined;
+  var table_obj;
   for(var i = 0; i < tabulatr_tables.length; i++){
     if(tabulatr_tables[i].id == tableId){
       table_obj = tabulatr_tables[i];
@@ -513,7 +512,7 @@ $(document).on('click', 'a[data-hide-table-filter]', function(){
     $('div[data-filter-column-name="_submit"]').hide('blind');
 
   var tableId = $(this).parents('form').data('table');
-  var table_obj = undefined;
+  var table_obj;
   for(var i = 0; i < tabulatr_tables.length; i++){
     if(tabulatr_tables[i].id == tableId){
       table_obj = tabulatr_tables[i];
@@ -544,7 +543,7 @@ var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
       // bottom part of element is visible
     } else {
       var tableId = $(event.currentTarget).data('table');
-      var table_obj = undefined;
+      var table_obj;
       for(var i = 0; i < tabulatr_tables.length; i++){
         if(tabulatr_tables[i].id == tableId){
           table_obj = tabulatr_tables[i];
