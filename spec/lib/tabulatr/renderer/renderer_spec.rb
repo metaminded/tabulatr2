@@ -18,6 +18,7 @@ describe Tabulatr::Renderer do
       klass = Product
       view = double(render: nil)
       fake_block = Proc.new { }
+      Tabulatr::Renderer.main_klass = nil
       renderer = Tabulatr::Renderer.new(klass, view)
       expect{renderer.build_static_table([], &fake_block)}.to(
         change{Tabulatr::Renderer.main_klass}.from(nil).to(Product)
