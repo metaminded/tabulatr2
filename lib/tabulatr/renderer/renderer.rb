@@ -76,6 +76,7 @@ class Tabulatr::Renderer
   end
 
   def build_static_table(records, &block)
+    self.main_klass = @klass
     @columns = ColumnsFromBlock.process @klass, &block
 
     @view.render(partial: '/tabulatr/tabulatr_static_table', locals: {
