@@ -34,8 +34,9 @@
     .tabulatr-fuzzy-search-field-wrapper.col-xs-6.col-sm-2 data-table-id=table_id
       = render '/tabulatr/tabulatr_fuzzy_search_field', opts
 
-  .tabulatr-paginator-wrapper.col-xs-12.col-sm-8 data-table-id=table_id
-    = render '/tabulatr/tabulatr_paginator', opts
+  - if table_options[:pagination_position].in?([:top, :both])
+    .tabulatr-paginator-wrapper.col-xs-12.col-sm-8 data-table-id=table_id
+      = render '/tabulatr/tabulatr_paginator', opts
 
 
 .tabulatr-filter-dialog-wrapper data-table-id=table_id
@@ -45,3 +46,6 @@
   = render '/tabulatr/tabulatr_info_string', opts
 
 = render '/tabulatr/tabulatr_actual_table', opts
+- if table_options[:pagination_position].in?([:bottom, :both])
+  .tabulatr-paginator-wrapper.col-xs-12 data-table-id=table_id
+    = render '/tabulatr/tabulatr_paginator', opts

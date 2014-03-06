@@ -34,8 +34,9 @@ class Tabulatr::Renderer
       batch_actions: false,  # :name => value hash of batch action stuff
       footer_content: false, # if given, add a <%= content_for <footer_content> %> before the </table>
       path: '#',             # where to send the AJAX-requests to
-      order_by: nil,
-      html_class: '')         # default order
+      order_by: nil,         # default order
+      html_class: '',
+      pagination_position: :top)
     @klass = klass
     @view = view
     @table_options = {
@@ -48,7 +49,8 @@ class Tabulatr::Renderer
       footer_content: footer_content,
       path: path,
       order_by: order_by,
-      html_class: 'table tabulatr_table '.concat(html_class)
+      html_class: 'table tabulatr_table '.concat(html_class),
+      pagination_position: pagination_position
     }
     @classname = @klass.name.underscore
   end

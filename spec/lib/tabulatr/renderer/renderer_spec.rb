@@ -26,4 +26,10 @@ describe Tabulatr::Renderer do
     end
   end
 
+  describe '.initialize' do
+    it 'sets pagination_position to top if not set explicitely' do
+      renderer = Tabulatr::Renderer.new(Product, nil)
+      expect(renderer.instance_variable_get('@table_options')[:pagination_position]).to eq :top
+    end
+  end
 end

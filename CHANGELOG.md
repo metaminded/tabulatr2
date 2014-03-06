@@ -1,5 +1,6 @@
 ## 0.9.5
-
+ * Added `pagination_position` option to `table_for`.
+   Possible values are `:top`, `:bottom` and `:both`.
  * Add 'mark all' checkbox in header row again
  * Added `html_class` option to `table_for`
 
