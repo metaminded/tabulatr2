@@ -37,9 +37,11 @@ module Tabulatr::Data::DSL
 
   def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
     @table_columns ||= []
-    t_name = Tabulatr::Renderer.main_klass.reflect_on_association(assoc.to_sym).try(:table_name)
+    assoc_klass = Tabulatr::Renderer.main_klass.reflect_on_association(assoc.to_sym)
+    t_name = assoc_klass.try(:table_name)
     table_column = Tabulatr::Renderer::Association.from(
-      table_column_options.merge(name: name, table_name: assoc, klass: @base,
+      table_column_options.merge(name: name, table_name: assoc,
+        klass: assoc_klass.try(:klass),
         sort_sql: sort_sql || sql || "#{t_name}.#{name}",
         filter_sql: filter_sql || sql || "#{t_name}.#{name}",
         output: block_given? ? block : ->(record){record.send(assoc).try(name)}))

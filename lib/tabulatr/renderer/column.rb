@@ -141,7 +141,6 @@ class Tabulatr::Renderer::Column
       return r
     end
     val = principal_value(record) or return ''
-
     if format.present? && val.respond_to?(:to_ary)
       val.map do |v|
         case format

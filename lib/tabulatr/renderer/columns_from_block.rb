@@ -44,7 +44,9 @@ class Tabulatr::Renderer
       if table_data
         @columns << fetch_column_from_table_data(table_name, name, opts, &block)
       else
-        @columns << Association.from(opts.merge(klass: klass, name: name, table_name: table_name), &block)
+        assoc_klass = klass.reflect_on_association(table_name.to_sym)
+        @columns << Association.from(opts.merge(klass: assoc_klass.try(:klass),
+          name: name, table_name: table_name), &block)
       end
     end
 
