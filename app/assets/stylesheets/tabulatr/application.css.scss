@@ -103,6 +103,9 @@ table.tabulatr_table {
       text-align: center;
     }
   }
+  tr.empty_row{
+    display: none;
+  }
 }
 
 .tabulatr-table-controls-wrapper {
@@ -169,4 +172,3 @@ table.tabulatr_table {
   position: relative;
   text-align: center;
 }
-
