@@ -39,7 +39,7 @@ module Tabulatr::Data::Formatting
   end # apply_formats
 
   def format_column(record, output, view)
-      view.instance_exec(record, &output)
+      view.instance_exec(record, &output) if output.present?
   end
 
   def format_row(view, row)
