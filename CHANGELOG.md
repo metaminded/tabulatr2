@@ -1,4 +1,5 @@
 ## 0.9.5
+ * Better DOM scopes to enable working with multiple tables per page
  * Added `pagination_position` option to `table_for`.
    Possible values are `:top`, `:bottom` and `:both`.
  * Add 'mark all' checkbox in header row again

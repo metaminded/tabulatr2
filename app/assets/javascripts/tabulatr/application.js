@@ -164,7 +164,7 @@ Tabulatr.prototype = {
       for(var i = 0; i < response.data.length; i++){
         var data = response.data[i];
         var id = data.id;
-        var tr = $('tr.empty_row').clone();
+        var tr = $('#'+ tableId +' tr.empty_row').clone();
         tr.removeClass('empty_row');
         if(data._row_config.data){
           tr.data(data._row_config.data);
@@ -235,7 +235,7 @@ Tabulatr.prototype = {
       return $(n).data('tabulatr-column-name');
     }).filter(function(n){return n; }).join();
     hash.table_id = this.id;
-    hash[tableName + '_search'] = $('input#'+ tableName +'_fuzzy_search_query').val();
+    hash[tableName + '_search'] = $('input#'+ this.id +'_fuzzy_search_query').val();
     var form_array = $('.tabulatr_filter_form[data-table="'+ this.id +'"]')
       .find('input:visible,select:visible,input[type=hidden]').serializeArray();
     for(var i = 0; i < form_array.length; i++){
@@ -494,8 +494,10 @@ $(document).on('click', '.pagination a', function(){
 $(document).on('click', 'a[data-show-table-filter]', function(){
   var a = $(this);
   var name = a.data('show-table-filter');
-  $('div[data-filter-column-name="'+ name +'"]').show('blind');
-  $('div[data-filter-column-name="_submit"]').show('blind');
+  var tableId = a.parents('.tabulatr-filter-menu-wrapper').data('table-id');
+  var filterForm = $('.tabulatr_filter_form[data-table="'+ tableId +'"]');
+  filterForm.find($('div[data-filter-column-name="'+ name +'"]')).show('blind');
+  filterForm.find($('div[data-filter-column-name="_submit"]')).show('blind');
 
   a.hide();
   return false;
@@ -504,14 +506,16 @@ $(document).on('click', 'a[data-show-table-filter]', function(){
 $(document).on('click', 'a[data-hide-table-filter]', function(){
   var a = $(this);
   var nam = a.data('hide-table-filter');
-  var t = $('div[data-filter-column-name="'+nam+'"]');
+  var filterForm = a.parents('.tabulatr_filter_form');
+  var t = filterForm.find($('div[data-filter-column-name="'+nam+'"]'));
   t.hide('blind');
   t.find('input[type=text]').val("");
-  $('a[data-show-table-filter="'+nam+'"]').show();
-  if ($('div[data-filter-column-name]:visible').length <= 2)
-    $('div[data-filter-column-name="_submit"]').hide('blind');
+  var filterMenu = $('.tabulatr-filter-menu-wrapper[data-table-id="'+ filterForm.data('table') +'"]');
+  filterMenu.find($('a[data-show-table-filter="'+nam+'"]')).show();
+  if (filterForm.find($('div[data-filter-column-name]:visible')).length <= 2)
+    filterForm.find($('div[data-filter-column-name="_submit"]')).hide('blind');
 
-  var tableId = $(this).parents('form').data('table');
+  var tableId = filterForm.data('table');
   var table_obj;
   for(var i = 0; i < tabulatr_tables.length; i++){
     if(tabulatr_tables[i].id == tableId){
