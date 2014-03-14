@@ -23,9 +23,30 @@
 
 module Tabulatr::Data::DSL
 
+  def target_class(name)
+    s = name.to_s
+    @target_class = s.camelize.constantize rescue "There's no class `#{s.camelize}' for `#{self.name}'"
+    @target_class_name = s.underscore
+  end
+
+  def main_class
+    target_class_name # to get auto setting @target_class
+    @target_class
+  end
+
+  def target_class_name
+    return @target_class_name if @target_class_name.present?
+    if (s = /(\w+)TabulatrData\Z/.match(self.name))
+      # try whether it's a class
+      target_class s[1].underscore
+    else
+      raise "Don't know target_class which class `#{self.name}' should be."
+    end
+  end
+
   def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
     @table_columns ||= []
-    table_name = Tabulatr::Renderer.main_klass.table_name
+    table_name = main_class.table_name
     table_column = Tabulatr::Renderer::Column.from(
       table_column_options.merge(name: name,
         klass: @base, sort_sql: sort_sql || sql || "#{table_name}.#{name}",
@@ -37,7 +58,7 @@ module Tabulatr::Data::DSL
 
   def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
     @table_columns ||= []
-    assoc_klass = Tabulatr::Renderer.main_klass.reflect_on_association(assoc.to_sym)
+    assoc_klass = main_class.reflect_on_association(assoc.to_sym)
     t_name = assoc_klass.try(:table_name)
     table_column = Tabulatr::Renderer::Association.from(
       table_column_options.merge(name: name, table_name: assoc,

@@ -23,8 +23,6 @@
 
 class Tabulatr::Renderer
 
-  cattr_accessor :main_klass
-
   def initialize(klass, view,
       filter: true,          # false for no filter row at all
       search: true,          # show fuzzy search field
@@ -56,7 +54,6 @@ class Tabulatr::Renderer
   end
 
   def build_table(columns, &block)
-    self.main_klass = @klass
     tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
     if block_given?
       @columns = ColumnsFromBlock.process @klass, tdc, &block
@@ -78,7 +75,6 @@ class Tabulatr::Renderer
   end
 
   def build_static_table(records, &block)
-    self.main_klass = @klass
     @columns = ColumnsFromBlock.process @klass, &block
 
     @view.render(partial: '/tabulatr/tabulatr_static_table', locals: {
