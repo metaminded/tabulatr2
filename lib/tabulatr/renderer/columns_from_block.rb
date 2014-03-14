@@ -32,11 +32,10 @@ class Tabulatr::Renderer
     end
 
     def column(name, opts={}, &block)
-      table_name = Tabulatr::Renderer.main_klass.table_name.try(:to_sym)
       if table_data
-        @columns << fetch_column_from_table_data(table_name, name, opts, &block)
+        @columns << fetch_column_from_table_data(klass.table_name.to_sym, name, opts, &block)
       else
-        @columns << Column.from(opts.merge(klass: klass, table_name: table_name, name: name), &block)
+        @columns << Column.from(opts.merge(klass: klass, table_name: klass.table_name.to_sym, name: name), &block)
       end
     end
 

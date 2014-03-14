@@ -36,11 +36,11 @@ module Tabulatr::Data::DSL
 
   def target_class_name
     return @target_class_name if @target_class_name.present?
-    if (s = /(\w+)TabulatrData\Z/.match(self.name))
+    if (s = /(.+)TabulatrData\Z/.match(self.name))
       # try whether it's a class
       target_class s[1].underscore
     else
-      raise "Don't know target_class which class `#{self.name}' should be."
+      raise "Don't know which class should be target_class for `#{self.name}'."
     end
   end
 

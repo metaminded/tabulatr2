@@ -107,7 +107,7 @@ class Tabulatr::Renderer
   private
 
   def get_requested_columns(available_columns, requested_columns)
-    main_table_name = self.class.main_klass.table_name.try(:to_sym)
+    main_table_name = @klass.table_name.to_sym
     requested_columns.collect do |r|
       if r.is_a?(Hash) && r.count == 1
         r = "#{r.keys.first}:#{r.values.first}"
