@@ -23,10 +23,14 @@
 
 module Tabulatr::Data::Sorting
 
-  def apply_sorting(sortparam, default_order=nil)
+  def apply_sorting(sortparam)
     if sortparam.present?
       clname, orientation = sortparam.split(' ')
-      splitted = clname.split(':')
+      if clname[':']
+        splitted = clname.split(':')
+      else
+        splitted = clname.split('.')
+      end
       if splitted.count == 2
         assoc_name = splitted[0].to_sym
         name = splitted[1].to_sym
@@ -37,7 +41,7 @@ module Tabulatr::Data::Sorting
       end
       sort_by(column, orientation)
     else
-      @relation = @relation.order(default_order || "#{@table_name}.#{@base.primary_key} desc")
+      @relation = @relation.order("#{@table_name}.#{@base.primary_key} desc")
     end
   end
 

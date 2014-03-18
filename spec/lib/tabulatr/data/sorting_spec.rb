@@ -14,7 +14,8 @@ describe Tabulatr::Data::Sorting do
         name: :title,
         klass: Product,
         sort_sql: "products.title",
-        filter_sql: "products.title"
+        filter_sql: "products.title",
+        table_name: :products
     )
     allow(@dummy).to receive(:table_columns).and_return([column])
   end
@@ -22,14 +23,6 @@ describe Tabulatr::Data::Sorting do
   describe '.apply_sorting' do
 
     context 'no sortparam' do
-
-      context 'with default order given' do
-        it 'uses the given order' do
-          @dummy.apply_sorting(nil, 'products.title desc')
-          expect(@dummy.instance_variable_get('@relation').to_sql)
-            .to match /ORDER BY products.title desc/
-        end
-      end
 
       context 'with no default order given' do
         it 'sorts by primary_key descending' do
@@ -44,21 +37,11 @@ describe Tabulatr::Data::Sorting do
       context 'sort by column of main table' do
         context 'sort by "title"' do
           it 'uses the given sortparam' do
-            @dummy.apply_sorting('title desc', 'products.id desc')
+            @dummy.apply_sorting('products.title desc')
             expect(@dummy.instance_variable_get('@relation').to_sql)
               .to match /ORDER BY products.title desc/
           end
         end
-
-        # context 'sort by "products:title"' do
-        #   it 'uses the given sortparam' do
-        #     @dummy.instance_variable_set('@cname', 'Product')
-        #     @dummy.instance_variable_set('@columns', {title: {sort_sql: nil}})
-        #     @dummy.apply_sorting('products:title desc', 'products.id desc')
-        #     expect(@dummy.instance_variable_get('@relation').to_sql)
-        #       .to match /ORDER BY products.title desc/
-        #   end
-        # end
       end
 
       context 'sort by association column' do
