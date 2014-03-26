@@ -43,4 +43,8 @@ module Tabulatr::Utility
       false
     end
   end
+
+  def self.formatted_name class_name
+    "#{class_name.gsub(/::/, '--').downcase}"
+  end
 end

@@ -70,7 +70,7 @@ class Tabulatr::Renderer
       classname: @classname,
       tabulatr_data: tdc,
       table_id: generate_id,
-      formatted_name: formatted_name
+      formatted_name: Tabulatr::Utility.formatted_name(@klass.name)
     })
   end
 
@@ -87,11 +87,7 @@ class Tabulatr::Renderer
   end
 
   def generate_id
-    "#{formatted_name}_table_#{SecureRandom.uuid}"
-  end
-
-  def formatted_name
-    "#{@klass.to_s.gsub(/::/, '--').downcase}"
+    "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{SecureRandom.uuid}"
   end
 
   def self.build_static_table(records, view, toptions={}, &block)
