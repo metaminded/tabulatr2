@@ -41,7 +41,7 @@ module Tabulatr::Data::Sorting
       end
       sort_by(column, orientation)
     else
-      @relation = @relation.order("#{@table_name}.#{@base.primary_key} desc")
+      @relation = @relation.reorder("#{@table_name}.#{@base.primary_key} desc")
     end
   end
 
@@ -50,7 +50,7 @@ module Tabulatr::Data::Sorting
       if sort_sql.respond_to? :call
         @relation = sort_sql.call(@relation, orientation, "#{@table_name}.#{@base.primary_key}", @base)
       else
-        @relation = @relation.order("#{sort_sql} #{orientation}")
+        @relation = @relation.reorder("#{sort_sql} #{orientation}")
       end
   end
 
