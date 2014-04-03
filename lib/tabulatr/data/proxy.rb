@@ -27,6 +27,7 @@ class Data::Proxy < ActionView::Base
 
   def initialize(record=nil, locals: {})
     self.class._init
+    Rails.application.routes.mounted_helpers.instance_methods.each{|f| self.send(f).instance_variable_set('@scope', self)}
     @record = record
     locals.each do |nam, val|
       raise "cowardly refusing to override `#{nam}'" if respond_to? nam
@@ -40,6 +41,7 @@ class Data::Proxy < ActionView::Base
     include ActionView::Helpers
     include Rails.application.helpers
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
   end
 
 end
