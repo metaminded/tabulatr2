@@ -7,6 +7,7 @@
    ```ruby
    search do |query, relation|
     relation.joins(:vendor).where(["vendors.name = ?", query])
+   end
    ```
 
 ## 0.9.5
