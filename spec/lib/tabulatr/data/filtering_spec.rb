@@ -104,5 +104,10 @@ describe Tabulatr::Data::Filtering do
       sql =  @dummy.instance_variable_get('@relation').to_sql
       expect(sql).to match(/WHERE \(title = 'awesome product'\)/)
     end
+
+    it 'can not be called without a block variable' do
+      @dummy.instance_variable_set('@search', ->{'hi'})
+      expect{@dummy.apply_search('test')}.to raise_error
+    end
   end
 end

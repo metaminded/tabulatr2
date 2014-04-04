@@ -122,11 +122,12 @@ module Tabulatr::Data::Filtering
   private
 
   def execute_provided_search_block!(query)
-    search_result = nil
     if @search.arity == 1
       search_result = @search.(query)
     elsif @search.arity == 2
       search_result = @search.(query, @relation)
+    else
+      raise 'Search block needs either `query` or both `query` and `relation` block variables'
     end
     handle_search_result(search_result)
   end
