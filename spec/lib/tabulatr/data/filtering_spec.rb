@@ -76,4 +76,33 @@ describe Tabulatr::Data::Filtering do
       expect(result.map(&:id)).to eq ([@yesterday.id, @today.id, @week_two.id].sort)
     end
   end
+
+  describe '.apply_search' do
+    it 'allows to alter the ActiveRecord::Relation' do
+      @dummy.instance_variable_set('@search',
+        ->(query, relation){ relation.joins(:vendor).where(%{vendors.name LIKE '%#{query}%'})})
+      expect{@dummy.apply_search('awesome vendor')}.to_not raise_error
+      sql =  @dummy.instance_variable_get('@relation').to_sql
+      expect(sql).to match(/INNER JOIN \"vendors\" ON \"vendors\".\"id\" = \"products\".\"vendor_id\"/)
+    end
+
+    it 'allows to provide only one argument' do
+      @dummy.instance_variable_set('@search', ->(query){ nil })
+      expect{@dummy.apply_search('awesome product')}.to_not raise_error
+    end
+
+    it 'allows to return a Hash' do
+      @dummy.instance_variable_set('@search', ->(query){ {title: query} })
+      expect{@dummy.apply_search('awesome product')}.to_not raise_error
+      sql =  @dummy.instance_variable_get('@relation').to_sql
+      expect(sql).to match(/WHERE \"products\".\"title\"/)
+    end
+
+    it 'allows to return an Array' do
+      @dummy.instance_variable_set('@search', ->(query){["title = ?", query]})
+      expect{@dummy.apply_search('awesome product')}.to_not raise_error
+      sql =  @dummy.instance_variable_get('@relation').to_sql
+      expect(sql).to match(/WHERE \(title = 'awesome product'\)/)
+    end
+  end
 end

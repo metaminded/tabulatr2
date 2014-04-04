@@ -36,7 +36,7 @@ module Tabulatr::Data::Filtering
       a = a.join(' OR ')
       @relation = @relation.where(a)
     else # search is a proc
-      @relation = @relation.where(@search.(query))
+      execute_provided_search_block!(query)
     end
   end
 
@@ -117,6 +117,29 @@ module Tabulatr::Data::Filtering
     apply_date_condition(column_name, hash[:date])
     apply_string_condition("#{column_name.filter_sql} >= ?", "#{hash[:from]}")
     apply_string_condition("#{column_name.filter_sql} <= ?", "#{hash[:to]}")
+  end
+
+  private
+
+  def execute_provided_search_block!(query)
+    search_result = nil
+    if @search.arity == 1
+      search_result = @search.(query)
+    elsif @search.arity == 2
+      search_result = @search.(query, @relation)
+    end
+    handle_search_result(search_result)
+  end
+
+  def handle_search_result(search_result)
+    return if search_result.nil?
+    if search_result.is_a?(ActiveRecord::Relation)
+      @relation = search_result
+    elsif search_result.is_a?(String) || search_result.is_a?(Hash) || search_result.is_a?(Array)
+      @relation = @relation.where(search_result)
+    else
+      Tabulatr::UnexpectedSearchResultError.raise_error(search_result.class)
+    end
   end
 
 end

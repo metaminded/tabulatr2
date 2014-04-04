@@ -1,3 +1,14 @@
+## 0.9.6
+ * The DSL now accepts a search block with two block variables. The
+   second being the relation. The block needs to return an ActiveRecord::Relation,
+   a Hash, a String, nil or an Array.
+
+   Example:
+   ```ruby
+   search do |query, relation|
+    relation.joins(:vendor).where(["vendors.name = ?", query])
+   ```
+
 ## 0.9.5
  * Better DOM scopes to enable working with multiple tables per page
  * Added `pagination_position` option to `table_for`.
