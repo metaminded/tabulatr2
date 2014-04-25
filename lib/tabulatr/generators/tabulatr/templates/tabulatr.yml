@@ -5,7 +5,7 @@ en:
     batch_actions: 'Batch actions'
     count: 'Showing: %{current} of total %{total}. %{per_page} items per page.'
     apply_filters: 'Apply'
-    search: 'Search'
+    search: 'Search...'
     date_filter:
       none: ''
       today: "Today"
@@ -27,7 +27,7 @@ de:
     batch_actions: 'Batch-Aktionen'
     count: 'Zeige %{current} von insgesamt %{total}. %{per_page} pro Seite.'
     apply_filters: 'Anwenden'
-    search: 'Suche'
+    search: 'Suche...'
     date_filter:
       none: ''
       today: "Heute"
