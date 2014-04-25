@@ -53,8 +53,12 @@ class Tabulatr::Renderer
     @classname = @klass.name.underscore
   end
 
-  def build_table(columns, &block)
-    tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
+  def build_table(columns, tabulatr_data_class, &block)
+    if tabulatr_data_class.present?
+      tdc = tabulatr_data_class.constantize.new(@klass)
+    else
+      tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
+    end
     if block_given?
       @columns = ColumnsFromBlock.process @klass, tdc, &block
     elsif columns.any?
@@ -96,8 +100,8 @@ class Tabulatr::Renderer
     new(klass, view, toptions).build_static_table(records, &block)
   end
 
-  def self.build_table(klass, view, toptions={}, columns, &block)
-    new(klass, view, toptions).build_table(columns, &block)
+  def self.build_table(klass, view, toptions={}, columns, tabulatr_data_class, &block)
+    new(klass, view, toptions).build_table(columns, tabulatr_data_class, &block)
   end
 
   private
