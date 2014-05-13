@@ -512,6 +512,7 @@ $(document).on('click', 'a[data-hide-table-filter]', function(){
   var t = filterForm.find($('div[data-filter-column-name="'+nam+'"]'));
   t.hide('blind');
   t.find('input[type=text]').val("");
+  t.find('select').val('');
   var filterMenu = $('.tabulatr-filter-menu-wrapper[data-table-id="'+ filterForm.data('table') +'"]');
   filterMenu.find($('a[data-show-table-filter="'+nam+'"]')).show();
   if (filterForm.find($('div[data-filter-column-name]:visible')).length <= 2)
