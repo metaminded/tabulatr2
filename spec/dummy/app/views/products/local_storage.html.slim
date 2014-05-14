@@ -1,4 +1,4 @@
-<%= table_for Product, paginate: true, persistent: false,
+= table_for Product, :paginate => true, persistent: true, pagesize: 2,
   batch_actions: {a: "Hallo", b: "Du da!"},
   columns: [:title, :price, :active, :vendor_product_name, :updated_at,
-            {vendor: :name}, 'tags:title'] %>
+            {vendor: :name}, 'tags:title']

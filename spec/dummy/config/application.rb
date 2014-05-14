@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'font-awesome-rails'
 
 Bundler.require(*Rails.groups)
 

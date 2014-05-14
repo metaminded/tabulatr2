@@ -22,6 +22,10 @@
 #++
 
 class ActionController::Base
+  before_filter do
+    @_tabulatr_table_index = 0
+  end
+
   def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, locals: {}, &block)
     klass = relation.respond_to?(:klass) ? relation.klass : relation
     respond_to do |format|

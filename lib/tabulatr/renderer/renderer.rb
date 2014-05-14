@@ -34,7 +34,8 @@ class Tabulatr::Renderer
       path: '#',             # where to send the AJAX-requests to
       order_by: nil,         # default order
       html_class: '',
-      pagination_position: :top)
+      pagination_position: :top,
+      persistent: true)
     @klass = klass
     @view = view
     @table_options = {
@@ -48,7 +49,8 @@ class Tabulatr::Renderer
       path: path,
       order_by: order_by,
       html_class: 'table tabulatr_table '.concat(html_class),
-      pagination_position: pagination_position
+      pagination_position: pagination_position,
+      persistent: paginate ? persistent : false
     }
     @classname = @klass.name.underscore
   end
@@ -66,7 +68,6 @@ class Tabulatr::Renderer
     else
       @columns = tdc.table_columns
     end
-
     @view.render(partial: '/tabulatr/tabulatr_table', locals: {
       columns: @columns,
       table_options: @table_options,
@@ -91,7 +92,7 @@ class Tabulatr::Renderer
   end
 
   def generate_id
-    "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{SecureRandom.uuid}"
+    "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{@view.controller.controller_name}_#{@view.controller.action_name}_#{@view.instance_variable_get(:@_tabulatr_table_index)}"
   end
 
   def self.build_static_table(records, view, toptions={}, &block)

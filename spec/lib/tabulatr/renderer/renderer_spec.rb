@@ -2,21 +2,26 @@ require 'spec_helper'
 
 describe Tabulatr::Renderer do
 
-  describe "#generate_id" do
-
-    it "generates a 'unique' id for a table" do
-      klass = Product
-      renderer = Tabulatr::Renderer.new(klass, nil)
-      first_id = renderer.generate_id
-      second_id = renderer.generate_id
-      expect(first_id).to_not eq second_id
-    end
+  def double_view
+    view = double(controller: double(controller_name: 'products', action_name: 'index'))
+    view.instance_variable_set('@_tabulatr_table_index', 0)
+    view
   end
 
   describe '.initialize' do
     it 'sets pagination_position to top if not set explicitely' do
-      renderer = Tabulatr::Renderer.new(Product, nil)
+      renderer = Tabulatr::Renderer.new(Product, double_view)
       expect(renderer.instance_variable_get('@table_options')[:pagination_position]).to eq :top
+    end
+
+    it 'sets persistent to false if not set explicitely' do
+      renderer = Tabulatr::Renderer.new(Product, double_view)
+      expect(renderer.instance_variable_get('@table_options')[:persistent]).to eq false
+    end
+
+    it 'sets persistent to true if paginate is true' do
+      renderer = Tabulatr::Renderer.new(Product, double_view, paginate: true)
+      expect(renderer.instance_variable_get('@table_options')[:persistent]).to eq true
     end
   end
 end

@@ -100,7 +100,7 @@ describe "Tabulatr" do
           Product.create!(:title => "test #{i}")
         end
         visit one_item_per_page_with_pagination_products_path
-        page.all('.pagination li a').count.should eq 5
+        page.all('.pagination li a[data-page]').count.should eq 5
       end
 
       it 'shows some pages when there are 20', js: true do
@@ -108,7 +108,7 @@ describe "Tabulatr" do
           Product.create!
         end
         visit one_item_per_page_with_pagination_products_path
-        pages = page.all('.pagination li a').map{|a| a['data-page'].to_i}
+        pages = page.all('.pagination li a[data-page]').map{|a| a['data-page'].to_i}
         pages.should eq [1,2,3,10,20]
       end
     end

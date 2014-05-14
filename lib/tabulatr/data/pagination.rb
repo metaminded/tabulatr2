@@ -33,7 +33,6 @@ module Tabulatr::Data::Pagination
     pagesize, page = pagesize.to_i, page.to_i
 
     pages = (count/pagesize.to_f).ceil
-
     {
       offset: [0,((page-1)*pagesize).to_i].max,
       pagesize: pagesize,

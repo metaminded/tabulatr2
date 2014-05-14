@@ -1,4 +1,12 @@
 ## 0.9.6
+ * Adds localStorage persistency for tables. It's automatically turned on for paginated
+   tables and you can adjust the setting in your template.
+
+   Example:
+   ```
+   table_for Product, persistent: false
+   ```
+
  * Added `font-awesome-rails`
 
  * The DSL now accepts a search block with two block variables. The

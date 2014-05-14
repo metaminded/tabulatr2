@@ -49,4 +49,13 @@ class ProductsController < ApplicationController
   def implicit_columns
     tabulatr_for Product
   end
+
+  def local_storage
+    begin
+      tabulatr_for Product
+    rescue Exception => e
+      puts e.backtrace
+      raise e
+    end
+  end
 end

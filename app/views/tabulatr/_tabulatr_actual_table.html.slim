@@ -21,7 +21,7 @@
 
 
 .table-responsive
-  table class=table_options[:html_class] id=table_id data-path=table_options[:path] data-pagesize=table_options[:pagesize]
+  table class=table_options[:html_class] id=table_id data-path=table_options[:path] data-pagesize=table_options[:pagesize] data-persistent=table_options[:persistent].to_s
     thead
       tr
        - columns.each do |column|

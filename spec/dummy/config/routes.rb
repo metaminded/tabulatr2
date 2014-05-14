@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       get :with_batch_actions
       get :implicit_columns
       get :with_styling
+      get :local_storage
     end
   end
 
