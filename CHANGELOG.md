@@ -1,4 +1,6 @@
 ## 0.9.6
+ * Added `font-awesome-rails`
+
  * The DSL now accepts a search block with two block variables. The
    second being the relation. The block needs to return an ActiveRecord::Relation,
    a Hash, a String, nil or an Array.
