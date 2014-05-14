@@ -30,8 +30,9 @@ module Tabulatr::Data::Filtering
       query = query.strip.gsub(/['*%\s]+/, '%')
       a = @search.map do |name|
         column = table_columns.find{|c| c.name == name}
+        nn = column ? column.filter_sql : name
         # nn = build_column_name name, use_for: :filter
-        "(#{column.filter_sql} #{like} '%#{query}%')"
+        "(#{nn} #{like} '%#{query}%')"
       end
       a = a.join(' OR ')
       @relation = @relation.where(a)

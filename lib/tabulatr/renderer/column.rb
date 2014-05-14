@@ -118,9 +118,17 @@ class Tabulatr::Renderer::Column
 
   def apply_styles!
     # raise cell_style.inspect
-    self.cell_style = style_options.merge(self.cell_style).map{|e| e.join(':')}.join(';')
-    self.header_style = style_options.merge(self.header_style).map{|e| e.join(':')}.join(';')
+    self.cell_style = style_options.merge(self.cell_style)
+    self.header_style = style_options.merge(self.header_style)
     self
+  end
+
+  def html_cell_style
+    cell_style.map{|e| e.join(':')}.join(';')
+  end
+
+  def html_header_style
+    header_style.map{|e| e.join(':')}.join(';')
   end
 
   def style_options
