@@ -49,6 +49,9 @@ Tabulatr.prototype = {
 
       if(currentPage > 3){
         $paginatorUl.append(this.createPaginationListItem(currentPage-2, false));
+      }
+
+      if(currentPage > 2){
         $paginatorUl.append(this.createPaginationListItem(currentPage-1, false));
       }
 
