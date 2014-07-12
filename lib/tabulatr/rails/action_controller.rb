@@ -32,9 +32,11 @@ class ActionController::Base
       format.json {
         records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, &block)
         render json: records.to_tabulatr_json(serializer)
+        records
       }
       format.html {
         render action: render_action || action_name
+        nil
       }
     end
   end
