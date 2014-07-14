@@ -30,17 +30,13 @@ module Tabulatr::Data::Formatting
       h = HashWithIndifferentAccess.new
       table_columns.each do |tc|
         h[tc.table_name] ||= HashWithIndifferentAccess.new
-        h[tc.table_name][tc.name] = format_column(record, tc.output, view)
+        h[tc.table_name][tc.name] = tc.value_for(record, view)
       end
       h[:_row_config] = format_row(view, @row)
       h[:id] = record.id
       h
     end # @relation map
   end # apply_formats
-
-  def format_column(record, output, view)
-      view.instance_exec(record, &output) if output.present?
-  end
 
   def format_row(view, row)
     row_config = Row.new

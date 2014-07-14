@@ -51,7 +51,6 @@ class Tabulatr::Renderer::Column
     filter_sql: nil,
     output: nil,
     &block)
-    b = block_given? ? block : nil
     self.new(
       name: name,
       table_name: table_name,
@@ -68,7 +67,7 @@ class Tabulatr::Renderer::Column
       format: format,
       map: map,
       klass: klass,
-      block: b,
+      block: block,
       cell_style: cell_style,
       header_style: header_style,
       sort_sql: sort_sql,
@@ -143,12 +142,7 @@ class Tabulatr::Renderer::Column
   end
 
   def value_for(record, view)
-    if block
-      r = view.instance_exec(record, &block)
-      r = r.join(' ').html_safe if r.is_a?(Array)
-      return r
-    end
-    val = principal_value(record) or return ''
+    val = principal_value(record, view)
     if format.present? && val.respond_to?(:to_ary)
       val.map do |v|
         case format
@@ -170,8 +164,16 @@ class Tabulatr::Renderer::Column
     end
   end
 
-  def principal_value(record)
-    record.send name
+  def principal_value(record, view)
+    if output
+      view.instance_exec(record, &output)
+    elsif block
+      view.instance_exec(record, &block)
+    elsif name
+      record.send name
+    else
+      nil
+    end
   end
 
   def determine_appropriate_filter!

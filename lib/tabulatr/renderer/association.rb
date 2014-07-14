@@ -30,7 +30,8 @@ class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
   def column?() false end
   def association?() true end
 
-  def principal_value(record)
+  def principal_value(record, view)
+    return super if output
     v = record.send(table_name)
     if v && v.respond_to?(:to_a) && map && name != :count
       v.map(&:"#{name}")
