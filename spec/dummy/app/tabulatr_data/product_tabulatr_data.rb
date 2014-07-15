@@ -30,4 +30,13 @@ class ProductTabulatrData < Tabulatr::Data
   end
   association :tags, :count
 
+  buttons do |b,r|
+    b.button :eye, product_path(r), class: 'btn-success'
+    b.button :pencil, edit_product_path(r), class: 'btn-warning'
+    b.submenu do |s|
+      s.button :star, product_path(r), label: 'Dolle Sache'
+      s.divider
+      s.button :'trash-o', product_path(r), label: 'Löschen', confirm: 'echt?', class: 'btn-danger', method: :delete
+    end
+  end
 end

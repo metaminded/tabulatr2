@@ -21,23 +21,51 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class ActionController::Base
-  before_filter do
-    @_tabulatr_table_index = 0
+# buttons do |b,r|
+#   b.button :'eye-open', foo_path(r), class: 'btn-success'
+#   b.button :'pencil', edit_foo_path(r), class: 'btn-warning'
+#   b.submenu do |s|
+#     s.button :star, star_foor_path(r), label: 'Dolle Sache'
+#     s.divider
+#     s.button :'trash-o', foo_path(r), label: 'Löschen', confirm: 'echt?', class: 'btn-danger', method: :delete
+#   end
+# end
+
+
+class Tabulatr::Data::ButtonBuilder
+
+  def initialize
+    @mode = :buttons
+    @buttons = []
+    @submenu = []
+    val
   end
 
-  def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, locals: {}, &block)
-    klass = relation.respond_to?(:klass) ? relation.klass : relation
-    respond_to do |format|
-      format.json {
-        records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
-        render json: records.to_tabulatr_json(serializer)
-        records
-      }
-      format.html {
-        render action: render_action || action_name
-        nil
-      }
+  def val
+    {buttons: @buttons, submenu: @submenu}
+  end
+
+  def button(icon, path, options={})
+    label = options.dup.delete(:label)
+    if @mode == :buttons
+      @buttons << {icon: icon, path: path, options: options}
+    else
+      @submenu << {icon: icon, label: label, path: path, options: options}
     end
+    val
+  end
+
+  def submenu(&block)
+    raise "No submenus in submenus, sorry" if @mode == :submenu
+    @mode = :submenu
+    yield(self)
+    @mode = :buttons
+    val
+  end
+
+  def divider
+    raise "use dividers only in submenu" unless @mode == :submenu
+    @submenu << :divider
+    val
   end
 end

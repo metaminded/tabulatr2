@@ -38,7 +38,7 @@ class Tabulatr::Data
     end
   end
 
-  def data_for_table(params, locals: {}, &block)
+  def data_for_table(params, locals: {}, controller: nil, &block)
 
     @batch_actions = block if block_given?
 
@@ -59,7 +59,7 @@ class Tabulatr::Data
     # TODO: batch actions and checked ids
 
     # get the records
-    found = apply_formats(locals: locals)
+    found = apply_formats(locals: locals, controller: controller)
 
     append = params[:append].present? ? Tabulatr::Utility.string_to_boolean(params[:append]) : false
 
@@ -139,3 +139,4 @@ require_relative './pagination'
 require_relative './formatting'
 require_relative './row'
 require_relative './proxy'
+require_relative './button_builder'

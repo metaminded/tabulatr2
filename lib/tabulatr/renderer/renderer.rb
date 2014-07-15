@@ -114,7 +114,7 @@ class Tabulatr::Renderer
         r = "#{r.keys.first}:#{r.values.first}"
       end
       result = available_columns.find{|column| column.full_name.to_sym == r.to_sym }
-      result = available_columns.find{|column| column.name.to_sym == r.to_sym && column.table_name == main_table_name} if result.nil?
+      result ||= available_columns.find{|column| column.name.to_sym == r.to_sym && column.table_name == main_table_name}
       result
     end.flatten
   end

@@ -69,6 +69,34 @@ module Tabulatr::Data::DSL
     @table_columns << table_column
   end
 
+  def actions(header: nil, name: nil, table_column_options: {}, &block)
+    raise 'give a block to action column' unless block_given?
+    @table_columns ||= []
+    table_column = Tabulatr::Renderer::Action.from(
+      table_column_options.merge(
+        name: (name || '_actions'), table_name: main_class.table_name.to_sym,
+        klass: @base, header: header || '',
+        filter: false, sortable: false,
+        output: block))
+    @table_columns << table_column
+  end
+
+  def buttons(header: nil, name: nil, table_column_options: {}, &block)
+    raise 'give a block to action column' unless block_given?
+    @table_columns ||= []
+    output = ->(r) {
+      bb = self.instance_exec Tabulatr::Data::ButtonBuilder.new, r, &block
+      @controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
+    }
+    table_column = Tabulatr::Renderer::Action.from(
+      table_column_options.merge(
+        name: (name || '_buttons'), table_name: main_class.table_name.to_sym,
+        klass: @base, header: header || '',
+        filter: false, sortable: false,
+        output: output))
+    @table_columns << table_column
+  end
+
   def search(*args, &block)
     raise "either column or block" if args.present? && block_given?
     @search = args.presence || block

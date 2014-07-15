@@ -134,6 +134,36 @@ class UserTabulatrData < Tabulatr::Data
 end
 ```
 
+### Actions
+
+To provide a column that's not sortable and filterable but renders something nice:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  action do |r|
+    link_to "edit", edit_product_path(r)
+  end
+end
+```
+
+### Buttons
+
+To render a fancy button group:
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  buttons do |b,r|
+    b.button :eye, product_path(r), class: 'btn-success'
+    b.button :pencil, edit_product_path(r), class: 'btn-warning'
+    b.submenu do |s|
+      s.button :star, star_product_path(r), label: 'Dolle Sache'
+      s.divider
+      s.button :'trash-o', product_path(r), label: 'Löschen', confirmation: 'echt?', class: 'btn-danger', method: :delete
+    end
+  end
+end
+```
+
 ### Search
 
 The DSL provides you with a `search` method to define a custom fuzzy search method which is not bound
