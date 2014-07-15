@@ -55,7 +55,7 @@ module Tabulatr::Data::DSL
       format: format, map: map, cell_style: cell_style, header_style: header_style)
     table_name = main_class.table_name
     table_column = Tabulatr::Renderer::Column.from(
-      table_column_options = table_column_options.merge(name: name,
+      table_column_options.merge(name: name,
         klass: @base, sort_sql: sort_sql || sql || "#{table_name}.#{name}",
         filter_sql: filter_sql || sql || "#{table_name}.#{name}",
         table_name: table_name.to_sym,
@@ -75,7 +75,7 @@ module Tabulatr::Data::DSL
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
     t_name = assoc_klass.try(:table_name)
     table_column = Tabulatr::Renderer::Association.from(
-      table_column_options = table_column_options.merge(name: name, table_name: assoc,
+      table_column_options.merge(name: name, table_name: assoc,
         klass: assoc_klass.try(:klass),
         sort_sql: sort_sql || sql || "#{t_name}.#{name}",
         filter_sql: filter_sql || sql || "#{t_name}.#{name}",
@@ -94,7 +94,7 @@ module Tabulatr::Data::DSL
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
       format: format, map: map, cell_style: cell_style, header_style: header_style)
     table_column = Tabulatr::Renderer::Action.from(
-      table_column_options = table_column_options.merge(
+      table_column_options.merge(
         name: (name || '_actions'), table_name: main_class.table_name.to_sym,
         klass: @base, header: header || '',
         filter: false, sortable: false,

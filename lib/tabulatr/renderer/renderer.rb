@@ -115,7 +115,7 @@ class Tabulatr::Renderer
       end
       result = available_columns.find{|column| column.full_name.to_sym == r.to_sym }
       result ||= available_columns.find{|column| column.name.to_sym == r.to_sym && column.table_name == main_table_name}
-      result
+      result or raise "Can't find column '#{r}'"
     end.flatten
   end
 
