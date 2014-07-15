@@ -44,11 +44,18 @@ module Tabulatr::Data::DSL
     end
   end
 
-  def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
+  def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
+    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
+    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    header_style: {},
+    &block)
     @table_columns ||= []
+    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      format: format, map: map, cell_style: cell_style, header_style: header_style)
     table_name = main_class.table_name
     table_column = Tabulatr::Renderer::Column.from(
-      table_column_options.merge(name: name,
+      table_column_options = table_column_options.merge(name: name,
         klass: @base, sort_sql: sort_sql || sql || "#{table_name}.#{name}",
         filter_sql: filter_sql || sql || "#{table_name}.#{name}",
         table_name: table_name.to_sym,
@@ -56,12 +63,19 @@ module Tabulatr::Data::DSL
     @table_columns << table_column
   end
 
-  def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {}, &block)
+  def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
+    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
+    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    header_style: {},
+    &block)
     @table_columns ||= []
+    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      format: format, map: map, cell_style: cell_style, header_style: header_style)
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
     t_name = assoc_klass.try(:table_name)
     table_column = Tabulatr::Renderer::Association.from(
-      table_column_options.merge(name: name, table_name: assoc,
+      table_column_options = table_column_options.merge(name: name, table_name: assoc,
         klass: assoc_klass.try(:klass),
         sort_sql: sort_sql || sql || "#{t_name}.#{name}",
         filter_sql: filter_sql || sql || "#{t_name}.#{name}",
@@ -69,11 +83,18 @@ module Tabulatr::Data::DSL
     @table_columns << table_column
   end
 
-  def actions(header: nil, name: nil, table_column_options: {}, &block)
+  def actions(header: nil, name: nil, table_column_options: {},
+    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
+    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    header_style: {},
+    &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
+    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      format: format, map: map, cell_style: cell_style, header_style: header_style)
     table_column = Tabulatr::Renderer::Action.from(
-      table_column_options.merge(
+      table_column_options = table_column_options.merge(
         name: (name || '_actions'), table_name: main_class.table_name.to_sym,
         klass: @base, header: header || '',
         filter: false, sortable: false,
@@ -81,15 +102,22 @@ module Tabulatr::Data::DSL
     @table_columns << table_column
   end
 
-  def buttons(header: nil, name: nil, table_column_options: {}, &block)
+  def buttons(header: nil, name: nil, table_column_options: {},
+    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
+    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    header_style: {},
+    &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
+    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      format: format, map: map, cell_style: cell_style, header_style: header_style)
     output = ->(r) {
       bb = self.instance_exec Tabulatr::Data::ButtonBuilder.new, r, &block
       @controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
     }
     table_column = Tabulatr::Renderer::Action.from(
-      table_column_options.merge(
+      table_column_options = table_column_options.merge(
         name: (name || '_buttons'), table_name: main_class.table_name.to_sym,
         klass: @base, header: header || '',
         filter: false, sortable: false,
@@ -97,15 +125,21 @@ module Tabulatr::Data::DSL
     @table_columns << table_column
   end
 
+  def checkbox(table_column_options: {},
+    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
+    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    header_style: {})
+    @table_columns ||= []
+    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      format: format, map: map, cell_style: cell_style, header_style: header_style)
+    box = Tabulatr::Renderer::Checkbox.from(table_column_options = table_column_options.merge(klass: @base, filter: false, sortable: false))
+    @table_columns << box
+  end
+
   def search(*args, &block)
     raise "either column or block" if args.present? && block_given?
     @search = args.presence || block
-  end
-
-  def checkbox(table_column_options: {})
-    @table_columns ||= []
-    box = Tabulatr::Renderer::Checkbox.from(table_column_options.merge(klass: @base, filter: false, sortable: false))
-    @table_columns << box
   end
 
   def row &block

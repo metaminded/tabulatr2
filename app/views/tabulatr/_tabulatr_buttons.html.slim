@@ -12,6 +12,8 @@
           li.divider role="presentation"
         - else
           li= link_to button[:path], button[:options] do
-            => fa_icon(button[:icon])
-            = button[:label]
+            - if button[:icon].present?
+              => fa_icon(button[:icon])
+            - if button[:label].present?
+              = button[:label]
 

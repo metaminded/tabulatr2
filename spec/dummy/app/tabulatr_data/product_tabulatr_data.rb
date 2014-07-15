@@ -22,7 +22,7 @@ class ProductTabulatrData < Tabulatr::Data
     table_column_options: {header: 'Product by vendor'} do
     "#{record.title} from #{record.vendor.try(:name)}"
   end
-  column :active, table_column_options: {sortable: false}
+  column :active, sortable: false
   column :updated_at, table_column_options: { filter: :date } do "#{record.updated_at.strftime('%H:%M %d.%m.%Y')}" end
   association :vendor, :name, table_column_options: { filter: :exact }
   association :tags, :title do |r|
@@ -30,7 +30,7 @@ class ProductTabulatrData < Tabulatr::Data
   end
   association :tags, :count
 
-  buttons do |b,r|
+  buttons width: '200px' do |b,r|
     b.button :eye, product_path(r), class: 'btn-success'
     b.button :pencil, edit_product_path(r), class: 'btn-warning'
     b.submenu do |s|
