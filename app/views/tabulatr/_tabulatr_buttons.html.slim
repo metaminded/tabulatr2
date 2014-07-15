@@ -1,7 +1,7 @@
 //{:buttons=>[{:icon=>:"eye-open", :path=>"/products/1", :options=>{:class=>"btn-success"}}, {:icon=>:pencil, :path=>"/products/1/edit", :options=>{:class=>"btn-warning"}}], :submenu=>[{:icon=>:star, :path=>"/products/1", :label=>"Dolle Sache"}, :divider, {:icon=>:"trash-o", :path=>"/products/1", :label=>"Löschen", :options=>{:confirm=>"echt?", :class=>"btn-danger", :method=>:delete}}]}
 .btn-group
   - buttons[:buttons].each do |button|
-    - o = (button[:options] || {}).merge(class: "btn btn-sm btna-default #{button[:options].try(:[], :class)}")
+    - o = (button[:options] || {}).merge(class: "btn btn-sm btn-default #{button[:options].try(:[], :class)}")
     = link_to fa_icon(button[:icon]), button[:path], o
   - if buttons[:submenu].present?
     button.btn.btn-default.btn-sm.dropdown-toggle data-toggle='dropdown'
