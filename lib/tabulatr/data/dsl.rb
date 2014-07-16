@@ -114,9 +114,9 @@ module Tabulatr::Data::DSL
       format: format, map: map, cell_style: cell_style, header_style: header_style)
     output = ->(r) {
       bb = self.instance_exec Tabulatr::Data::ButtonBuilder.new, r, &block
-      @controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
+      self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
     }
-    table_column = Tabulatr::Renderer::Action.from(
+    table_column = Tabulatr::Renderer::Buttons.from(
       table_column_options = table_column_options.merge(
         name: (name || '_buttons'), table_name: main_class.table_name.to_sym,
         klass: @base, header: header || '',

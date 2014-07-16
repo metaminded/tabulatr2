@@ -124,5 +124,6 @@ end
 require_relative './column'
 require_relative './association'
 require_relative './action'
+require_relative './buttons'
 require_relative './checkbox'
 require_relative './columns_from_block'

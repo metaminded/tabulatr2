@@ -21,28 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Data::Proxy < ActionView::Base
-
-  attr_accessor :record, :controller
-
-  def initialize(record=nil, locals: {}, controller: nil)
-    self.class._init
-    Rails.application.routes.mounted_helpers.instance_methods.each{|f| self.send(f).instance_variable_set('@scope', self)}
-    @record = record
-    @controller = controller
-    locals.each do |nam, val|
-      raise "cowardly refusing to override `#{nam}'" if respond_to? nam
-      define_singleton_method nam do val end
-    end
+class Tabulatr::Renderer::Buttons < Tabulatr::Renderer::Action
+  def human_name
+    header
   end
 
-  def self._init
-    return if @_initialized
-    @_initialized = true
-    include ActionView::Helpers
-    include Rails.application.helpers
-    include Rails.application.routes.url_helpers
-    include Rails.application.routes.mounted_helpers
-  end
-
+  def coltype() 'buttons' end
+  def column?() false end
+  def action?() true end
 end

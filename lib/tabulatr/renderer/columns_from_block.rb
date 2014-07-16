@@ -57,6 +57,14 @@ class Tabulatr::Renderer
       @columns << Action.from(opts.merge(klass: klass, filter: false, sortable: false), &block)
     end
 
+    def buttons(opts={}, &block)
+      output = ->(r) {
+        bb = self.instance_exec Tabulatr::Data::ButtonBuilder.new, r, &block
+        self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
+      }
+      @columns << Buttons.from(opts.merge(klass: klass, filter: false, sortable: false, output: output), &block)
+    end
+
     def self.process(klass, table_data_object = nil, &block)
       i = self.new(klass, table_data_object)
       yield(i)

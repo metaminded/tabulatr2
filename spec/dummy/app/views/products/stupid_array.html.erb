@@ -17,4 +17,7 @@
   t.action header: "ACTION!" do |t|
     t.title.upcase
   end
+  t.buttons do |b,r|
+    b.button :eye, product_path(r)
+  end
 end or "empty" %>
