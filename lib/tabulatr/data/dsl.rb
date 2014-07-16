@@ -113,7 +113,9 @@ module Tabulatr::Data::DSL
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
       format: format, map: map, cell_style: cell_style, header_style: header_style)
     output = ->(r) {
-      bb = self.instance_exec Tabulatr::Data::ButtonBuilder.new, r, &block
+      tdbb = Tabulatr::Data::ButtonBuilder.new
+      self.instance_exec tdbb, r, &block
+      bb = tdbb.val
       self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
     }
     table_column = Tabulatr::Renderer::Buttons.from(

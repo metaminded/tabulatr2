@@ -38,5 +38,6 @@ class ProductTabulatrData < Tabulatr::Data
       s.divider
       s.button :'trash-o', product_path(r), label: 'Löschen', confirm: 'echt?', class: 'btn-danger', method: :delete
     end
+    "haha!"
   end
 end
