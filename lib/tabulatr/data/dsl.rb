@@ -50,9 +50,10 @@ module Tabulatr::Data::DSL
     header_style: {},
     &block)
     @table_columns ||= []
-    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style)
+      format: format, map: map, cell_style: cell_style, header_style: header_style
+    }.merge(table_column_options)
     table_name = main_class.table_name
     table_column = Tabulatr::Renderer::Column.from(
       table_column_options.merge(name: name,
@@ -69,9 +70,10 @@ module Tabulatr::Data::DSL
     header_style: {},
     &block)
     @table_columns ||= []
-    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style)
+      format: format, map: map, cell_style: cell_style, header_style: header_style
+    }.merge(table_column_options)
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
     t_name = assoc_klass.try(:table_name)
     table_column = Tabulatr::Renderer::Association.from(
@@ -90,9 +92,10 @@ module Tabulatr::Data::DSL
     &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
-    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style)
+      format: format, map: map, cell_style: cell_style, header_style: header_style
+    }.merge(table_column_options)
     table_column = Tabulatr::Renderer::Action.from(
       table_column_options.merge(
         name: (name || '_actions'), table_name: main_class.table_name.to_sym,
@@ -109,9 +112,10 @@ module Tabulatr::Data::DSL
     &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
-    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style)
+      format: format, map: map, cell_style: cell_style, header_style: header_style
+    }.merge(table_column_options)
     output = ->(r) {
       tdbb = Tabulatr::Data::ButtonBuilder.new
       self.instance_exec tdbb, r, &block
@@ -132,9 +136,10 @@ module Tabulatr::Data::DSL
     filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
     header_style: {})
     @table_columns ||= []
-    table_column_options = table_column_options.merge(classes: classes, width: width, align: align, valign: valign, wrap: wrap,
+    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style)
+      format: format, map: map, cell_style: cell_style, header_style: header_style
+    }.merge(table_column_options)
     box = Tabulatr::Renderer::Checkbox.from(table_column_options = table_column_options.merge(klass: @base, filter: false, sortable: false))
     @table_columns << box
   end
