@@ -17,8 +17,8 @@ en:
       from_to: From - To
     boolean_filter:
       both: All
-      yes: Yes
-      no: No
+      'yes': Yes
+      'no': No
 
 de:
   tabulatr:
@@ -39,5 +39,5 @@ de:
       from_to: Von - Bis
     boolean_filter:
       both: Alle
-      yes: Ja
-      no: Nein
+      'yes': Ja
+      'no': Nein
