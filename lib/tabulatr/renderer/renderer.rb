@@ -35,6 +35,7 @@ class Tabulatr::Renderer
       order_by: nil,         # default order
       html_class: '',
       pagination_position: :top,
+      counter_position: :top,
       persistent: true)
     @klass = klass
     @view = view
@@ -50,6 +51,7 @@ class Tabulatr::Renderer
       order_by: order_by,
       html_class: 'table tabulatr_table '.concat(html_class),
       pagination_position: pagination_position,
+      counter_position: counter_position,
       persistent: paginate ? persistent : false
     }
     @classname = @klass.name.underscore

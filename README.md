@@ -322,6 +322,7 @@ They change the appearance and behaviour of the table.
   path: '#',             # where to send the AJAX-requests to
   order_by: nil          # default order,
   html_class: ''         # html classes for the table element
+  counter_position: :top # position of the counter row, can by :top, :bottom or :both
 ```
 
 #### Example:
