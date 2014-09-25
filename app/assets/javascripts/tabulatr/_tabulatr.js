@@ -246,7 +246,9 @@ Tabulatr.prototype = {
       pagesize = $('table#'+ this.id).data('pagesize');
     }
     if(hash.page === undefined){
-      hash.page = Math.floor($('#'+ this.id +' tbody tr[class!=empty_row]').length/pagesize) + 1;
+      if(this.hasInfiniteScrolling){
+        hash.page = Math.floor($('#'+ this.id +' tbody tr[class!=empty_row]').length/pagesize) + 1;
+      }
       if(!isFinite(hash.page)){
         hash.page = 1;
       }
