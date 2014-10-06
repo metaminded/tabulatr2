@@ -9,14 +9,14 @@ Gem::Specification.new do |s|
   s.summary     = "A tight DSL to build tables of ActiveRecord "+
                   "models with sorting, pagination, finding/filtering, "+
                   "selecting and batch actions."
-  s.email       = "info@provideal.net"
-  s.homepage    = "http://github.com/provideal/tabulatr2"
+  s.email       = "open-source@metaminded.com"
+  s.homepage    = "http://github.com/metaminded/tabulatr2"
   s.description = "A tight DSL to build tables of ActiveRecord "+
                   "models with sorting, pagination, finding/filtering, "+
                   "selecting and batch actions. " +
                   "Tries to do for tables what formtastic and simple_form did "+
                   "for forms."
-  s.authors     = ['Peter Horn', 'René Sprotte', 'Florian Thomas']
+  s.authors     = ['Peter Horn', 'Florian Thomas', 'René Sprotte']
   s.license       = 'MIT'
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('rails', '~> 4.0')
   s.add_dependency('slim', '~> 2.0.0', '>= 2.0.0')
-  s.add_dependency('tilt', '~> 1.4.1')
+  s.add_dependency('tilt', '~> 1.4', '>= 1.4.1')
   s.add_dependency('font-awesome-rails', '~> 4.0')
 end

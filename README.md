@@ -1,7 +1,7 @@
 # Tabulatr2 - Index Tables made easy
 [![Gem Version](https://badge.fury.io/rb/tabulatr2.png)](http://badge.fury.io/rb/tabulatr2)
-[![Code Climate](https://codeclimate.com/github/provideal/tabulatr2.png)](https://codeclimate.com/github/provideal/tabulatr2)
-[![Travis CI](https://api.travis-ci.org/provideal/tabulatr2.png)](https://travis-ci.org/provideal/tabulatr2)
+[![Code Climate](https://codeclimate.com/github/metaminded/tabulatr2.png)](https://codeclimate.com/github/metaminded/tabulatr2)
+[![Travis CI](https://api.travis-ci.org/metaminded/tabulatr2.png)](https://travis-ci.org/metaminded/tabulatr2)
 
 ## Requirements
 

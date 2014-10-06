@@ -7,3 +7,4 @@ tags
 log
 .DS_Store
 .rake_tasks~
+tabulatr2*.gem
