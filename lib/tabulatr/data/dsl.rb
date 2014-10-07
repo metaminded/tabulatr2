@@ -44,7 +44,7 @@ module Tabulatr::Data::DSL
     end
   end
 
-  def column(name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
+  def column(name, header: nil, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
     classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
     filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
     header_style: {},
@@ -52,19 +52,21 @@ module Tabulatr::Data::DSL
     @table_columns ||= []
     table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style
+      format: format, map: map, cell_style: cell_style, header_style: header_style,
+      header: header
     }.merge(table_column_options)
     table_name = main_class.table_name
     table_column = Tabulatr::Renderer::Column.from(
       table_column_options.merge(name: name,
-        klass: @base, sort_sql: sort_sql || sql || "#{table_name}.#{name}",
+        klass: @base,
+        sort_sql: sort_sql || sql || "#{table_name}.#{name}",
         filter_sql: filter_sql || sql || "#{table_name}.#{name}",
         table_name: table_name.to_sym,
         output: block_given? ? block : ->(record){record.send(name)}))
     @table_columns << table_column
   end
 
-  def association(assoc, name, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
+  def association(assoc, name, header: nil, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
     classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
     filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
     header_style: {},
@@ -72,7 +74,8 @@ module Tabulatr::Data::DSL
     @table_columns ||= []
     table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
       th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style
+      format: format, map: map, cell_style: cell_style, header_style: header_style,
+      header: header
     }.merge(table_column_options)
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
     t_name = assoc_klass.try(:table_name)

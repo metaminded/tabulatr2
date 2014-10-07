@@ -19,7 +19,7 @@ class ProductTabulatrData < Tabulatr::Data
   column :vendor_product_name,
     sort_sql: "products.title || '' || vendors.name",
     filter_sql: "products.title || '' || vendors.name",
-    table_column_options: {header: 'Product by vendor'} do
+    header: 'Product by vendor' do
     "#{record.title} from #{record.vendor.try(:name)}"
   end
   column :active, sortable: false
