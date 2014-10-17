@@ -14,6 +14,7 @@ group :development, :test do
   gem 'sqlite3', :require => 'sqlite3'
   gem 'rspec', '~> 2.14.1'
   gem 'rspec-rails', '~> 2.14.0'
+  gem 'minitest'
   gem 'capybara'
   gem 'launchy'
   gem 'database_cleaner', '< 1.1.0'
