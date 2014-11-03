@@ -84,7 +84,7 @@ module Tabulatr::Data::DSL
         klass: assoc_klass.try(:klass),
         sort_sql: sort_sql || sql || name,
         filter_sql: filter_sql || sql || name,
-        output: block_given? ? block : ->(record){record.send(assoc).try(name)}))
+        output: block_given? ? block : ->(record){record.send(assoc)[name]}))
     @table_columns << table_column
   end
 
