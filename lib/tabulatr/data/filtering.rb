@@ -69,7 +69,7 @@ module Tabulatr::Data::Filtering
     if ['true', 'false'].include?(v)
       @relation = @relation.where(n.klass.table_name => { n.filter_sql => Tabulatr::Utility.string_to_boolean(v) })
     elsif v.is_a?(String)
-      apply_string_condition("#{n.filter_sql} = ?", v)
+      apply_string_condition("#{n.klass.table_name}.#{n.filter_sql} = ?", v)
     elsif v.is_a?(Hash)
       apply_hash_condition(n, v)
     else
@@ -114,10 +114,10 @@ module Tabulatr::Data::Filtering
 
   def apply_hash_condition(column_name, hash)
     like ||= Tabulatr::Utility.like_statement
-    apply_string_condition("#{column_name.filter_sql} #{like} ?", "%#{hash[:like]}%") if hash[:like].present?
+    apply_string_condition("#{column_name.klass.table_name}.#{column_name.filter_sql} #{like} ?", "%#{hash[:like]}%") if hash[:like].present?
     apply_date_condition(column_name, hash[:date])
-    apply_string_condition("#{column_name.filter_sql} >= ?", "#{hash[:from]}")
-    apply_string_condition("#{column_name.filter_sql} <= ?", "#{hash[:to]}")
+    apply_string_condition("#{column_name.klass.table_name}.#{column_name.filter_sql} >= ?", "#{hash[:from]}")
+    apply_string_condition("#{column_name.klass.table_name}.#{column_name.filter_sql} <= ?", "#{hash[:to]}")
   end
 
   private
