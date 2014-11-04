@@ -59,8 +59,8 @@ module Tabulatr::Data::DSL
     table_column = Tabulatr::Renderer::Column.from(
       table_column_options.merge(name: name,
         klass: @base,
-        sort_sql: sort_sql || sql || "#{main_class.quoted_table_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        filter_sql: filter_sql || sql || "#{main_class.quoted_table_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
+        sort_sql: sort_sql || sql || "#{main_class.table_name}.#{name}",
+        filter_sql: filter_sql || sql || "#{name}",
         table_name: table_name.to_sym,
         output: block_given? ? block : ->(record){record.send(name)}))
     @table_columns << table_column
@@ -78,13 +78,13 @@ module Tabulatr::Data::DSL
       header: header
     }.merge(table_column_options)
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
-    t_name = assoc_klass.try(:quoted_table_name)
+    t_name = assoc_klass.try(:table_name)
     table_column = Tabulatr::Renderer::Association.from(
       table_column_options.merge(name: name, table_name: assoc,
         klass: assoc_klass.try(:klass),
-        sort_sql: sort_sql || sql || "#{t_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        filter_sql: filter_sql || sql || "#{t_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        output: block_given? ? block : ->(record){record.send(assoc).try(name)}))
+        sort_sql: sort_sql || sql || "#{t_name}.#{name}",
+        filter_sql: filter_sql || sql || "#{name}",
+        output: block_given? ? block : ->(record){a=record.send(assoc); a.try(:read_attribute, name) || a.try(name)}))
     @table_columns << table_column
   end
 
