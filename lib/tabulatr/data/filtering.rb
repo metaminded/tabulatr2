@@ -67,7 +67,7 @@ module Tabulatr::Data::Filtering
 
   def apply_condition(n,v)
     if ['true', 'false'].include?(v)
-      @relation = @relation.where(:"#{n.filter_sql}" => Tabulatr::Utility.string_to_boolean(v))
+      @relation = @relation.where("#{n.filter_sql} = ?", Tabulatr::Utility.string_to_boolean(v))
     elsif v.is_a?(String)
       apply_string_condition("#{n.filter_sql} = ?", v)
     elsif v.is_a?(Hash)
