@@ -357,6 +357,10 @@ $(document).on('ready page:load', function(){
     return false;
   });
 
+  $('form.tabulatr_filter_form input, form.tabulatr_filter_form select').change(function(){
+    $(this).parents('form.tabulatr_filter_form').submit();
+  });
+
   $('form.tabulatr_filter_form').submit(function(){
     var tableId = $(this).data('table');
     var table_obj;
@@ -366,32 +370,6 @@ $(document).on('ready page:load', function(){
       }
     }
     table_obj.submitFilterForm();
-    return false;
-  });
-
-  $('.tabulatr_table').on('click', 'i.tabulatr_remove_filter', function(){
-    var $th = $(this).closest('th');
-    var name = $th.data('tabulatr-form-name').
-                  replace(/\[(like|checkbox|from|to)\]/, '');
-    name = name.replace(/(:|\.|\[|\])/g,'\\$1');
-    $th.removeClass('tabulatr_filtered_column');
-    if($('[name^='+ name +']').is(':checkbox')){
-      $('[name^='+ name +']').prop('checked', false);
-    }else{
-      $('[name^='+ name +']').val('');
-    }
-    var tableId = $(this).closest('.tabulatr_table').attr('id');
-    $(this).remove();
-    var table_obj;
-    for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
-        table_obj = tabulatr_tables[i];
-      }
-    }
-    if(table_obj.hasInfiniteScrolling){
-      $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
-    }
-    table_obj.updateTable({});
     return false;
   });
 
@@ -472,8 +450,10 @@ $(document).on('ready page:load', function(){
   });
 
   $(document).on('click', 'a[data-tabulatr-reset]',function(){
+    var a = $(this);
     var tableObj, tableName;
-    var tableId = $(this).data('tabulatrReset');
+    var tableId = a.data('tabulatrReset');
+    a.parents('.tabulatr-outer-wrapper').removeClass('filtered')
     for(var i = 0; i < tabulatr_tables.length; i++){
       if(tabulatr_tables[i].id == tableId){
         tableObj = tabulatr_tables[i];
@@ -511,6 +491,12 @@ $(document).on('ready page:load', function(){
       tableObj.updateTable({}, false);
     });
   }
+
+  $(document).on('click', 'a[data-show-filters-for]', function(){
+    var a = $(this);
+    a.parents('.tabulatr-outer-wrapper').addClass('filtered');
+  });
+
 });
 
 $(document).on('click', '.pagination a[data-page]', function(){
@@ -533,52 +519,14 @@ $(document).on('click', '.pagination a[data-page]', function(){
 });
 
 
-// TODO: We absolutely need to clean that up!
-
-$(document).on('click', 'a[data-show-table-filter]', function(){
-  var a = $(this);
-  var name = a.data('show-table-filter');
-  var tableId = a.parents('.tabulatr-filter-menu-wrapper').data('table-id');
-  var filterForm = $('.tabulatr_filter_form[data-table="'+ tableId +'"]');
-  filterForm.find($('div[data-filter-column-name="'+ name +'"]')).show('blind');
-  filterForm.find($('div[data-filter-column-name="_submit"]')).show('blind');
-
-  a.hide();
-  return false;
-});
-
-$(document).on('click', 'a[data-hide-table-filter]', function(){
-  var a = $(this);
-  var nam = a.data('hide-table-filter');
-  var filterForm = a.parents('.tabulatr_filter_form');
-  var t = filterForm.find($('div[data-filter-column-name="'+nam+'"]'));
-  t.hide();
-  t.find('input[type=text]').val("");
-  t.find('select').val('');
-  var filterMenu = $('.tabulatr-filter-menu-wrapper[data-table-id="'+ filterForm.data('table') +'"]');
-  filterMenu.find($('a[data-show-table-filter="'+nam+'"]')).show();
-  if (filterForm.find($('div[data-filter-column-name]:visible')).length <= 2)
-    filterForm.find($('div[data-filter-column-name="_submit"]')).hide('blind');
-
-  var tableId = filterForm.data('table');
-  var table_obj;
-  for(var i = 0; i < tabulatr_tables.length; i++){
-    if(tabulatr_tables[i].id == tableId){
-      table_obj = tabulatr_tables[i];
-    }
-  }
-  table_obj.submitFilterForm();
-  return false;
-});
-
 $(document).on('change', 'select[data-tabulatr-date-filter]', function() {
   var select = $(this);
   var option = select.find('option:selected');
   var val = option.val();
   if (val === 'from_to') {
-    select.parents('.controls').find(".from_to").show().removeClass('hidden');
+    select.parents('.tabulatr-filter-row').find(".from_to").show().removeClass('hidden');
   } else {
-    select.parents('.controls').find(".from_to").hide().val('');
+    select.parents('.tabulatr-filter-row').find(".from_to").hide().val('');
   }
 });
 

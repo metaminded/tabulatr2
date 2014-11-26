@@ -25,7 +25,7 @@ class Tabulatr::Renderer::Column
   include ActiveModel::Model
 
   attr_accessor *%i{name header width align valign wrap type th_html filter_html
-    filter filter_width range_filter_symbol
+    filter_label filter filter_width range_filter_symbol
     sortable table_name block klass format map classes cell_style header_style
     sort_sql filter_sql output}
 
@@ -40,6 +40,7 @@ class Tabulatr::Renderer::Column
     wrap: nil,
     th_html: false,
     filter_html: false,
+    filter_label: nil,
     filter: true,
     sortable: true,
     format: nil,
@@ -62,6 +63,7 @@ class Tabulatr::Renderer::Column
       wrap: wrap,
       th_html: th_html,
       filter_html: filter_html,
+      filter_label: filter_label,
       filter: filter,
       sortable: sortable,
       format: format,
@@ -85,6 +87,7 @@ class Tabulatr::Renderer::Column
     self.wrap = hash[:wrap] || self.wrap
     self.th_html = hash[:th_html] || self.th_html
     self.filter_html = hash[:filter_html] || self.filter_html
+    self.filter_label = hash[:filter_label] || self.filter_label
     self.filter = hash[:filter] || self.filter
     self.sortable = hash[:sortable] || self.sortable
     self.format = hash[:format] || self.format

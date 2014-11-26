@@ -46,12 +46,12 @@ module Tabulatr::Data::DSL
 
   def column(name, header: nil, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
     classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    filter_html: false, filter_label: nil, filter: true, sortable: true, format: nil, map: true, cell_style: {},
     header_style: {},
     &block)
     @table_columns ||= []
     table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      th_html: th_html, filter_html: filter_html, filter_label: filter_label, filter: filter, sortable: sortable,
       format: format, map: map, cell_style: cell_style, header_style: header_style,
       header: header
     }.merge(table_column_options)
@@ -68,12 +68,12 @@ module Tabulatr::Data::DSL
 
   def association(assoc, name, header: nil, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
     classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    filter_html: false, filter_label: nil, filter: true, sortable: true, format: nil, map: true, cell_style: {},
     header_style: {},
     &block)
     @table_columns ||= []
     table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      th_html: th_html, filter_html: filter_html, filter_label: filter_label, filter: filter, sortable: sortable,
       format: format, map: map, cell_style: cell_style, header_style: header_style,
       header: header
     }.merge(table_column_options)
@@ -90,13 +90,13 @@ module Tabulatr::Data::DSL
 
   def actions(header: nil, name: nil, table_column_options: {},
     classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
+    filter_html: false, filter_label: nil, filter: true, sortable: true, format: nil, map: true, cell_style: {},
     header_style: {},
     &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
     table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
+      th_html: th_html, filter_html: filter_html, filter_label: filter_label, filter: filter, sortable: sortable,
       format: format, map: map, cell_style: cell_style, header_style: header_style
     }.merge(table_column_options)
     table_column = Tabulatr::Renderer::Action.from(

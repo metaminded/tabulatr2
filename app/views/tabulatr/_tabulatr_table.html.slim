@@ -23,29 +23,30 @@
     klass: klass, classname: classname, table_id: table_id,
     formatted_name: formatted_name }
 
-.tabulatr-table-controls-wrapper.row data-table-id=table_id
-  .tabulatr-filter-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
-    = render '/tabulatr/tabulatr_filter_menu', opts
+.row.tabulatr-outer-wrapper data-table-id=table_id
+  .tabulatr-filter-col data-table-id=table_id
+    = render '/tabulatr/tabulatr_filter_dialog', opts
+  .tabulatr-table-col.col-xs-12 data-table-id=table_id
+    .tabulatr-table-controls-wrapper.row data-table-id=table_id
+      .tabulatr-filter-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
+        = render '/tabulatr/tabulatr_filter_menu', opts
 
-  .tabulatr-batch-actions-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
-    = render '/tabulatr/tabulatr_batch_actions_menu', opts
+      .tabulatr-batch-actions-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
+        = render '/tabulatr/tabulatr_batch_actions_menu', opts
 
-  - if tabulatr_data.search?
-    .tabulatr-fuzzy-search-field-wrapper.col-xs-6.col-sm-2 data-table-id=table_id
-      = render '/tabulatr/tabulatr_fuzzy_search_field', opts
+      - if tabulatr_data.search?
+        .tabulatr-fuzzy-search-field-wrapper.col-xs-6.col-sm-2 data-table-id=table_id
+          = render '/tabulatr/tabulatr_fuzzy_search_field', opts
 
-  - if table_options[:pagination_position].in?([:top, :both])
-    .tabulatr-paginator-wrapper.col-xs-12.col-sm-8 data-table-id=table_id
-      = render '/tabulatr/tabulatr_paginator', opts
+      - if table_options[:pagination_position].in?([:top, :both])
+        .tabulatr-paginator-wrapper.col-xs-12.col-sm-8 data-table-id=table_id
+          = render '/tabulatr/tabulatr_paginator', opts
 
-.tabulatr-filter-dialog-wrapper data-table-id=table_id
-  = render '/tabulatr/tabulatr_filter_dialog', opts
 
-- if table_options[:counter_position].in?([:top, :both])
-  .tabulatr-info-string-wrapper data-table-id=table_id
-    = render '/tabulatr/tabulatr_info_string', opts
-
-= render '/tabulatr/tabulatr_actual_table', opts
+    - if table_options[:counter_position].in?([:top, :both])
+      .tabulatr-info-string-wrapper data-table-id=table_id
+        = render '/tabulatr/tabulatr_info_string', opts
+    = render '/tabulatr/tabulatr_actual_table', opts
 
 - if table_options[:counter_position].in?([:bottom, :both])
   .tabulatr-info-string-wrapper data-table-id=table_id

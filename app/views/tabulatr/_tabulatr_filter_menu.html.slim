@@ -20,11 +20,6 @@
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 - if table_options[:filter] && columns.select(&:filter).present?
-  .dropdown
-    a.btn.btn-default data-toggle="dropdown" href="#"
-      i.icon-filter.glyphicon.glyphicon-filter.fa.fa-filter'
-      i.icon-caret-down.glyphicon.glyphicon-chevron-down.fa.fa-caret-down
-    ul.dropdown-menu role="menu" aria-labelledby="dLabel"
-      - columns.select(&:filter).each do |column|
-        li
-          = link_to column.human_name, '#', "data-show-table-filter" => column.full_name
+    a.btn.btn-default data-show-filters-for=table_id href="#"
+      => t('tabulatr.filter')
+      i.icon-caret-right.glyphicon.glyphicon-chevron-right.fa.fa-caret-right

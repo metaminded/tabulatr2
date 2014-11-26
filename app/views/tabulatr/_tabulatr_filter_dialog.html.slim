@@ -20,70 +20,74 @@
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-form.form.form-horizontal.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
-  input name="#{formatted_name}_sort" type="hidden" value=table_options[:order_by]
-  - if table_options[:filter] && columns.select(&:filter).present?
-    - columns.select(&:filter).each do |column|
-      - name = column.full_name
-      .control-group.form-group data-filter-column-name=name
-        - iname = "#{formatted_name}_filter[#{name}]"
-        - filter_name = "tabulatr_form_#{name}"
+.tabulatr-filter-popover title="Filter" data-table=table_id
+  form.form.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
+    .panel.panel-default
+      .panel-heading
+        = t('tabulatr.filter')
+        .btn-group.pull-right
+          a.tabulatr-reset-table.btn.btn-danger.btn-xs data-tabulatr-reset=table_id
+            = fa_icon :remove
+          a.tabulatr-submit-table.btn.btn-primary.btn-xs
+            = fa_icon 'arrow-right'
+      .panel-body
+        .wech style='text-indent: -2000px; height: 0px'
+          = submit_tag "Anwenden"
+        input name="#{formatted_name}_sort" type="hidden" value=table_options[:order_by]
+        - if table_options[:filter] && columns.select(&:filter).present?
+          - columns.select(&:filter).each do |column|
+            - name = column.full_name
+            .row.tabulatr-filter-row
+              .col-xs-12
+                .control-group.form-group data-filter-column-name=name
+                  - iname = "#{formatted_name}_filter[#{name}]"
+                  - filter_name = "tabulatr_form_#{name}"
 
-        label.control-label.col-sm-3.col-xs-12 for=filter_name
-          = column.human_name
+                  label.control-label for=filter_name
+                    = column.filter_label || column.human_name
 
-        .controls.col-sm-9.col-xs-12.row
-          - if column.filter.is_a?(Hash) || column.filter.is_a?(Array) || column.filter.is_a?(String)
-            .col-sm-11
-              select.form-control id=name name=iname
-                - if column.filter.class.is_a?(String)
-                  = column.filter
-                - else
-                  option
-                  = options_for_select(column.filter)
-          - elsif column.filter == :range
-            .col-sm-5
-              input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}_from" name="#{iname}[from]"
-            span.col-sm-1.text-center —
-            .col-sm-5
-              input.tabulatr_filter.form-control type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"
-          - elsif column.filter == :checkbox
-            .col-sm-11
-              = select_tag(iname, options_for_select([ \
-                  [t('tabulatr.boolean_filter.both'), ""],
-                  [t('tabulatr.boolean_filter.no'), "false"],
-                  [t('tabulatr.boolean_filter.yes'), "true"]] \
-                ), class: 'form-control')
-          - elsif column.filter == :exact
-            .col-sm-11
-              input.tabulatr_filter.form-control type="text" id="#{name}_exact" data-tabulatr-attribute="#{name}" name="#{iname}"
-          - elsif column.filter == :date
-            .col-sm-3
-              select.form-control name="#{iname}[date][simple]" data-tabulatr-date-filter="#{formatted_name}_#{name}_filter"
-                option= I18n.t("tabulatr.date_filter.none")
-                option value="today"= I18n.t("tabulatr.date_filter.today")
-                option value="yesterday"= I18n.t("tabulatr.date_filter.yesterday")
-                option value="this_week"= I18n.t("tabulatr.date_filter.this_week")
-                option value="last_7_days"= I18n.t("tabulatr.date_filter.last_7_days")
-                option value="this_month"= I18n.t("tabulatr.date_filter.this_month")
-                option value="last_30_days"= I18n.t("tabulatr.date_filter.last_30_days")
-                option value="from_to"= I18n.t("tabulatr.date_filter.from_to")
-            .col-sm-1
-            .col-sm-3
-              input.tabulatr_filter.form-control.date-picker.hidden.from_to type="text" id="#{formatted_name}_#{name}_filter_from" name="#{iname}[date][from]"
-            .col-sm-1.text-center
-              .span.from_to.hidden
-                |&mdash;
-            .col-sm-3
-              input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{formatted_name}_#{name}_filter_to" name="#{iname}[date][to]"
-          - else
-            .col-sm-11
-              input.tabulatr_filter.form-control type="text" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
-          .col-sm-1
-            = link_to "✕", '#', 'data-hide-table-filter' => name, class: 'form-control btn btn-danger btn-mini'
-
-    .control-group.form-group data-filter-column-name="_submit"
-      label.control-label.col-md-3 for="_submit"
-        |&nbsp;
-      .controls.col-md-9
-        input.submit-table.btn.btn-primary.btn-mini.btn-sm type='submit' value=I18n.t('tabulatr.apply_filters')
+                  - if column.filter.is_a?(Hash) || column.filter.is_a?(Array) || column.filter.is_a?(String)
+                    select.form-control.no-chosen id=name name=iname
+                      - if column.filter.class.is_a?(String)
+                        = column.filter
+                      - else
+                        option
+                        = options_for_select(column.filter)
+                  - elsif column.filter == :range
+                    .col-sm-5
+                      input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}_from" name="#{iname}[from]"
+                    span.col-sm-1.text-center —
+                    .col-sm-5
+                      input.tabulatr_filter.form-control type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"
+                  - elsif column.filter == :checkbox
+                    .col-xs-12
+                      = select_tag(iname, options_for_select([ \
+                          [t('tabulatr.boolean_filter.both'), ""],
+                          [t('tabulatr.boolean_filter.no'), "false"],
+                          [t('tabulatr.boolean_filter.yes'), "true"]] \
+                        ), class: 'form-control no-chosen')
+                  - elsif column.filter == :exact
+                    input.tabulatr_filter.form-control type="text" id="#{name}_exact" data-tabulatr-attribute="#{name}" name="#{iname}"
+                  - elsif column.filter == :date
+                    select.form-control.no-chosen name="#{iname}[date][simple]" data-tabulatr-date-filter="#{formatted_name}_#{name}_filter"
+                      option= I18n.t("tabulatr.date_filter.none")
+                      option value="today"= I18n.t("tabulatr.date_filter.today")
+                      option value="yesterday"= I18n.t("tabulatr.date_filter.yesterday")
+                      option value="this_week"= I18n.t("tabulatr.date_filter.this_week")
+                      option value="last_7_days"= I18n.t("tabulatr.date_filter.last_7_days")
+                      option value="this_month"= I18n.t("tabulatr.date_filter.this_month")
+                      option value="last_30_days"= I18n.t("tabulatr.date_filter.last_30_days")
+                      option value="from_to"= I18n.t("tabulatr.date_filter.from_to")
+                    .row.from_to.hidden
+                      .col-xs-6
+                        .control-group
+                          label.control-label for="#{formatted_name}_#{name}_filter_from"
+                            = "Von"
+                          input.tabulatr_filter.form-control.date-picker.hidden.from_to type="text" id="#{formatted_name}_#{name}_filter_from" name="#{iname}[date][from]"
+                      .col-xs-6
+                        .control-group
+                          label.control-label for="#{formatted_name}_#{name}_filter_from"
+                            = "Bis"
+                          input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{formatted_name}_#{name}_filter_to" name="#{iname}[date][to]"
+                  - else
+                    input.tabulatr_filter.form-control type="text" data-tabulatr-attribute="#{name}" name="#{iname}[like]"

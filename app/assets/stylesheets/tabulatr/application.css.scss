@@ -19,156 +19,177 @@
 //  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-.tabulatr-sort{
-  opacity: 0.3;
-}
+.tabulatr-outer-wrapper {
 
-.tabulatr-sort:hover{
-  cursor: pointer;
-}
-
-.sorted{
-  opacity: 1;
-}
-
-i.tabulatr_remove_filter:hover{
-  cursor: pointer;
-}
-
-.tabulatr_filtered_column{
-  text-decoration: underline;
-}
-
-.tabulatr-per-page {
-  margin: 20px 10px;
-  a.active{
-    background-color: red;
+  .tabulatr-filter-col {
+    display:none;
   }
-}
+  .tabulatr-table-col {
+    @extend .col-xs-12;
+  }
 
-.table-controls div{
-  margin: 20px 10px;
-  display: inline-block;
-  vertical-align: middle;
-}
+  &.filtered {
+    .tabulatr-filter-col {
+      display:block;
+      @extend .col-xs-4;
+      @extend .col-sm-3;
+      @extend .col-lg-2;
+    }
+    .tabulatr-table-col {
+      @extend .col-xs-8;
+      @extend .col-sm-9;
+      @extend .col-lg-10;
+    }
+    a[data-show-filters-for] {
+      display: none;
+    }
+  }
 
-.table-controls i, .tabulatr_table i{
-  margin-right: 5px;
-}
+  .tabulatr-sort{
+    opacity: 0.3;
+  }
 
-.table-controls .form-inline{
-  display: inline-block;
-  position: relative;
-  vertical-align: top;
-}
+  .tabulatr-sort:hover{
+    cursor: pointer;
+  }
 
-#tabulatr-wrench{
-  margin-left: 10px;
-}
+  .sorted{
+    opacity: 1;
+  }
 
+  .popover .tabulatr_filter_form {
+    width: 400px;
+  }
 
+  .tabulatr_filtered_column{
+    text-decoration: underline;
+  }
 
-div[data-filter-column-name] {
-  display:none;
-}
+  .tabulatr-per-page {
+    margin: 20px 10px;
+    a.active{
+      background-color: red;
+    }
+  }
 
-th.tabulatr-sortable {
-  cursor: pointer;
+  .table-controls div{
+    margin: 20px 10px;
+    display: inline-block;
+    vertical-align: middle;
+  }
 
-  &.sorted {
+  .table-controls i, .tabulatr_table i{
+    margin-right: 5px;
+  }
 
-    &[data-sorted=asc] {
-      &:after {
-        content: " \25B2";
-        margin-left: 5px;
+  .table-controls .form-inline{
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+  }
+
+  #tabulatr-wrench{
+    margin-left: 10px;
+  }
+
+  th.tabulatr-sortable {
+    cursor: pointer;
+
+    &.sorted {
+
+      &[data-sorted=asc] {
+        &:after {
+          content: " \25B2";
+          margin-left: 5px;
+        }
+      }
+
+      &[data-sorted=desc] {
+        &:after {
+          content: " \25BC";
+          margin-left: 5px;
+        }
       }
     }
+  }
 
-    &[data-sorted=desc] {
-      &:after {
-        content: " \25BC";
-        margin-left: 5px;
+  table.tabulatr_table {
+    td, th {
+      &[align=right] {
+        text-align: right;
+      }
+
+      &[align=center] {
+        text-align: center;
       }
     }
-  }
-}
-
-table.tabulatr_table {
-  td, th {
-    &[align=right] {
-      text-align: right;
-    }
-
-    &[align=center] {
-      text-align: center;
-    }
-  }
-  tr.empty_row{
-    display: none;
-  }
-}
-
-.tabulatr-table-controls-wrapper {
-  display: block;
-  padding-top: 10px;
-
-  .tabulatr-filter-menu-wrapper {
-    display: inline-block;
-    padding: 20px 0 20px 0;
-  }
-
-  .tabulatr-batch-actions-menu-wrapper {
-    display: inline-block;
-    padding: 20px 0 20px 20px;
-  }
-
-  .tabulatr-paginator-wrapper {
-    display: inline-block;
-    padding: 0;
-    text-align: center;
-
-    .pagination{
-      margin: 10px 0;
-      vertical-align: middle;
-    }
-
-    .pagination_trigger{
-      width: 1px;
-      height: 1px;
-      position: relative;
-      float: left;
-      opacity: 1;
+    tr.empty_row{
+      display: none;
     }
   }
 
-  .tabulatr-info-string-wrapper {
-    display: inline-block;
-    padding: 20px 20px 20px 0;
-  }
-
-  .tabulatr-fuzzy-search-field-wrapper {
-    display: inline-block;
-    float: right;
-    padding: 20px 0 20px 0;
-  }
-
-  .tabulatr-filter-dialog-wrapper {
+  .tabulatr-table-controls-wrapper {
     display: block;
+    padding-top: 10px;
 
-    .submit-table{
-      z-index: 2;
+    .tabulatr-filter-menu-wrapper {
+      display: inline-block;
+      padding: 20px 0 20px 0;
+    }
+
+    .tabulatr-batch-actions-menu-wrapper {
+      display: inline-block;
+      padding: 20px 0 20px 20px;
+    }
+
+    .tabulatr-paginator-wrapper {
+      display: inline-block;
+      padding: 0;
+      text-align: center;
+
+      .pagination{
+        margin: 10px 0;
+        vertical-align: middle;
+      }
+
+      .pagination_trigger{
+        width: 1px;
+        height: 1px;
+        position: relative;
+        float: left;
+        opacity: 1;
+      }
+    }
+
+    .tabulatr-info-string-wrapper {
+      display: inline-block;
+      padding: 20px 20px 20px 0;
+    }
+
+    .tabulatr-fuzzy-search-field-wrapper {
+      display: inline-block;
+      float: right;
+      padding: 20px 0 20px 0;
+    }
+
+    .tabulatr-filter-dialog-wrapper {
+      display: block;
+
+      .submit-table{
+        z-index: 2;
+      }
     }
   }
-}
 
-.tabulatr-table-controls-wrapper.row{
-  margin: 0;
-}
+  .tabulatr-table-controls-wrapper.row{
+    margin: 0;
+  }
 
-.tabulatr-spinner-box{
-  width: 100%;
-  height: 50px;
-  display: none;
-  position: relative;
-  text-align: center;
+  .tabulatr-spinner-box{
+    width: 100%;
+    height: 50px;
+    display: none;
+    position: relative;
+    text-align: center;
+  }
 }

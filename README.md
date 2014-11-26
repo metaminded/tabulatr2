@@ -344,6 +344,7 @@ the columns in the block of `table_for`.
   wrap: nil,
   th_html: false,
   filter_html: false,
+  filter_label: nil,
   filter: true,          # whether this column should be filterable
   sortable: true,        # whethter this column should be sortable
   format: nil,
