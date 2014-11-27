@@ -129,24 +129,16 @@ describe "Tabulatr" do
         Product.create!(:title => n, :active => true, :price => 10.0)
       end
       visit simple_index_products_path
-      find(".tabulatr-filter-menu-wrapper a.btn").click
-      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
-        find_link('Title').click
-      end
-      expect(find('.dropdown-menu').visible?)
-      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
-      within(".tabulatr_filter_form") do
-        fill_in("product_filter[products:title][like]", with: "ore")
-        expect{find('#title_like').visible?}.to be_true
-        find_button("Apply").trigger('click')
-      end
+      click_link 'Filter'
+      fill_in("product_filter[products:title][like]", with: "ore")
+      find('.tabulatr-submit-table').click
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'dolore')
 
       within(".tabulatr_filter_form") do
         fill_in("product_filter[products:title][like]", :with => "loreem")
-        find_button("Apply").trigger('click')
+        find('.tabulatr-submit-table').click
       end
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
@@ -157,13 +149,9 @@ describe "Tabulatr" do
       Product.create!([{title: 'foo', vendor: @vendor1},
                        {title: 'bar', vendor: @vendor2}])
       visit simple_index_products_path
-      find(".tabulatr-filter-menu-wrapper a.btn").click
-      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
-        find_link('Vendor Name').click
-      end
-      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+      click_link 'Filter'
       find('form.tabulatr_filter_form').fill_in("product_filter[vendor:name]", with: "producer")
-      find('form.tabulatr_filter_form').find_button('Apply').trigger('click')
+      find('.tabulatr-submit-table').click
       expect(page).not_to have_selector('td[data-tabulatr-column-name="vendor:name"]', text: @vendor1.name)
       expect(page).to have_selector('td[data-tabulatr-column-name="vendor:name"]', text: @vendor2.name)
     end
@@ -172,22 +160,19 @@ describe "Tabulatr" do
       n = names.length
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])
       visit simple_index_products_path
-      find(".tabulatr-filter-menu-wrapper a.btn").click
-      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
-        find_link('Price').click
-      end
-      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+
+      click_link 'Filter'
       within('.tabulatr_filter_form') do
         fill_in("product_filter[products:price][from]", :with => 4)
         fill_in("product_filter[products:price][to]", :with => 10)
-        find_button("Apply").trigger('click')
+        find('.tabulatr-submit-table').click
       end
       page.find(".tabulatr_table tbody tr[data-id='#{Product.first.id}']").should have_content('foo')
       page.has_no_css?(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
       within('.tabulatr_filter_form') do
         fill_in("product_filter[products:price][from]", :with => 12)
         fill_in("product_filter[products:price][to]", :with => 19)
-        find_button("Apply").trigger('click')
+        find('.tabulatr-submit-table').click
       end
       page.should have_selector(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
       page.should have_no_selector(".tabulatr_table tbody tr[data-id='#{Product.first.id}']")
@@ -196,24 +181,14 @@ describe "Tabulatr" do
     it 'removes the filters', js: true do
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 5}])
       visit simple_index_products_path
-      find(".tabulatr-filter-menu-wrapper a.btn").click
-      within(".tabulatr-filter-menu-wrapper .dropdown.open") do
-        find_link('Title').click
-      end
-      expect(find('.dropdown-menu').visible?)
-      find(".tabulatr-filter-menu-wrapper a.btn").trigger('click')
+      click_link 'Filter'
       within(".tabulatr_filter_form") do
         fill_in("product_filter[products:title][like]", with: "foo")
-        # expect(find('#products--title_like').visible?)
-        find_button("Apply").trigger('click')
+        find('.tabulatr-submit-table').click
       end
-      # expect(page).to have_content('foo')
-      # expect(page).to have_no_content('bar')
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'bar')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'foo')
-      find("a[data-hide-table-filter='products:title']").trigger('click')
-      # expect(page).to have_content('foo')
-      # expect(page).to have_content('bar')
+      find('.tabulatr-reset-table').click
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'bar')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'foo')
     end
