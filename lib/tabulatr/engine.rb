@@ -22,6 +22,7 @@
 #++
 
 require 'slim'
+require 'font-awesome-rails'
 class Tabulatr::Engine < Rails::Engine
 
 end
