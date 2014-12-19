@@ -1,8 +1,9 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Tabulatr::Data::Formatting do
   class DummySpecClass
     include Tabulatr::Data::Formatting
+    def table_columns; end
   end
 
   before(:each) do

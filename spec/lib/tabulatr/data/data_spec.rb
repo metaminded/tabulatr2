@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Tabulatr::Data do
 
@@ -11,7 +11,7 @@ describe Tabulatr::Data do
         filter_sql: "products.title",
         output: ->(record){record.send(:title)}
     )
-    Tabulatr::Data.any_instance.stub(:table_columns).and_return([column])
+    allow_any_instance_of(Tabulatr::Data).to receive(:table_columns).and_return([column])
   end
 
   it 'prefilters the result' do

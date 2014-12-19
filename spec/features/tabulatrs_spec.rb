@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "Tabulatr" do
+feature "Tabulatr" do
 
   names = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur",
   "adipisicing", "elit", "sed", "eiusmod", "tempor", "incididunt", "labore",
@@ -19,9 +19,9 @@ describe "Tabulatr" do
     @tag3 = Tag.create!(:title => 'fubar')
   end
 
-  describe "General data" do
+  feature "General data" do
 
-    it "contains buttons" do
+    scenario "contains buttons" do
       visit simple_index_products_path
       ['.tabulatr-filter-menu-wrapper', '.tabulatr-batch-actions-menu-wrapper',
         '.tabulatr-paginator-wrapper'].each do |n|
@@ -29,102 +29,102 @@ describe "Tabulatr" do
       end
     end
 
-    it "contains column headers" do
+    scenario "contains column headers" do
       visit simple_index_products_path
       ['Title','Price','Active','Updated at'].each do |n|
-        find('.tabulatr_table thead').should have_content(n)
+        expect(page).to have_css('.tabulatr_table thead', text: n)
       end
     end
 
-    it "contains the actual data", js: true do
+    scenario "contains the actual data", js: true do
       product = Product.create!(:title => names[0], :active => true, :price => 10.0)
       product.vendor = @vendor1
       product.save!
       visit simple_index_products_path
-      page.should have_content("true")
-      page.should have_content("10.0")
-      product.vendor.name.should eq("ven d'or")
-      find('.tabulatr_table tbody').should have_content(names[0])
-      find('.tabulatr_table tbody').should have_content("ven d'or")
+      expect(page).to have_content("true")
+      expect(page).to have_content("10.0")
+      expect(product.vendor.name).to eq("ven d'or")
+      expect(page).to have_css('.tabulatr_table tbody', text: names[0])
+      expect(page).to have_css('.tabulatr_table tbody', text: "ven d'or")
     end
 
-    it "correctly contains the association data", js: true do
+    scenario "correctly contains the association data", js: true do
       product = Product.create!(:title => names[0], :active => true, :price => 10.0)
       [@tag1, @tag2, @tag3].each_with_index do |tag, i|
         product.tags << tag
         product.save
         visit simple_index_products_path
-        page.should have_content tag.title.upcase
+        expect(page).to have_content(tag.title.upcase)
       end
     end
 
-    it "contains the actual data multiple times", js: true do
+    scenario "contains the actual data multiple times", js: true do
       9.times do |i|
         product = Product.create!(:title => names[i], :active => i.even?, :price => 11.0+i,
           :vendor => i.even? ? @vendor1 : @vendor2)
         visit simple_index_products_path
-        page.should have_content(names[i])
-        page.should have_content((11.0+i).to_s)
+        expect(page).to have_content(names[i])
+        expect(page).to have_content((11.0+i).to_s)
       end
     end
 
-    it "contains the further data on the further pages" do
+    scenario "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
         product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
           :vendor => i.even? ? @vendor1 : @vendor2)
         visit simple_index_products_path
-        page.should_not have_content(/\s+#{n}\s+/)
-        page.should_not have_content((30.0+i).to_s)
+        expect(page).to have_no_content(/\s+#{n}\s+/)
+        expect(page).to have_no_content((30.0+i).to_s)
       end
     end
   end
 
-  describe 'has_many' do
-    it 'displays the count when called with :count', js: true do
+  feature 'has_many' do
+    scenario 'displays the count when called with :count', js: true do
       product = Product.create!(:title => names[0], :active => true, :price => 10.0)
       [@tag1, @tag2, @tag3].each do |tag|
         product.tags << tag
       end
       product.save
       visit count_tags_products_path
-      page.find('tbody td[data-tabulatr-column-name="tags:count"]').should have_content 3
+      expect(page).to have_css('tbody td[data-tabulatr-column-name="tags:count"]', text: '3')
     end
   end
 
-  describe "Pagination" do
+  feature "Pagination" do
 
 
     context 'pagination setting is true' do
-      it 'has pages', js: true do
+      scenario 'has pages', js: true do
         5.times do |i|
           Product.create!(:title => "test #{i}")
         end
         visit one_item_per_page_with_pagination_products_path
-        page.all('.pagination li a[data-page]').count.should eq 5
+        expect(page).to have_css('.pagination li a[data-page]', count: 5)
       end
 
-      it 'shows some pages when there are 20', js: true do
+      scenario 'shows some pages when there are 20', js: true do
         20.times do |i|
           Product.create!
         end
         visit one_item_per_page_with_pagination_products_path
         pages = page.all('.pagination li a[data-page]').map{|a| a['data-page'].to_i}
-        pages.should eq [1,2,3,10,20]
+        expect(pages).to match_array([1,2,3,10,20])
       end
     end
     context 'pagination setting is false' do
-      it 'has no pages', js: true do
+      scenario 'has no pages', js: true do
         5.times do |i|
           Product.create!
         end
         visit one_item_per_page_without_pagination_products_path
-        page.all('.pagination li a').count.should be 0
+        expect(page).to have_no_css('.pagination li a')
       end
     end
   end
 
-  describe "Filters" do
-    it "filters with like", js: true do
+  feature "Filters" do
+    scenario "filters with like", js: true do
       names.each do |n|
         Product.create!(:title => n, :active => true, :price => 10.0)
       end
@@ -145,7 +145,7 @@ describe "Tabulatr" do
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'dolore')
     end
 
-    it "filters", js: true do
+    scenario "filters", js: true do
       Product.create!([{title: 'foo', vendor: @vendor1},
                        {title: 'bar', vendor: @vendor2}])
       visit simple_index_products_path
@@ -156,7 +156,7 @@ describe "Tabulatr" do
       expect(page).to have_selector('td[data-tabulatr-column-name="vendor:name"]', text: @vendor2.name)
     end
 
-    it "filters with range", js: true do
+    scenario "filters with range", js: true do
       n = names.length
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])
       visit simple_index_products_path
@@ -167,18 +167,18 @@ describe "Tabulatr" do
         fill_in("product_filter[products:price][to]", :with => 10)
         find('.tabulatr-submit-table').click
       end
-      page.find(".tabulatr_table tbody tr[data-id='#{Product.first.id}']").should have_content('foo')
-      page.has_no_css?(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
+      expect(page).to have_css(".tabulatr_table tbody tr[data-id='#{Product.first.id}']", text: 'foo')
+      expect(page).to have_no_css(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
       within('.tabulatr_filter_form') do
         fill_in("product_filter[products:price][from]", :with => 12)
         fill_in("product_filter[products:price][to]", :with => 19)
         find('.tabulatr-submit-table').click
       end
-      page.should have_selector(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
-      page.should have_no_selector(".tabulatr_table tbody tr[data-id='#{Product.first.id}']")
+      expect(page).to have_css(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
+      expect(page).to have_no_css(".tabulatr_table tbody tr[data-id='#{Product.first.id}']")
     end
 
-    it 'removes the filters', js: true do
+    scenario 'removes the filters', js: true do
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 5}])
       visit simple_index_products_path
       click_link 'Filter'
@@ -194,36 +194,35 @@ describe "Tabulatr" do
     end
   end
 
-  describe "Sorting" do
-    it "knows how to sort", js: true do
+  feature "Sorting" do
+    scenario "knows how to sort", js: true do
       names.each do |n|
         Product.create!(title: n, vendor: @vendor1, active: true, price: 10.0)
       end
-      Product.count.should > 10
       visit simple_index_products_path
       l = names.count
       (1..10).each do |i|
-        page.should have_content names[l-i]
+        expect(page).to have_content names[l-i]
       end
       within('.tabulatr_table thead') do
         find('th[data-tabulatr-column-name="products:title"]').click
       end
       snames = names.sort
       (1..10).each do |i|
-        page.should have_content snames[i-1]
+        expect(page).to have_content snames[i-1]
       end
       within('.tabulatr_table thead') do
         find('th[data-tabulatr-column-name="products:title"]').click
       end
       (1..10).each do |i|
-        page.should have_content snames[-i]
+        expect(page).to have_content snames[-i]
       end
     end
   end
 
-  describe "Show simple records" do
+  feature "Show simple records" do
 
-    it "contains the actual data", js: false do
+    scenario "contains the actual data", js: false do
       names.shuffle.each.with_index do |n,i|
         p = Product.new(:title => n, :active => true, :price => 10.0 + i)
         p.vendor = [@vendor1, @vendor2].shuffle.first
@@ -232,50 +231,50 @@ describe "Tabulatr" do
       end
       visit stupid_array_products_path
       Product.order('price asc').limit(11).each do |product|
-        page.should have_content(product.title)
-        page.should have_content(product.title.upcase)
-        page.should have_content(product.price)
-        page.should have_content(product.vendor.name)
-        page.should have_content(product.title)
-        page.should have_content("foo#{product.title}foo")
-        page.should have_content("bar#{product.title}bar")
-        page.should have_content("%08.4f" % product.price)
-        page.should have_content(product.tags.count)
+        expect(page).to have_content(product.title)
+        expect(page).to have_content(product.title.upcase)
+        expect(page).to have_content(product.price)
+        expect(page).to have_content(product.vendor.name)
+        expect(page).to have_content(product.title)
+        expect(page).to have_content("foo#{product.title}foo")
+        expect(page).to have_content("bar#{product.title}bar")
+        expect(page).to have_content("%08.4f" % product.price)
+        expect(page).to have_content(product.tags.count)
         product.tags.each do |tag|
-          page.should have_content(tag.title)
-          page.should have_content("foo#{tag.title}foo")
-          page.should have_content("bar#{tag.title}bar")
+          expect(page).to have_content(tag.title)
+          expect(page).to have_content("foo#{tag.title}foo")
+          expect(page).to have_content("bar#{tag.title}bar")
         end
       end
     end
   end
 
-  describe "Batch actions", js: true do
+  feature "Batch actions", js: true do
 
-    it "hides the actions if there are none" do
+    scenario "hides the actions if there are none" do
       visit one_item_per_page_with_pagination_products_path
-      page.should have_no_selector('.tabulatr-batch-actions-menu-wrapper a')
+      expect(page).to have_no_selector('.tabulatr-batch-actions-menu-wrapper a')
     end
 
 
-    it 'executes the action when clicked' do
+    scenario 'executes the action when clicked' do
       product1 = Product.create!(:title => names[0], :active => true, :price => 10.0)
       product2 = Product.create!(:title => names[1], :active => true, :price => 10.0)
       product3 = Product.create!(:title => names[2], :active => true, :price => 10.0)
-      page.has_css?(".tabulatr_table tbody tr", :count => 3)
       visit with_batch_actions_products_path
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 3)
       find(".tabulatr-checkbox[value='#{product1.id}']").trigger('click')
       find(".tabulatr-checkbox[value='#{product3.id}']").trigger('click')
       find('.tabulatr-batch-actions-menu-wrapper a').click
       within('.dropdown.open') do
         click_link 'Delete'
       end
-      page.has_css?(".tabulatr_table tbody tr", :count => 1)
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 1)
     end
   end
 
-  describe "Column options", js: true do
-    it 'applys the given style' do
+  feature "Column options", js: true do
+    scenario 'applys the given style' do
       p = Product.create!(:title => names[0], :active => true, :price => 10.0)
       visit with_styling_products_path
       cell   = find(".tabulatr_table tbody td[data-tabulatr-column-name='products:title']")

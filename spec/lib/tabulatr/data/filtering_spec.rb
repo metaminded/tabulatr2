@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Tabulatr::Data::Filtering do
   class DummySpecClass
@@ -17,7 +17,7 @@ describe Tabulatr::Data::Filtering do
     @outside_last_thirty_days = Product.create!(publish_at: DateTime.new(2013, 12, 2, 23, 59))
     @this_month = Product.create!(publish_at: DateTime.new(2014, 1, 15, 0, 0))
     @next_year = Product.create!(publish_at: DateTime.new(2015, 1, 1, 12, 0))
-    Date.stub(:today).and_return(Date.new(2014,1,1))
+    allow(Date).to receive(:today).and_return(Date.new(2014,1,1))
   end
   describe '.apply_date_condition' do
     it "filters for 'today'" do
