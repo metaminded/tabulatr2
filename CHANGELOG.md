@@ -1,3 +1,6 @@
+## 0.9.15
+ * Removes bootstrap2 CSS modifications
+
 ## 0.9.6
  * Adds localStorage persistency for tables. It's automatically turned on for paginated
    tables and you can adjust the setting in your template.
