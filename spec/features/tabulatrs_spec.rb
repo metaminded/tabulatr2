@@ -167,6 +167,7 @@ feature "Tabulatr" do
         fill_in("product_filter[products:price][to]", :with => 10)
         find('.tabulatr-submit-table').click
       end
+      wait_for_ajax
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css(".tabulatr_table tbody tr", text: 'foo')
       expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'bar')
@@ -175,6 +176,7 @@ feature "Tabulatr" do
         fill_in("product_filter[products:price][to]", :with => 19)
         find('.tabulatr-submit-table').click
       end
+      wait_for_ajax
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css(".tabulatr_table tbody tr", text: 'bar')
       expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'foo')
