@@ -180,6 +180,31 @@ feature "Tabulatr" do
       expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'foo')
     end
 
+    scenario "filters enums", js: true do
+      skip unless Product.respond_to?(:enum)
+      Product.create!([{title: 'foo', price: 5, status: 'in_stock'},
+                       {title: 'bar', price: 10, status: 'out_of_stock'}])
+      visit simple_index_products_path
+      expect(page).to have_css('.tabulatr_table tbody', text: 'foo')
+      expect(page).to have_css('.tabulatr_table tbody', text: 'bar')
+      click_link 'Filter'
+      within('.tabulatr_filter_form') do
+        select 'in_stock', from: 'product_filter[products:status]'
+        find('.tabulatr-submit-table').click
+      end
+      expect(page).to have_no_css('.tabulatr-spinner-box')
+      expect(page).to have_css('.tabulatr_table tbody', text: 'foo')
+      expect(page).to have_no_css('.tabulatr_table tbody', text: 'bar')
+      within('.tabulatr_filter_form') do
+        select 'out_of_stock', from: 'product_filter[products:status]'
+        find('.tabulatr-submit-table').click
+      end
+      expect(page).to have_no_css('.tabulatr-spinner-box')
+      expect(page).to have_css('.tabulatr_table tbody', text: 'bar')
+      expect(page).to have_no_css('.tabulatr_table tbody', text: 'foo')
+
+    end
+
     scenario 'removes the filters', js: true do
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 5}])
       visit simple_index_products_path

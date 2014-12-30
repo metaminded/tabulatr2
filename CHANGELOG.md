@@ -1,4 +1,10 @@
 ## 0.9.15
+ * Adds filter support for `enum`
+   If it detects an enum it creates a dropdown filter with the possible enum
+   values as options.
+
+   fixes #35
+
  * Removes bootstrap2 CSS modifications
 
 ## 0.9.6

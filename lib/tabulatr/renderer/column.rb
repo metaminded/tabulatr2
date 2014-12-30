@@ -182,7 +182,11 @@ class Tabulatr::Renderer::Column
   def determine_appropriate_filter!
     case self.klass.columns_hash[self.name.to_s].try(:type)
     when :integer, :float, :decimal
-      self.filter = :exact
+      if self.klass.respond_to?(:defined_enums) && self.klass.defined_enums.keys.include?(self.name.to_s)
+        self.filter = :enum
+      else
+        self.filter = :exact
+      end
     when :string, :text
       self.filter = :like
     when :date, :time, :datetime, :timestamp

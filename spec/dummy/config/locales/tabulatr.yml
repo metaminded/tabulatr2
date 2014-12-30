@@ -19,7 +19,8 @@ en:
       both: All
       'yes': Yes
       'no': No
-
+    enum_filter:
+      none: ''
 de:
   tabulatr:
     rows_per_page: 'Ergebnisse pro Seite'
@@ -41,3 +42,5 @@ de:
       both: Alle
       'yes': Ja
       'no': Nein
+    enum_filter:
+      none: ''

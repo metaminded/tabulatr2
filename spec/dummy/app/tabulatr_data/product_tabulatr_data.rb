@@ -8,6 +8,7 @@ class ProductTabulatrData < Tabulatr::Data
 
   column :title
   column :id
+  column :status
   column :price, table_column_options: {filter: :range} do "#{record.price} EUR" end # <- Block evaluiert im Kontext EINES Records
   column :edit_link do link_to "edit #{record.title}", product_path(record) end
   # column :name,
