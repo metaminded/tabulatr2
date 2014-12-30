@@ -167,15 +167,17 @@ feature "Tabulatr" do
         fill_in("product_filter[products:price][to]", :with => 10)
         find('.tabulatr-submit-table').click
       end
-      expect(page).to have_css(".tabulatr_table tbody tr[data-id='#{Product.first.id}']", text: 'foo')
-      expect(page).to have_no_css(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
+      expect(page).to have_no_css('.tabulatr-spinner-box')
+      expect(page).to have_css(".tabulatr_table tbody tr", text: 'foo')
+      expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'bar')
       within('.tabulatr_filter_form') do
         fill_in("product_filter[products:price][from]", :with => 12)
         fill_in("product_filter[products:price][to]", :with => 19)
         find('.tabulatr-submit-table').click
       end
-      expect(page).to have_css(".tabulatr_table tbody tr[data-id='#{Product.last.id}']")
-      expect(page).to have_no_css(".tabulatr_table tbody tr[data-id='#{Product.first.id}']")
+      expect(page).to have_no_css('.tabulatr-spinner-box')
+      expect(page).to have_css(".tabulatr_table tbody tr", text: 'bar')
+      expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'foo')
     end
 
     scenario 'removes the filters', js: true do

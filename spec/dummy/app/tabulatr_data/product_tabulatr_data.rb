@@ -36,7 +36,7 @@ class ProductTabulatrData < Tabulatr::Data
     b.submenu do |s|
       s.button :star, product_path(r), label: 'Dolle Sache'
       s.divider
-      s.button :'trash-o', product_path(r), label: 'Löschen', confirm: 'echt?', class: 'btn-danger', method: :delete
+      s.button :'trash-o', product_path(r), label: 'Löschen', class: 'btn-danger', method: :delete, data: {confirm: 'echt?'}
     end
     "haha!"
   end

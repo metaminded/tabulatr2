@@ -6,7 +6,9 @@ describe Tabulatr::Renderer::Checkbox do
 
     it "generates a checkbox" do
       checkbox = Tabulatr::Renderer::Checkbox.new
-      expect(checkbox.human_name).to eq('<input class="tabulatr_mark_all" id="mark_all" name="mark_all" type="checkbox" value="1" />')
+      expect(checkbox.human_name).to match(/\A<input.+\/>\z/)
+      expect(checkbox.human_name).to match(/class="tabulatr_mark_all"/)
+      expect(checkbox.human_name).to match(/type="checkbox"/)
     end
 
   end
