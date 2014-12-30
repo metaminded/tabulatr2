@@ -18,10 +18,14 @@ gem 'tabulatr2'
 After that run `bundle install`.
 
 Also add `//= require tabulatr` to your application js file and `*= require tabulatr` to your CSS asset
-pipeline.
+pipeline. Make sure to add it after including the `bootstrap` assets.
 
 In order to get the provided `i18n` language files run
 `rails g tabulatr:install`
+
+## Example
+
+![example](https://cloud.githubusercontent.com/assets/570608/5580201/661c63c0-9047-11e4-9993-f71a0f1f4c00.png)
 
 ## The DSL
 
