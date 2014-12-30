@@ -57,10 +57,6 @@
     opacity: 1;
   }
 
-  .popover .tabulatr_filter_form {
-    width: 400px;
-  }
-
   .tabulatr_filtered_column{
     text-decoration: underline;
   }
@@ -191,5 +187,11 @@
     display: none;
     position: relative;
     text-align: center;
+  }
+
+  .tabulatr-filter-row{
+    label{
+      display: block;
+    }
   }
 }
