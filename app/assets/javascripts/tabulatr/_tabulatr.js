@@ -9,6 +9,19 @@ function Tabulatr(id){
   this.hasInfiniteScrolling = false;
 }
 
+var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
+  if (isInView && visiblePartY !== 'top' && visiblePartY !== 'bottom') {
+    var tableId = $(event.currentTarget).data('table');
+    var table_obj;
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id === tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.updateTable({append: true});
+  }
+};
+
 var tabulatr_tables;
 Tabulatr.prototype = {
   constructor: Tabulatr,
@@ -108,7 +121,6 @@ Tabulatr.prototype = {
     }
     if(this.locked){ return; }
     this.locked = true;
-    var curTable = this;
     this.showLoadingSpinner();
     if(this.initialRequest && this.isAPersistedTable && localStorage[this.id]){
       data = JSON.parse(localStorage[this.id]);
@@ -150,7 +162,7 @@ Tabulatr.prototype = {
     }
   },
 
-  handleError: function(foo, bar){
+  handleError: function(){
     if(this.isAPersistedTable && this.initialRequest){
       this.initialRequest = false;
       this.locked = false;
@@ -161,54 +173,36 @@ Tabulatr.prototype = {
   insertTabulatrData: function(response){
     var tableId = response.meta.table_id;
     var tbody = $('#'+ tableId +' tbody');
-    if(!response.meta.append){
-      if(this.storePage){
-        $('#'+ tableId +' tbody tr').hide();
-      }else{
-        $('#'+ tableId +' tbody').html('');
-      }
-    }
-    if(response.data.length === 0){
-      this.moreResults = false;
-      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
-    }else{
-      if(this.currentCount() + response.data.length >= response.meta.count){
-        this.moreResults = false;
-        $('.pagination_trigger[data-table='+ tableId + ']').unbind('inview');
-      }
 
-      // insert the actual data
-      for(var i = 0; i < response.data.length; i++){
-        var data = response.data[i];
-        var id = data.id;
-        var tr = $('#'+ tableId +' tr.empty_row').clone();
-        tr.removeClass('empty_row');
-        if(data._row_config.data){
-          tr.data(data._row_config.data);
-          delete data._row_config.data;
-        }
-        tr.attr(data._row_config);
-        tr.attr('data-page', response.meta.page);
-        tr.attr('data-id', id);
-        tr.find('td').each(function(index,element) {
-          var td = $(element);
-          var coltype = td.data('tabulatr-type');
-          var name = td.data('tabulatr-column-name');
-          var cont = data[name];
-          if(coltype === 'checkbox') {
-            cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
-          }
-          td.html(cont);
-        });
-        tbody.append(tr);
+    this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
+
+
+    // insert the actual data
+    for(var i = 0; i < response.data.length; i++){
+      var data = response.data[i];
+      var id = data.id;
+      var tr = $('#'+ tableId +' tr.empty_row').clone();
+      tr.removeClass('empty_row');
+      if(data._row_config.data){
+        tr.data(data._row_config.data);
+        delete data._row_config.data;
       }
+      tr.attr(data._row_config);
+      tr.attr('data-page', response.meta.page);
+      tr.attr('data-id', id);
+      tr.find('td').each(function(index,element) {
+        var td = $(element);
+        var coltype = td.data('tabulatr-type');
+        var name = td.data('tabulatr-column-name');
+        var cont = data[name];
+        if(coltype === 'checkbox') {
+          cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
+        }
+        td.html(cont);
+      });
+      tbody.append(tr);
     }
-    var count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
-    count_string = count_string.replace(/%\{current\}/, response.meta.count);
-    count_string = count_string.replace(/%\{total\}/, response.meta.total);
-    count_string = count_string.replace(/%\{per_page\}/,
-      response.meta.pagesize);
-    $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
+    this.updateInfoString(tableId, response);
 
     if(this.isAPersistedTable){
       this.retrieveTableFromLocalStorage(response);
@@ -216,7 +210,7 @@ Tabulatr.prototype = {
   },
 
 
-  replacer: function(match, attribute, offset, string){
+  replacer: function(match, attribute){
     return this.currentData[attribute];
   },
 
@@ -267,7 +261,7 @@ Tabulatr.prototype = {
     return hash;
   },
 
-  localDate: function(value, $td, $tr, obj){
+  localDate: function(value){
     return new Date(value).toLocaleString();
   },
 
@@ -279,6 +273,29 @@ Tabulatr.prototype = {
     this.initialRequest = false;
     this.locked = false;
     $('.tabulatr-spinner-box[data-table="'+ this.id +'"]').hide();
+  },
+
+  updateInfoString: function(tableId, response){
+    var count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
+    count_string = count_string.replace(/%\{current\}/, response.meta.count);
+    count_string = count_string.replace(/%\{total\}/, response.meta.total);
+    count_string = count_string.replace(/%\{per_page\}/,
+      response.meta.pagesize);
+    $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
+  },
+
+  prepareTableForInsert: function(tableId, append, dataCount, actualCount){
+    if(!append){
+      if(this.storePage){
+        $('#'+ tableId +' tbody tr').hide();
+      }else{
+        $('#'+ tableId +' tbody').html('');
+      }
+    }
+    if(dataCount === 0 || this.currentCount() + dataCount >= actualCount){
+      this.moreResults = false;
+      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
+    }
   }
 
 };
@@ -294,7 +311,7 @@ $(document).on('ready page:load', function(){
     var tableId = table.attr('id');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -334,7 +351,7 @@ $(document).on('ready page:load', function(){
     $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -345,7 +362,7 @@ $(document).on('ready page:load', function(){
     var tableId = $(this).data('table');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -365,7 +382,7 @@ $(document).on('ready page:load', function(){
     var tableId = $(this).data('table');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -377,7 +394,7 @@ $(document).on('ready page:load', function(){
     var tableId = $(this).parents('table').prop('id');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -400,7 +417,7 @@ $(document).on('ready page:load', function(){
     var $markAllCheckbox = $table.find('.tabulatr_mark_all');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -435,7 +452,7 @@ $(document).on('ready page:load', function(){
     var tableId = $(this).closest('div').data('table');
     var table_obj;
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         table_obj = tabulatr_tables[i];
       }
     }
@@ -451,11 +468,11 @@ $(document).on('ready page:load', function(){
 
   $(document).on('click', 'a[data-tabulatr-reset]',function(){
     var a = $(this);
-    var tableObj, tableName;
+    var tableObj;
     var tableId = a.data('tabulatrReset');
-    a.parents('.tabulatr-outer-wrapper').removeClass('filtered')
+    a.parents('.tabulatr-outer-wrapper').removeClass('filtered');
     for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id == tableId){
+      if(tabulatr_tables[i].id === tableId){
         tableObj = tabulatr_tables[i];
         tableObj.resetTable();
         return false;
@@ -484,7 +501,7 @@ $(document).on('ready page:load', function(){
       }
       tabulatr_tables.push(tabulatrTable);
       for(var i = 0; i < tabulatr_tables.length; i++){
-        if(tabulatr_tables[i].id == tableId){
+        if(tabulatr_tables[i].id === tableId){
           tableObj = tabulatr_tables[i];
         }
       }
@@ -510,7 +527,7 @@ $(document).on('click', '.pagination a[data-page]', function(){
   $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
   var table_obj;
   for(var i = 0; i < tabulatr_tables.length; i++){
-    if(tabulatr_tables[i].id == tableId){
+    if(tabulatr_tables[i].id === tableId){
       table_obj = tabulatr_tables[i];
     }
   }
@@ -529,24 +546,3 @@ $(document).on('change', 'select[data-tabulatr-date-filter]', function() {
     select.parents('.tabulatr-filter-row').find(".from_to").hide().val('');
   }
 });
-
-
-var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
-  if (isInView) {
-    // element is now visible in the viewport
-    if (visiblePartY == 'top') {
-      // top part of element is visible
-    } else if (visiblePartY == 'bottom') {
-      // bottom part of element is visible
-    } else {
-      var tableId = $(event.currentTarget).data('table');
-      var table_obj;
-      for(var i = 0; i < tabulatr_tables.length; i++){
-        if(tabulatr_tables[i].id == tableId){
-          table_obj = tabulatr_tables[i];
-        }
-      }
-      table_obj.updateTable({append: true});
-    }
-  }
-};
