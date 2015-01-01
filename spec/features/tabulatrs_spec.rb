@@ -131,14 +131,12 @@ feature "Tabulatr" do
       visit simple_index_products_path
       click_link 'Filter'
       fill_in("product_filter[products:title][like]", with: "ore")
-      find('.tabulatr-submit-table').click
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'dolore')
 
       within(".tabulatr_filter_form") do
         fill_in("product_filter[products:title][like]", :with => "loreem")
-        find('.tabulatr-submit-table').click
       end
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
@@ -151,7 +149,6 @@ feature "Tabulatr" do
       visit simple_index_products_path
       click_link 'Filter'
       find('form.tabulatr_filter_form').fill_in("product_filter[vendor:name]", with: "producer")
-      find('.tabulatr-submit-table').click
       expect(page).not_to have_selector('td[data-tabulatr-column-name="vendor:name"]', text: @vendor1.name)
       expect(page).to have_selector('td[data-tabulatr-column-name="vendor:name"]', text: @vendor2.name)
     end
@@ -164,19 +161,19 @@ feature "Tabulatr" do
       click_link 'Filter'
       within('.tabulatr_filter_form') do
         fill_in("product_filter[products:price][from]", :with => 4)
+        wait_for_ajax
         fill_in("product_filter[products:price][to]", :with => 10)
-        find('.tabulatr-submit-table').click
+        wait_for_ajax
       end
-      wait_for_ajax
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css(".tabulatr_table tbody tr", text: 'foo')
       expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'bar')
       within('.tabulatr_filter_form') do
         fill_in("product_filter[products:price][from]", :with => 12)
+        wait_for_ajax
         fill_in("product_filter[products:price][to]", :with => 19)
-        find('.tabulatr-submit-table').click
+        wait_for_ajax
       end
-      wait_for_ajax
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css(".tabulatr_table tbody tr", text: 'bar')
       expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'foo')
@@ -192,14 +189,12 @@ feature "Tabulatr" do
       click_link 'Filter'
       within('.tabulatr_filter_form') do
         select 'in_stock', from: 'product_filter[products:status]'
-        find('.tabulatr-submit-table').click
       end
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css('.tabulatr_table tbody', text: 'foo')
       expect(page).to have_no_css('.tabulatr_table tbody', text: 'bar')
       within('.tabulatr_filter_form') do
         select 'out_of_stock', from: 'product_filter[products:status]'
-        find('.tabulatr-submit-table').click
       end
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css('.tabulatr_table tbody', text: 'bar')
@@ -213,7 +208,6 @@ feature "Tabulatr" do
       click_link 'Filter'
       within(".tabulatr_filter_form") do
         fill_in("product_filter[products:title][like]", with: "foo")
-        find('.tabulatr-submit-table').click
       end
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'bar')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'foo')
