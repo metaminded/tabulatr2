@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe Tabulatr::Data::Filtering do
-  class DummySpecClass
+  class DummyFilteringClass
     include Tabulatr::Data::Filtering
   end
 
   before(:each) do
-    @dummy = DummySpecClass.new
+    @dummy = DummyFilteringClass.new
     @dummy.instance_variable_set('@relation', Product.all)
     @yesterday = Product.create!(publish_at: DateTime.new(2013, 12, 31, 0, 0))
     @today = Product.create!(publish_at: DateTime.new(2014, 1, 1, 15, 0))

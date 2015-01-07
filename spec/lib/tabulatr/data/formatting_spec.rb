@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 describe Tabulatr::Data::Formatting do
-  class DummySpecClass
+  class DummyFormattingClass
     include Tabulatr::Data::Formatting
     def table_columns; end
   end
 
   before(:each) do
-    @dummy = DummySpecClass.new
+    @dummy = DummyFormattingClass.new
     @dummy.instance_variable_set('@relation', Product.all)
     column = Tabulatr::Renderer::Column.from(
         name: :title,

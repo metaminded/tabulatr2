@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 describe Tabulatr::Data::Sorting do
-  class DummySpecClass
+  class DummySortingClass
     include Tabulatr::Data::Sorting
     def table_columns; end
   end
 
   before(:each) do
-    @dummy = DummySpecClass.new
+    @dummy = DummySortingClass.new
     @dummy.instance_variable_set('@relation', Product.all)
     @dummy.instance_variable_set('@table_name', 'products')
     @dummy.instance_variable_set('@base', Product)

@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 describe Tabulatr::Data::Pagination do
-  class DummySpecClass
+  class DummyPaginationClass
     include Tabulatr::Data::Pagination
   end
 
   before(:all) do
-    @dummy = DummySpecClass.new
+    @dummy = DummyPaginationClass.new
   end
   describe '.compute_pagination' do
     it "computes an offset" do
