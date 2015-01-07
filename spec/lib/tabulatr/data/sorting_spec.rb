@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Tabulatr::Data::Sorting do
   class DummySpecClass
     include Tabulatr::Data::Sorting
+    def table_columns; end
   end
 
   before(:each) do
