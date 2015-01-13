@@ -23,11 +23,13 @@ table class="#{table_options[:html_class]} tabulatr_static_table"
   thead
     tr
      - columns.each do |column|
-       th data-tabulatr-column-name=column.full_name style=column.html_header_style class=["tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
-         = column.human_name
+       - classes = ["tabulatr-column#{column.coltype}", column.col_options.classes].flatten.compact.join(' ')
+       = content_tag('th', column.col_options.header_html.merge(:'data-tabulatr-column-name' => column.full_name, class: classes)) do
+          - column.human_name
   tbody
     - records.each do |record|
       tr data-id=record.try(:id)
         - columns.each do |column|
-          td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.html_cell_style class=["tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
+          - classes = ["tabulatr-column-#{column.coltype}", column.col_options.classes].flatten.compact.join(' ')
+          = content_tag('td', column.col_options.data_html.merge(:'data-tabulatr-column-name' => column.full_name, :'data-tabulatr-type' => column.coltype, class: classes)) do
             = column.value_for(record, self)

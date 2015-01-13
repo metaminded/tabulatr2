@@ -23,7 +23,7 @@
 
 class Tabulatr::Renderer::Buttons < Tabulatr::Renderer::Action
   def human_name
-    header
+    col_options.header
   end
 
   def coltype() 'buttons' end

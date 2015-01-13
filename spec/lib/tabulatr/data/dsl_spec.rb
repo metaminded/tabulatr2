@@ -15,8 +15,8 @@ describe Tabulatr::Data::DSL do
     it 'escapes table and column names' do
       DummyDSLClass.column(:active)
       table_column = DummyDSLClass.instance_variable_get('@table_columns').first
-      expect(table_column.filter_sql).to match(/\"products\".\"active\"/)
-      expect(table_column.sort_sql).to match(/\"products\".\"active\"/)
+      expect(table_column.col_options.filter_sql).to match(/\"products\".\"active\"/)
+      expect(table_column.col_options.sort_sql).to match(/\"products\".\"active\"/)
     end
   end
 
@@ -24,8 +24,8 @@ describe Tabulatr::Data::DSL do
     it 'escapes table and column names' do
       DummyDSLClass.association(:vendor, :name)
       table_column = DummyDSLClass.instance_variable_get('@table_columns').first
-      expect(table_column.filter_sql).to match(/\"vendors\".\"name\"/)
-      expect(table_column.sort_sql).to match(/\"vendors\".\"name\"/)
+      expect(table_column.col_options.filter_sql).to match(/\"vendors\".\"name\"/)
+      expect(table_column.col_options.sort_sql).to match(/\"vendors\".\"name\"/)
     end
   end
 

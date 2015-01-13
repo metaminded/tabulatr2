@@ -9,12 +9,12 @@ describe Tabulatr::Data::Formatting do
   before(:each) do
     @dummy = DummyFormattingClass.new
     @dummy.instance_variable_set('@relation', Product.all)
+    col_options = Tabulatr::ParamsBuilder.new(sort_sql: 'products.title', filter_sql: 'products.title')
     column = Tabulatr::Renderer::Column.from(
         name: :title,
         klass: Product,
         table_name: :products,
-        sort_sql: "products.title",
-        filter_sql: "products.title"
+        col_options: col_options
     )
     allow(@dummy).to receive(:table_columns).and_return([column])
   end

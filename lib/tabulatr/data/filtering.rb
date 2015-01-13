@@ -62,7 +62,7 @@ module Tabulatr::Data::Filtering
       assoc, att = name.split(".").map(&:to_sym)
       table_name = table_name_for_association(assoc)
       column = table_columns.find{|c| c.table_name = table_name && name == name}
-      apply_condition(column, value)
+      apply_condition(column.col_options, value)
     end
   end
 

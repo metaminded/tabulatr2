@@ -9,7 +9,7 @@ class ProductTabulatrData < Tabulatr::Data
   column :title
   column :id
   column :status
-  column :price, table_column_options: {filter: :range} do "#{record.price} EUR" end # <- Block evaluiert im Kontext EINES Records
+  column :price, filter: :range do "#{record.price} EUR" end
   column :edit_link do link_to "edit #{record.title}", product_path(record) end
   # column :name,
   #   sort: "firstname || ' ' || lastname"
@@ -24,8 +24,8 @@ class ProductTabulatrData < Tabulatr::Data
     "#{record.title} from #{record.vendor.try(:name)}"
   end
   column :active, sortable: false
-  column :updated_at, table_column_options: { filter: :date } do "#{record.updated_at.strftime('%H:%M %d.%m.%Y')}" end
-  association :vendor, :name, table_column_options: { filter: :exact }
+  column :updated_at, filter: :date do "#{record.updated_at.strftime('%H:%M %d.%m.%Y')}" end
+  association :vendor, :name, filter: :exact
   association :tags, :title do |r|
     "'#{r.tags.map(&:title).map(&:upcase).join(', ')}'"
   end
@@ -35,10 +35,10 @@ class ProductTabulatrData < Tabulatr::Data
     b.button :eye, product_path(r), class: 'btn-success'
     b.button :pencil, edit_product_path(r), class: 'btn-warning'
     b.submenu do |s|
-      s.button :star, product_path(r), label: 'Dolle Sache'
+      s.button :star, product_path(r), label: 'Great product!'
       s.divider
-      s.button :'trash-o', product_path(r), label: 'Löschen', class: 'btn-danger', method: :delete, data: {confirm: 'echt?'}
+      s.button :'trash-o', product_path(r), label: 'Remove', class: 'btn-danger', method: :delete, data: {confirm: 'are you sure?'}
     end
-    "haha!"
+    "test!"
   end
 end

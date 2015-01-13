@@ -25,17 +25,17 @@
     thead
       tr
        - columns.each do |column|
-         - classes = column.sortable ? ['tabulatr-sortable'] : []
-         - classes = [classes, "tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
-         th data-tabulatr-column-name=column.full_name style=column.html_header_style class=classes
-           = column.human_name
+         - classes = column.col_options.sortable ? ['tabulatr-sortable'] : []
+         - classes = [classes, "tabulatr-column-#{column.coltype}", column.col_options.classes].flatten.compact.join(' ')
+         = content_tag('th', column.col_options.header_html.merge(:'data-tabulatr-column-name' => column.full_name, class: classes)) do
+             - column.human_name
     tbody
     tfoot
       tr.empty_row
         - columns.each do |column|
-          - classes = column.sortable ? ['tabulatr-sortable'] : []
-          - classes = [classes, "tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
-          td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.html_cell_style class=classes
+          - classes = column.col_options.sortable ? ['tabulatr-sortable'] : []
+          - classes = [classes, "tabulatr-column-#{column.coltype}", column.col_options.classes].flatten.compact.join(' ')
+          = content_tag('td', column.col_options.data_html.merge(:'data-tabulatr-column-name' => column.full_name, :'data-tabulatr-type' => column.coltype, class: classes)){}
   .tabulatr-spinner-box data-table=table_id
     = image_tag "#{Tabulatr.spinner}-loader.gif"
 span.pagination_trigger data-table="#{table_id}"

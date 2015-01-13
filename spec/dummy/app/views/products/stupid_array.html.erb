@@ -1,9 +1,15 @@
 <%= static_table_for @products do |t|
   t.column :title
-  t.column :title, format: :foo_me
-  t.column :title, format: ->(a) { bar_me(a) }
+  t.column :title do |a|
+    foo_me(a.title)
+  end
+  t.column :title do |a|
+    bar_me(a.title)
+  end
   t.column :price
-  t.column :price, format: "%08.4f"
+  t.column :price do |b|
+    "%08.4f" % b.price
+  end
   t.column :active
   t.column :updated_at
   t.column :updated_at do |r|
@@ -11,9 +17,17 @@
   end
   t.association :vendor, :name
   t.association :tags, :title
-  t.association :tags, :title, format: :bar_me
-  t.association :tags, :title, format: ->(a) { foo_me(a) }
-  t.association :tags, :count, map: false
+  t.association :tags, :title do |record|
+    record.tags.map(&:title).map do |v|
+      bar_me(v)
+    end
+  end
+  t.association :tags, :title do |record|
+    record.tags.map(&:title).map do |v|
+      foo_me(v)
+    end
+  end
+  t.association :tags, :count
   t.action header: "ACTION!" do |t|
     t.title.upcase
   end

@@ -3,12 +3,12 @@ require 'rails_helper'
 describe Tabulatr::Data do
 
   before do
+    col_options = Tabulatr::ParamsBuilder.new(sort_sql: 'products.title', filter_sql: 'products.title')
     column = Tabulatr::Renderer::Column.from(
         name: :title,
         klass: Product,
         table_name: :products,
-        sort_sql: "products.title",
-        filter_sql: "products.title",
+        col_options: col_options,
         output: ->(record){record.send(:title)}
     )
     allow_any_instance_of(Tabulatr::Data).to receive(:table_columns).and_return([column])

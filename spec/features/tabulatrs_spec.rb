@@ -334,8 +334,8 @@ feature "Tabulatr" do
       header = find(".tabulatr_table thead th[data-tabulatr-column-name='products:title']")
       cell_without_style   = find(".tabulatr_table tbody td[data-tabulatr-column-name='products:price']")
       header_without_style = find(".tabulatr_table thead th[data-tabulatr-column-name='products:price']")
-      expect(cell[:style]).to eql 'text-align:left;width:60px;vertical-align:top;white-space:nowrap;background-color:green'
-      expect(header[:style]).to eql 'text-align:left;width:60px;vertical-align:top;white-space:nowrap;color:orange'
+      expect(cell[:style]).to eql 'background-color: green;text-align: left;width: 60px;white-space: nowrap;'
+      expect(header[:style]).to eql 'color: orange;text-align: left;width: 60px;white-space: nowrap;'
       expect(cell_without_style[:style]).to be_empty
       expect(header_without_style[:style]).to be_empty
     end

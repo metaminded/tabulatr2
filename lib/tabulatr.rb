@@ -37,6 +37,7 @@ require 'tabulatr/engine'
 require 'tabulatr/renderer/renderer'
 require 'tabulatr/data/data'
 require 'tabulatr/json_builder'
+require 'tabulatr/params_builder'
 require 'tabulatr/generators/railtie' if defined?(Rails)
 
 #--
