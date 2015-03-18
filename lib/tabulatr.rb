@@ -27,8 +27,10 @@ module Tabulatr
   end
 
   mattr_accessor :spinner
+  mattr_accessor :paginate
 
-  self.spinner = :standard
+  self.spinner  = :standard
+  self.paginate = false
 end
 
 require 'tabulatr/engine'
@@ -64,4 +66,3 @@ end
 Dir[File.join(File.dirname(__FILE__), "tabulatr", "renderer", "*.rb")].each do |file|
   require file
 end
-

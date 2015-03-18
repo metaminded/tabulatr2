@@ -1,3 +1,6 @@
+## 0.9.16
+   Adds `paginate` as config option
+
 ## 0.9.15
  * Adds filter support for `enum`
    If it detects an enum it creates a dropdown filter with the possible enum
