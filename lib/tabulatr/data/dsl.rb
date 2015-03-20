@@ -23,25 +23,9 @@
 
 module Tabulatr::Data::DSL
 
-  def target_class(name)
-    s = name.to_s
-    @target_class = s.camelize.constantize rescue "There's no class `#{s.camelize}' for `#{self.name}'"
-    @target_class_name = s.underscore
-  end
-
   def main_class
     target_class_name # to get auto setting @target_class
     @target_class
-  end
-
-  def target_class_name
-    return @target_class_name if @target_class_name.present?
-    if (s = /(.+)TabulatrData\Z/.match(self.name))
-      # try whether it's a class
-      target_class s[1].underscore
-    else
-      raise "Don't know which class should be target_class for `#{self.name}'."
-    end
   end
 
   def column(name, opts = {}, &block)
@@ -130,6 +114,23 @@ module Tabulatr::Data::DSL
     @filters << Tabulatr::Renderer::Filter.new(name, partial: partial, &block)
   end
 
+  private
+
+  def target_class(name)
+    s = name.to_s
+    @target_class = s.camelize.constantize rescue "There's no class `#{s.camelize}' for `#{self.name}'"
+    @target_class_name = s.underscore
+  end
+
+  def target_class_name
+    return @target_class_name if @target_class_name.present?
+    if (s = /(.+)TabulatrData\Z/.match(self.name))
+      # try whether it's a class
+      target_class s[1].underscore
+    else
+      raise "Don't know which class should be target_class for `#{self.name}'."
+    end
+  end
 end
 
 Tabulatr::Data.send :extend, Tabulatr::Data::DSL
