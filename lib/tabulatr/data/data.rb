@@ -115,11 +115,13 @@ class Tabulatr::Data
   end
 
   def join_required_tables(params)
-    tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
-          s.split(':').first
-        end.uniq.map(&:to_sym))
-    tt.delete(@table_name.to_sym)
-    @includes = @includes + tt
+    if params[:arguments].present?
+      tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
+            s.split(':').first
+          end.uniq.map(&:to_sym))
+      tt.delete(@table_name.to_sym)
+      @includes = @includes + tt
+    end
     # @relation = @relation.includes(@includes.map(&:to_sym)).references(@includes.map(&:to_sym))
     @relation = @relation.eager_load(@includes.map(&:to_sym))
     # @relation = @relation.group("#{@table_name}.#{@base.primary_key}")
