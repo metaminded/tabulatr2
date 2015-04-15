@@ -94,5 +94,12 @@
                       option= I18n.t('tabulatr.enum_filter.none')
                       - column.klass.try(column.name.to_s.pluralize.to_sym).each do |key, value|
                         option value=value = key
+                  - elsif column.filter == :enum_multiselect
+                    - column.klass.try(column.name.to_s.pluralize.to_sym).each do |key, value|
+                      .row
+                        .col-xs-2
+                          = check_box_tag "#{iname}[]", value, true, {id: "check_box_#{key}"}
+                        .col-xs-10
+                          = label_tag "check_box_#{key}", key
                   - else
                     input.tabulatr_filter.form-control type="text" data-tabulatr-attribute="#{name}" name="#{iname}[like]"

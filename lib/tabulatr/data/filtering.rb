@@ -72,6 +72,8 @@ module Tabulatr::Data::Filtering
       apply_string_condition("#{n.filter_sql} = ?", v)
     elsif v.is_a?(Hash)
       apply_hash_condition(n, v)
+    elsif v.is_a?(Array)
+      apply_array_condition(n, v)
     else
       raise "Wrong filter type: #{v.class}"
     end
@@ -118,6 +120,10 @@ module Tabulatr::Data::Filtering
     apply_date_condition(column_name, hash[:date])
     apply_string_condition("#{column_name.filter_sql} >= ?", "#{hash[:from]}")
     apply_string_condition("#{column_name.filter_sql} <= ?", "#{hash[:to]}")
+  end
+
+  def apply_array_condition(column, value)
+    @relation = @relation.where(column.table_name => { column.name => value })
   end
 
   private

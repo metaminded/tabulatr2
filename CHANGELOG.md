@@ -1,3 +1,11 @@
+## 0.9.17
+   Add filter `enum_multiselect`
+
+   Example:
+   ```
+   column :status, filter: :enum_multiselect
+   ```
+
 ## 0.9.16
    Adds `paginate` as config option
 

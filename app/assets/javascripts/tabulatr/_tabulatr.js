@@ -256,7 +256,14 @@ Tabulatr.prototype = {
     var form_array = $('.tabulatr_filter_form[data-table="'+ this.id +'"]')
       .find('input:visible,select:visible,input[type=hidden]').serializeArray();
     for(var i = 0; i < form_array.length; i++){
-      hash[form_array[i].name] = form_array[i].value;
+      if(hash[form_array[i].name] !== undefined){
+        if(!Array.isArray(hash[form_array[i].name])){
+          hash[form_array[i].name] = [hash[form_array[i].name]];
+        }
+        hash[form_array[i].name].push(form_array[i].value);
+      }else{
+        hash[form_array[i].name] = form_array[i].value;
+      }
     }
     return hash;
   },
