@@ -33,6 +33,20 @@ describe Tabulatr::Data do
       expect(r[:products][:title]).to eql titles[ix]
     end
   end
+
+  it 'invokes the batch actions invoker with all ids if no row is selected' do
+    Product.create([{title: 'foo', price: 5, active: true}, {title: 'bar', price: 10, active: false}, {title: 'fuzz', price: 7, active: true}])
+
+    td = Tabulatr::Data.new(Product.where(active: true))
+    td.instance_variable_set(:@batch_actions, ->(batch_actions){
+      batch_actions.delete do |ids|
+        Product.where(id: ids).destroy_all
+      end
+    })
+    td.data_for_table(HashWithIndifferentAccess.new(example_params.merge(product_batch: 'delete', 'tabulatr_checked' => {'checked_ids' => ''})))
+    expect(Product.where(active: true).count).to be 0
+    expect(Product.count).to be 1
+  end
 end
 
 

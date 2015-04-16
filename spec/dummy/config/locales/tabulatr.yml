@@ -21,6 +21,7 @@ en:
       'no': No
     enum_filter:
       none: ''
+    batch_confirm_text: This action will be applied to all rows within the current filter
 de:
   tabulatr:
     rows_per_page: 'Ergebnisse pro Seite'
@@ -44,3 +45,4 @@ de:
       'no': Nein
     enum_filter:
       none: ''
+    batch_confirm_text: Diese Aktion wird auf allen Datensätzen im aktuallen Filter ausgeführt

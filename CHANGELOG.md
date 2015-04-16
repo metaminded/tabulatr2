@@ -1,5 +1,8 @@
 ## 0.9.17
-   Add filter `enum_multiselect`
+ * If a batch action is executed without checking any rows it
+   will be applied to all rows in the current filter
+
+ * Add filter `enum_multiselect`
 
    Example:
    ```

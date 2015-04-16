@@ -25,7 +25,7 @@
     a.btn.btn-default data-toggle="dropdown" href="#"
       i.icon-cog.glyphicon.glyphicon-cog.fa.fa-cog>
       i.icon-caret-down.glyphicon.glyphicon-chevron-down.fa.fa-caret-down
-    ul.dropdown-menu role="menu" aria-labelledby="dLabel"
+    ul.dropdown-menu role="menu" aria-labelledby="dLabel" data-confirm-text=t('tabulatr.batch_confirm_text')
       - table_options[:batch_actions].each do |key, label|
         li
           = link_to label, '#', class: "batch-action-inputs", data: { \

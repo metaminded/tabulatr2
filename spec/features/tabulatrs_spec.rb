@@ -294,6 +294,18 @@ feature "Tabulatr" do
       end
       expect(page).to have_css(".tabulatr_table tbody tr", count: 1)
     end
+
+    scenario 'executes the action for all items if nothing selected' do
+      product1 = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      product2 = Product.create!(:title => names[1], :active => true, :price => 10.0)
+      product3 = Product.create!(:title => names[2], :active => false, :price => 10.0)
+      visit with_batch_actions_products_path
+      find('.tabulatr-batch-actions-menu-wrapper a').click
+      within('.dropdown.open') do
+        click_link 'Delete'
+      end
+      expect(page).to have_css('.tabulatr_table tbody tr', count: 0)
+    end
   end
 
   feature "Column options", js: true do

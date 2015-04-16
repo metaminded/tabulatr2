@@ -354,15 +354,21 @@ $(document).on('ready page:load', function(){
     var params = {page: 1};
     params[name] = key;
     params.tabulatr_checked = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
-    $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
-    $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
-    var table_obj;
-    for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id === tableId){
-        table_obj = tabulatr_tables[i];
-      }
+    var confirmation = true;
+    if(params.tabulatr_checked.checked_ids == ''){
+      confirmation = confirm(a.parents('ul').data('confirm-text'));
     }
-    table_obj.updateTable(params, true);
+    if(confirmation){
+      $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);
+      $('#'+ tableId +' .tabulatr-wrench').addClass('disabled');
+      var table_obj;
+      for(var i = 0; i < tabulatr_tables.length; i++){
+        if(tabulatr_tables[i].id === tableId){
+          table_obj = tabulatr_tables[i];
+        }
+      }
+      table_obj.updateTable(params, true);
+    }
   });
 
   $('form.tabulatr-fuzzy-search').submit(function(){

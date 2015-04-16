@@ -43,7 +43,6 @@ class Tabulatr::Data
 
     @batch_actions = block if block_given?
 
-    execute_batch_actions(batch_params(params), check_params(params))
 
     # count
     total = @relation.count
@@ -54,10 +53,10 @@ class Tabulatr::Data
     apply_sorting(sort_params params)
     join_required_tables(params)
 
+    execute_batch_actions(batch_params(params), check_params(params))
+
     pagination = compute_pagination(params[:page], params[:pagesize])
     apply_pagination(pagination.slice(:offset, :pagesize))
-
-    # TODO: batch actions and checked ids
 
     # get the records
     found = apply_formats(locals: locals, controller: controller)
@@ -87,6 +86,7 @@ class Tabulatr::Data
   def execute_batch_actions batch_param, selected_ids
     if batch_param.present? && @batch_actions.present?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
+      selected_ids = @relation.map(&:id) if selected_ids.empty?
       @batch_actions.yield(Invoker.new(batch_param, selected_ids))
     end
   end
