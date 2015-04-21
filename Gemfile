@@ -9,6 +9,10 @@ group :development, :test do
   gem 'binding_of_caller', platforms: :ruby
 end
 
+group :test do
+  gem 'simplecov', :require => false
+end
+
 
 group :development, :test do
   gem 'sqlite3', :require => 'sqlite3'
