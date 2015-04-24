@@ -23,13 +23,12 @@
 
 class ActionView::Base
   # render the table in a view
-  def table_for(klass, columns: [], tabulatr_data_class: nil, **opts, &block)
+  def table_for(klass, columns: [], filter: [], tabulatr_data_class: nil, **opts, &block)
     @_tabulatr_table_index += 1
-    Tabulatr::Renderer.build_table(klass, self, opts, columns, tabulatr_data_class, &block)
+    Tabulatr::Renderer.build_table(klass, self, opts, columns, filter, tabulatr_data_class, &block)
   end
 
   def static_table_for(records, opts={}, &block)
     Tabulatr::Renderer.build_static_table(records, self, opts, &block)
   end
 end
-

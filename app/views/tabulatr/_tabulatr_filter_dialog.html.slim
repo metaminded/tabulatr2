@@ -103,3 +103,8 @@
                           = label_tag "check_box_#{key}", key
                   - else
                     input.tabulatr_filter.form-control type="text" data-tabulatr-attribute="#{name}" name="#{iname}[like]"
+        - filter.each do |f|
+          .row.tabulatr-filter-row
+            .col-xs-12
+              = render partial: f, locals: {input_name: "#{formatted_name}_filter[#{f.name}]",
+                                            input_id: "#{formatted_name}_#{f.name}"} 

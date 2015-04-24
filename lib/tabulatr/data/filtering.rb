@@ -45,12 +45,13 @@ module Tabulatr::Data::Filtering
     return unless filter_params
     assoc_filters = filter_params.delete :__association
     apply_association_filters(assoc_filters) if assoc_filters.present?
-    filter_params.each do |filter|
-      name, value = filter
+    filter_params.each do |param|
+      name, value = param
       next unless value.present?
 
       table_name, method_name = name.split(':').map(&:to_sym)
       column = table_columns.find{|c| c.table_name == table_name && c.name == method_name}
+      column = filters.find{|f| f.name.to_sym == name.to_sym} if column.nil?
       apply_condition(column, value)
     end
   end
@@ -78,6 +79,7 @@ module Tabulatr::Data::Filtering
     when :like     then apply_like_condition(n, v[:like])
     when :date     then apply_date_condition(n, v[:date])
     when :range    then apply_range_condition(n, v)
+    when :custom   then apply_custom_filter(n, v)
     else raise "Wrong filter type for #{n.name}: #{n.filter}"
     end
   end
@@ -132,6 +134,11 @@ module Tabulatr::Data::Filtering
 
   def apply_array_condition(column, value)
     @relation = @relation.where(column.table_name => { column.name => value })
+  end
+
+  def apply_custom_filter(filter, value)
+    filter_result = filter.block.(@relation, value)
+    handle_search_result(filter_result)
   end
 
   private

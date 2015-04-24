@@ -157,6 +157,11 @@ module Tabulatr::Data::DSL
     @row = block
   end
 
+  def filter(name, partial: nil, &block)
+    @filters ||= []
+    @filters << Tabulatr::Renderer::Filter.new(name, partial: partial, &block)
+  end
+
 end
 
 Tabulatr::Data.send :extend, Tabulatr::Data::DSL

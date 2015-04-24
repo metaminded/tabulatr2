@@ -95,6 +95,10 @@ class Tabulatr::Data
     self.class.instance_variable_get("@table_columns")
   end
 
+  def filters
+    self.class.instance_variable_get('@filters')
+  end
+
   def search?
     self.class.instance_variable_get('@search')
   end
