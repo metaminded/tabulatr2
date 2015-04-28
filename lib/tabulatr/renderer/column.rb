@@ -180,19 +180,21 @@ class Tabulatr::Renderer::Column
   end
 
   def determine_appropriate_filter!
-    case self.klass.columns_hash[self.name.to_s].try(:type)
-    when :integer, :float, :decimal
+    typ = self.klass.columns_hash[self.name.to_s].try(:type).try(:to_sym)
+    case typ
+    when :integer
       if self.klass.respond_to?(:defined_enums) && self.klass.defined_enums.keys.include?(self.name.to_s)
         self.filter = :enum
       else
-        self.filter = :exact
+        self.filter = :integer
       end
-    when :string, :text
-      self.filter = :like
-    when :date, :time, :datetime, :timestamp
-      self.filter = :date
-    when :boolean
-      self.filter = :checkbox
+    when :enum then self.filter = :enum
+    when :float, :decimal then self.filter = :decimal
+    when :string, :text then self.filter = :like
+    when :date, :time, :datetime, :timestamp then self.filter = :date
+    when :boolean then self.filter = :checkbox
+    when nil then self.filter = :exact
+    else raise "Unknown filter type for #{self.name}: »#{typ}«"
     end
   end
 

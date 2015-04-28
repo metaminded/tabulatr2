@@ -66,21 +66,25 @@ module Tabulatr::Data::Filtering
   end
 
   def apply_condition(n,v)
-    if ['true', 'false'].include?(v)
-      @relation = @relation.where("#{n.filter_sql} = ?", Tabulatr::Utility.string_to_boolean(v))
-    elsif v.is_a?(String)
-      apply_string_condition("#{n.filter_sql} = ?", v)
-    elsif v.is_a?(Hash)
-      apply_hash_condition(n, v)
-    elsif v.is_a?(Array)
-      apply_array_condition(n, v)
-    else
-      raise "Wrong filter type: #{v.class}"
+    case n.filter
+    when :checkbox then apply_boolean_condition(n, v)
+    when :decimal  then apply_string_condition("#{n.filter_sql} = ?", v.to_f)
+    when :integer  then apply_string_condition("#{n.filter_sql} = ?", v.to_i)
+    when :enum     then apply_string_condition("#{n.filter_sql} = ?", v.to_i)
+    when :enum_multiselect then apply_array_condition(n, v)
+    when :exact    then apply_string_condition("#{n.filter_sql} = ?", v)
+    when :like     then apply_like_condition(n, v[:like])
+    when :date     then apply_date_condition(n, v[:date])
+    when :range    then apply_range_condition(n, v)
+    else raise "Wrong filter type for #{n.name}: #{n.filter}"
     end
   end
 
+  def apply_boolean_condition(n, value)
+    @relation = @relation.where("#{n.filter_sql} = ?", Tabulatr::Utility.string_to_boolean(value))
+  end
+
   def apply_date_condition(n, cond)
-    return unless cond.present?
     today = Date.today
     case cond[:simple]
     when 'none' then return
@@ -114,10 +118,12 @@ module Tabulatr::Data::Filtering
      @relation = @relation.where(replacement_string, value) if value.present?
   end
 
-  def apply_hash_condition(column_name, hash)
+  def apply_like_condition(column_name, value)
     like ||= Tabulatr::Utility.like_statement
-    apply_string_condition("#{column_name.filter_sql} #{like} ?", "%#{hash[:like]}%") if hash[:like].present?
-    apply_date_condition(column_name, hash[:date])
+    apply_string_condition("#{column_name.filter_sql} #{like} ?", "%#{value}%") if value.present?
+  end
+
+  def apply_range_condition(column_name, hash)
     apply_string_condition("#{column_name.filter_sql} >= ?", "#{hash[:from]}")
     apply_string_condition("#{column_name.filter_sql} <= ?", "#{hash[:to]}")
   end
