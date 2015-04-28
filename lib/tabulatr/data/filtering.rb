@@ -107,8 +107,8 @@ module Tabulatr::Data::Filtering
       since = (today - 29.day).beginning_of_day
       to = today.at_end_of_day
     when 'from_to'
-      since = Date.parse(cond[:from]) if cond[:from].present?
-      to = Date.parse(cond[:to]) if cond[:to].present?
+      since = (Date.parse(cond[:from]) rescue nil) if cond[:from].present?
+      to = (Date.parse(cond[:to]) rescue nil) if cond[:to].present?
     end
     @relation = @relation.where("#{n.filter_sql} >= ?", since) if since.present?
     @relation = @relation.where("#{n.filter_sql} <= ?", to) if to.present?
