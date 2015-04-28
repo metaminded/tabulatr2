@@ -66,7 +66,7 @@
                           [t('tabulatr.boolean_filter.no'), "false"],
                           [t('tabulatr.boolean_filter.yes'), "true"]] \
                         ), class: 'form-control no-chosen')
-                  - elsif column.filter == :exact
+                  - elsif [:exact, :integer, :decimal].member? column.filter
                     input.tabulatr_filter.form-control type="text" id="#{name}_exact" data-tabulatr-attribute="#{name}" name="#{iname}"
                   - elsif column.filter == :date
                     select.form-control.no-chosen name="#{iname}[date][simple]" data-tabulatr-date-filter="#{formatted_name}_#{name}_filter"
