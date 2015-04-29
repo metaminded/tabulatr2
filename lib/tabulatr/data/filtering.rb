@@ -73,6 +73,8 @@ module Tabulatr::Data::Filtering
     when :enum     then apply_string_condition("#{n.filter_sql} = ?", v.to_i)
     when :enum_multiselect then apply_array_condition(n, v)
     when :exact    then apply_string_condition("#{n.filter_sql} = ?", v)
+    when Hash      then apply_string_condition("#{n.filter_sql} = ?", v)
+    when Array     then apply_string_condition("#{n.filter_sql} = ?", v)
     when :like     then apply_like_condition(n, v[:like])
     when :date     then apply_date_condition(n, v[:date])
     when :range    then apply_range_condition(n, v)
