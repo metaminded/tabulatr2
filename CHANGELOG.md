@@ -1,3 +1,7 @@
+## UNRELEASED
+ * Add `current_user` local to Tabulatr::Data by default if available
+   and not already present
+
 ## 0.9.17
  * If a batch action is executed without checking any rows it
    will be applied to all rows in the current filter

@@ -30,6 +30,7 @@ class ActionController::Base
     klass = relation.respond_to?(:klass) ? relation.klass : relation
     respond_to do |format|
       format.json {
+        locals[:current_user] ||= current_user if respond_to?(:current_user)
         records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
         render json: records.to_tabulatr_json(serializer)
         records
