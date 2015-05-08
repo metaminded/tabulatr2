@@ -177,31 +177,45 @@ Tabulatr.prototype = {
     this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
 
 
-    // insert the actual data
-    for(var i = 0; i < response.data.length; i++){
-      var data = response.data[i];
-      var id = data.id;
-      var tr = $('#'+ tableId +' tr.empty_row').clone();
-      tr.removeClass('empty_row');
-      if(data._row_config.data){
-        tr.data(data._row_config.data);
-        delete data._row_config.data;
-      }
-      tr.attr(data._row_config);
-      tr.attr('data-page', response.meta.page);
-      tr.attr('data-id', id);
-      tr.find('td').each(function(index,element) {
-        var td = $(element);
-        var coltype = td.data('tabulatr-type');
-        var name = td.data('tabulatr-column-name');
-        var cont = data[name];
-        if(coltype === 'checkbox') {
-          cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
+    var columnDescriptions = [];
+    $('tr.empty_row td').each(function(index, item){
+      columnDescriptions.push(
+        { name: $(item).data('tabulatr-column-name'),
+          type: $(item).data('tabulatr-type'),
+          style: $(item).attr('style'),
+          class: $(item).attr('class')
         }
-        td.html(cont);
-      });
-      tbody.append(tr);
+      );
+    });
+    var rowData = [];
+    var h;
+    for(var i = 0; i < response.data.length; i++){
+      h = {data: response.data[i]._row_config.data};
+      delete response.data[i]._row_config.data;
+      h['attributes'] = response.data[i]._row_config;
+      h['id'] = response.data[i].id;
+      rowData.push(h);
     }
+
+    var context = {data: response.data, columnDescriptions: columnDescriptions, page: response.meta.page};
+    Handlebars.registerHelper('getValueFor',function(name,context){
+      return context[name];
+    });
+    Handlebars.registerHelper('isCheckbox', function(val, options) {
+      var fnTrue=options.fn, fnFalse=options.inverse;
+      return val == 'checkbox' ? fnTrue() : fnFalse();
+    });
+    var xff = HandlebarsTemplates['table'](context);
+    var result;
+    $(xff).each(function(ix, item){
+        var result = $.grep(rowData, function(e){ return e.id == $(item).data('id'); })[0];
+        if(result !== undefined){
+          $(item).data(result.data);
+          $(item).attr(result.attributes);
+        }
+    });
+    tbody.append(xff);
+
     this.updateInfoString(tableId, response);
 
     if(this.isAPersistedTable){

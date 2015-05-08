@@ -23,6 +23,7 @@
 
 require 'slim'
 require 'font-awesome-rails'
+require 'handlebars_assets'
 class Tabulatr::Engine < Rails::Engine
 
 end

@@ -1,0 +1,13 @@
+{{#each data}}
+  <tr class="" data-page="{{../page}}" data-id="{{id}}">
+    {{#each ../columnDescriptions}}
+      <td data-tabulatr-column-name="{{name}}" data-tabulatr-type="{{type}}" style="{{style}}" class="{{classes}}">
+        {{#isCheckbox type}}
+          <input type="checkbox" class="tabulatr-checkbox" value="{{../../id}}"
+        {{else}}
+          {{{getValueFor ../name ../../this}}}
+        {{/isCheckbox}}
+      </td>
+    {{/each}}
+  </tr>
+{{/each}}
