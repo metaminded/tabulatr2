@@ -57,16 +57,17 @@ class Tabulatr::Renderer
     @classname = @klass.name.underscore
   end
 
-  def build_table(columns, tabulatr_data_class, &block)
+  def build_table(columns, filters, tabulatr_data_class, &block)
     if tabulatr_data_class.present?
       tdc = tabulatr_data_class.constantize.new(@klass)
     else
       tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
     end
     if block_given?
-      @columns = ColumnsFromBlock.process @klass, tdc, &block
-    elsif columns.any?
+      @columns = ColumnsFromBlock.process(@klass, tdc, &block).columns
+    elsif columns.any? || filters.any?
       @columns = get_requested_columns(tdc.table_columns, columns)
+      @filters = get_requested_filters(tdc.filters, filters)
     else
       @columns = tdc.table_columns
     end
@@ -77,12 +78,13 @@ class Tabulatr::Renderer
       classname: @classname,
       tabulatr_data: tdc,
       table_id: generate_id,
-      formatted_name: Tabulatr::Utility.formatted_name(@klass.name)
+      formatted_name: Tabulatr::Utility.formatted_name(@klass.name),
+      filter: tdc.filters || []
     })
   end
 
   def build_static_table(records, &block)
-    @columns = ColumnsFromBlock.process @klass, &block
+    @columns = ColumnsFromBlock.process(@klass, &block).columns
 
     @view.render(partial: '/tabulatr/tabulatr_static_table', locals: {
       columns: @columns,
@@ -103,8 +105,8 @@ class Tabulatr::Renderer
     new(klass, view, toptions).build_static_table(records, &block)
   end
 
-  def self.build_table(klass, view, toptions={}, columns, tabulatr_data_class, &block)
-    new(klass, view, toptions).build_table(columns, tabulatr_data_class, &block)
+  def self.build_table(klass, view, toptions={}, columns, filters, tabulatr_data_class, &block)
+    new(klass, view, toptions).build_table(columns, filters, tabulatr_data_class, &block)
   end
 
   private
@@ -121,6 +123,13 @@ class Tabulatr::Renderer
     end.flatten
   end
 
+  def get_requested_filters(available_filters, requested_filters)
+    requested_filters.collect do |f|
+      result = available_filters.find{|filter| filter.name.to_sym == f.to_sym }
+      result or raise "Can't find filter '#{f}'"
+    end.flatten
+  end
+
 end
 
 require_relative './column'
@@ -129,3 +138,4 @@ require_relative './action'
 require_relative './buttons'
 require_relative './checkbox'
 require_relative './columns_from_block'
+require_relative './filter'

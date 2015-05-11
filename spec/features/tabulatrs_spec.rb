@@ -215,6 +215,24 @@ feature "Tabulatr" do
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'bar')
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'foo')
     end
+
+    scenario 'custom filters', js: true do
+      Product.create!([{title: 'foo', price: 7.5, vendor: @vendor1}, {title: 'bar', price: 90, vendor: @vendor1}])
+      Product.create!([{title: 'baz', price: 125, vendor: @vendor2}, {title: 'fubar', price: 133.3, vendor: @vendor2}, {title: 'fiz', price: 97, vendor: @vendor2}])
+      visit vendors_path
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 2)
+      click_link 'Filter'
+      within(".tabulatr_filter_form") do
+        select("> 100 Euro", from: "vendor_filter[product_price_range]")
+      end
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 1)
+      expect(page).to have_css('.tabulatr_table tbody td', text: @vendor2.name)
+      within(".tabulatr_filter_form") do
+        select("<= 100 Euro", from: "vendor_filter[product_price_range]")
+      end
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 1)
+      expect(page).to have_css('.tabulatr_table tbody td', text: @vendor1.name)
+    end
   end
 
   feature "Sorting" do

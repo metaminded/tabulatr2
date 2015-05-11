@@ -184,6 +184,44 @@ class UserTabulatrData < Tabulatr::Data
 end
 ```
 
+### Custom filters
+
+You're also able to create custom filters with the `filter` method to create more advanced
+filters which are independent of the displayed columns.
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  filter :age_range do |relation, value|
+    if value == 'upto_18'
+      relation.where("birthday > ?", Date.today-18.years)
+    elsif value == 'over_18'
+      relation.where("birthday <= ?", Date.today-18.years)
+    end
+  end
+end
+```
+
+This code will look for a partial to render in `tabulatr/filter/_age_range.*`.
+You can override this path by specifying the `partial` argument of the `filter` method.
+It will call it's block with the ActiveRecord::Relation and the submitted value after
+the user submits the filter form.
+
+```erb
+# tabulatr/filter/_age_range.html.erb
+
+<div class='form-group'>
+  <label class='control-label' for="<%= input_id %>">Age range</label>
+  <select id="<%= input_id %>" name="<%= input_name %>">
+    <option value=''>None</option>
+    <option value='upto_18'>0 - 17</option>
+    <option value='over_18'>18+</option>
+  </select>
+</div>
+```
+
+As you can see there are two locales defined which should be used for your custom form
+field: `input_name` and `input_id`
+
 ### Row formatting
 
 To provide row specific HTML-Attributes call `row`:

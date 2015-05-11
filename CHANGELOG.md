@@ -1,4 +1,17 @@
 ## UNRELEASED
+  * Add `filter` to DSL to define custom filters
+
+    Example:
+    ```
+    filter :product_price_range do |relation, value|
+      relation = relation.joins(:products)
+      if value == 'low'
+        relation.group("vendors.id").having('AVG(products.price) <= 100')
+      elsif value == 'high'
+        relation.group("vendors.id").having('AVG(products.price) > 100')
+      end
+    end
+    ```
  * Add `current_user` local to Tabulatr::Data by default if available
    and not already present
 

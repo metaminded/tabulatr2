@@ -23,12 +23,13 @@
 
 class Tabulatr::Renderer
   class ColumnsFromBlock
-    attr_accessor :columns, :klass, :table_data
+    attr_accessor :columns, :klass, :table_data, :filters
 
     def initialize(klass, table_data_object)
       @klass = klass
       @table_data = table_data_object
       @columns ||= []
+      @filters ||= []
     end
 
     def column(name, opts={}, &block)
@@ -65,11 +66,19 @@ class Tabulatr::Renderer
       @columns << Buttons.from(opts.merge(klass: klass, filter: false, sortable: false, output: output), &block)
     end
 
+    def filter(name, partial: nil, &block)
+      if table_data
+        found_filter = fetch_filter_from_table_data(name)
+        @filters << found_filter if found_filter.present?
+      else
+        @filters << Tabulatr::Renderer::Filter.new(name, partial: partial, &block)
+      end
+    end
+
     def self.process(klass, table_data_object = nil, &block)
       i = self.new(klass, table_data_object)
       yield(i)
-      c = i.columns
-      c
+      i
     end
 
     private
@@ -77,6 +86,10 @@ class Tabulatr::Renderer
     def fetch_column_from_table_data table_name, name, opts={}, &block
       column = table_data.table_columns.find{|tc| tc.table_name == table_name && tc.name == name}
       column.update_options(opts, &block)
+    end
+
+    def fetch_filter_from_table_data name
+      table_data.filters.find{|f| f.name.to_sym == name.to_sym}
     end
   end
 end

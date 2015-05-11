@@ -2,6 +2,10 @@ require 'rails_helper'
 
 describe Tabulatr::Renderer do
 
+  class FakeRendererSpecTabulatrData < Tabulatr::Data
+    filter :simple_filter
+  end
+
   def double_view
     view = double(controller: double(controller_name: 'products', action_name: 'index'), render: '')
     view.instance_variable_set('@_tabulatr_table_index', 0)
@@ -28,10 +32,18 @@ describe Tabulatr::Renderer do
   describe '#build_table' do
     it 'gets columns by their names' do
       renderer = Tabulatr::Renderer.new(Product, double_view)
-      renderer.build_table(['_buttons'], 'ProductTabulatrData')
+      renderer.build_table(['_buttons'], [], 'ProductTabulatrData')
       columns = renderer.instance_variable_get('@columns')
       expect(columns.count).to be(1)
       expect(columns.first).to be_instance_of(Tabulatr::Renderer::Buttons)
+    end
+
+    it 'gets filters by their names' do
+      allow_any_instance_of(Tabulatr::Data).to receive(:table_columns).and_return([])
+      renderer = Tabulatr::Renderer.new(Product, double_view)
+      renderer.build_table([], [:simple_filter], 'FakeRendererSpecTabulatrData')
+      filters = renderer.instance_variable_get('@filters')
+      expect(filters.map(&:name)).to match_array([:simple_filter])
     end
   end
 end

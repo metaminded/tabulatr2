@@ -10,7 +10,7 @@ describe Tabulatr::Data::Pagination do
   end
   describe '.compute_pagination' do
     it "computes an offset" do
-      count = double(count: 20)
+      count = (1..20).to_a
       @dummy.instance_variable_set('@relation', count)
       pagination = @dummy.compute_pagination(1, 10)
       expect(pagination[:offset]).to be 0
