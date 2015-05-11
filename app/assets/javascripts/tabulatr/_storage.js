@@ -19,8 +19,8 @@ $(function(){
         elem = $('[name="'+ objKeys[i] +'"]');
         if(elem.length > 0){
           var val = currentStorage[objKeys[i]];
-          elem.val(val);
-          formParent = elem.parents('.form-group[data-filter-column-name]');
+          elem.val(val).trigger('change');
+          formParent = elem.parents('.tabulatr-filter-row');
           if(formParent.length > 0 && val && val.length > 0){
             $('.tabulatr-outer-wrapper[data-table-id="'+this.id+'"]').addClass('filtered')
           }
@@ -34,7 +34,7 @@ $(function(){
     localStorage.removeItem(this.id);
     $('table#'+ this.id).find('th.sorted').removeClass('sorted').removeAttr('data-sorted');
     $('form[data-table='+ this.id +'] input.search').val('');
-    $('[data-table-id="'+ this.id +'"] [data-filter-column-name]').find('input[type=text], input[type=hidden], select').val('');
+    $('.tabulatr_filter_form[data-table="'+ this.id +'"]').find('input[type=text], input[type=hidden], select').val('');
     $('.tabulatr_filter_form[data-table='+ this.id +'] input[name="'+ tableName +'_sort"]').val('');
     this.updateTable({page: 1}, true);
   };
