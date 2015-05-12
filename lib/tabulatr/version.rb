@@ -22,5 +22,5 @@
 #++
 
 module Tabulatr
-  VERSION = "0.9.19"
+  VERSION = "0.9.20"
 end

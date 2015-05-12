@@ -1,4 +1,4 @@
-## UNRELEASED
+## 0.9.20
   * Add `filter` to DSL to define custom filters
 
     Example:
