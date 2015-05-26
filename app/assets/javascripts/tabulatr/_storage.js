@@ -19,10 +19,11 @@ $(function(){
         elem = $('[name="'+ objKeys[i] +'"]');
         if(elem.length > 0){
           var val = currentStorage[objKeys[i]];
-          elem.val(val).trigger('change');
+          elem.val(val);
+          if(elem.val()){ elem.trigger('change'); }
           formParent = elem.parents('.tabulatr-filter-row');
           if(formParent.length > 0 && val && val.length > 0){
-            $('.tabulatr-outer-wrapper[data-table-id="'+this.id+'"]').addClass('filtered')
+            $('.tabulatr-outer-wrapper[data-table-id="'+this.id+'"]').addClass('filtered');
           }
         }
       }
