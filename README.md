@@ -344,6 +344,67 @@ Tabulatr tries to make these common tasks as simple/transparent as possible:
 * filtering
 * batch actions
 
+### Custom layout
+
+With tabulatr you can define custom layouts so your data will e.g. be displayed
+as a list instead of a table.
+
+In order to use this feature you need to set certain options in your `table_for`
+call.
+
+```erb
+<%= table_for Product, table_wrapper: 'custom_wrapper', data_selector: '.panel',
+      template: 'list' %>
+```
+This will look for a partial `tabulatr/_custom_wrapper` which will serve as your
+wrapper. It'll look something like this:
+```erb
+<div class="panel-group tabulatr_table col-xs-12" id="<%= table_id %>"
+  data-path="<%= table_options[:path] %>" data-pagesize="<%= table_options[:pagesize]%>"
+  data-persistent="<%= table_options[:persistent].to_s %>">
+    <div class="content-wrapper"></div>
+</div>
+```
+It is mandatory to define an element with the class `content-wrapper`, this is where
+your data will be inserted.
+
+The template option is set to `list` in this example ( default is `table` ).
+This means tabulatr will look for a **handlebars** template
+`app/assets/javascript/templates/list`. This template receives 3 local variables:
+- data
+- columnDescriptions
+- page
+
+```handlebars
+{{#each data}}
+<div class="panel panel-info" data-page="{{../page}}" data-id="{{id}}">
+  <div class="panel-heading">
+    <h4 class="panel-title">
+      <a class="iconize collapsed" data-toggle="collapse" href="#product-{{id}}">
+        {{#if vendor:name}}
+          {{vendor:name}} |
+        {{/if}}
+        {{products:title}}
+      </a>
+    </h4>
+  </div>
+  <div class="panel-collapse collapse" id="product-{{id}}">
+    <div class="panel-body">
+      <p>
+        {{{products:edit_link}}}
+      </p>
+      {{#if products:price}}
+        <p>Price: {{products:price}}</p>
+      {{/if}}
+    </div>
+  </div>
+</div>
+{{/each}}
+```
+`data` is holding the records and we're looping over it to display each record
+as a panel. This brings us to the third overwritten `table_for` option: `data_selector`.
+In our example case it is set to `.panel` and it marks the container for each
+record. In a table the data_selector would be `tr`, in an unordered-list `li` and so on.
 
 ## Options
 
