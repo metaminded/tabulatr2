@@ -31,11 +31,10 @@
            = column.human_name
     tbody
     tfoot
-      tr.empty_row
-        - columns.each do |column|
-          - classes = column.sortable ? ['tabulatr-sortable'] : []
-          - classes = [classes, "tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
-          td data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.html_cell_style class=classes
-  .tabulatr-spinner-box data-table=table_id
-    = image_tag "#{Tabulatr.spinner}-loader.gif"
+
+.column-definitions
+  - columns.each do |column|
+    - classes = column.sortable ? ['tabulatr-sortable'] : []
+    - classes = [classes, "tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
+    div data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.html_cell_style class=classes
 span.pagination_trigger data-table="#{table_id}"

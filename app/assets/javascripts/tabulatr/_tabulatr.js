@@ -178,7 +178,7 @@ Tabulatr.prototype = {
 
 
     var columnDescriptions = [];
-    $('tr.empty_row td').each(function(index, item){
+    $('.column-definitions div').each(function(index, item){
       columnDescriptions.push(
         { name: $(item).data('tabulatr-column-name'),
           type: $(item).data('tabulatr-type'),
@@ -255,14 +255,14 @@ Tabulatr.prototype = {
     }
     if(hash.page === undefined){
       if(this.hasInfiniteScrolling){
-        hash.page = Math.floor($('#'+ this.id +' tbody tr[class!=empty_row]').length/pagesize) + 1;
+        hash.page = Math.floor($('#'+ this.id +' [class!=column-definitions]').length/pagesize) + 1;
       }
       if(!isFinite(hash.page)){
         hash.page = 1;
       }
     }
     hash.pagesize = pagesize;
-    hash.arguments = $.map($('#'+ this.id +' th'), function(n){
+    hash.arguments = $.map($('.column-definitions div'), function(n){
       return $(n).data('tabulatr-column-name');
     }).filter(function(n){return n; }).join();
     hash.table_id = this.id;
