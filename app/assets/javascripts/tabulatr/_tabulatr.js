@@ -36,8 +36,7 @@ Tabulatr.prototype = {
 
   updatePagination: function(currentPage, numPages){
     var $paginatorUl = $('.pagination[data-table='+ this.id +'] > ul');
-
-    if($('table#'+ this.id).data('persistent')){
+    if($('#'+ this.id).parents('.tabulatr-outer-wrapper').data('persistent')){
       $paginatorUl.html('<li><a href="#" data-tabulatr-reset="'+ this.id +'"><i class="fa fa-refresh"></i></a></li>');
     }else{
       $paginatorUl.html('');
@@ -103,9 +102,11 @@ Tabulatr.prototype = {
       //old page should be stored
       this.storePage = true;
       // check if this page was already loaded
-      $table.find('tbody tr').hide();
-      if($table.find('tbody tr[data-page='+ hash.page +']').length > 0){
-        $table.find('tbody tr[data-page='+ hash.page +']').show();
+      var selector = $table.parents('.tabulatr-outer-wrapper').data('selector');
+
+      $table.find(selector).hide();
+      if($table.find(selector +'[data-page='+ hash.page +']').length > 0){
+        $table.find(selector +'[data-page='+ hash.page +']').show();
 
         this.updatePagination(hash.page,
           $('.pagination[data-table='+ this.id +'] a:last').data('page'),
@@ -133,7 +134,7 @@ Tabulatr.prototype = {
     $.ajax({
       context: this,
       type: 'GET',
-      url: $('table#'+ this.id).data('path'),
+      url: $('#'+ this.id).data('path'),
       accepts: {
         json: 'application/json'
       },
@@ -149,7 +150,8 @@ Tabulatr.prototype = {
   },
 
   currentCount: function(){
-    return $('#'+ this.id +' tbody tr.tabulatr-row').length;
+    var selector = $('#'+ this.id).parents('.tabulatr-outer-wrapper').data('selector');
+    return $('#'+ this.id +' '+ selector +'.tabulatr-row').length;
   },
 
   handleResponse: function(response) {
@@ -172,7 +174,9 @@ Tabulatr.prototype = {
 
   insertTabulatrData: function(response){
     var tableId = response.meta.table_id;
-    var tbody = $('#'+ tableId +' tbody');
+    var tbody = $('#'+ tableId).find('.content-wrapper');
+    var template = tbody.parents('.tabulatr-outer-wrapper').data('template');
+    var selector = tbody.parents('.tabulatr-outer-wrapper').data('selector');
 
     this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
 
@@ -205,16 +209,19 @@ Tabulatr.prototype = {
       var fnTrue=options.fn, fnFalse=options.inverse;
       return val == 'checkbox' ? fnTrue() : fnFalse();
     });
-    var xff = HandlebarsTemplates['table'](context);
+    var xff = HandlebarsTemplates[template](context);
     var result;
-    $(xff).each(function(ix, item){
+    tbody.append(xff);
+    tbody.find(selector).each(function(ix, item){
         var result = $.grep(rowData, function(e){ return e.id == $(item).data('id'); })[0];
         if(result !== undefined){
           $(item).data(result.data);
+          $(item).addClass(result.attributes['class'])
+          delete result.attributes['class']
           $(item).attr(result.attributes);
+          $(item).data('page', response.meta.page);
         }
     });
-    tbody.append(xff);
 
     this.updateInfoString(tableId, response);
 
@@ -251,10 +258,11 @@ Tabulatr.prototype = {
     }
     var pagesize = hash.pagesize;
     if(pagesize === undefined){
-      pagesize = $('table#'+ this.id).data('pagesize');
+      pagesize = $('#'+ this.id).parents('.tabulatr-outer-wrapper').data('pagesize');
     }
     if(hash.page === undefined){
       if(this.hasInfiniteScrolling){
+        var selector = $('#'+ this.id).parents('.tabulatr-outer-wrapper').data('selector');
         hash.page = Math.floor($('#'+ this.id +' [class!=column-definitions]').length/pagesize) + 1;
       }
       if(!isFinite(hash.page)){
@@ -268,7 +276,7 @@ Tabulatr.prototype = {
     hash.table_id = this.id;
     hash[tableName + '_search'] = $('input#'+ this.id +'_fuzzy_search_query').val();
     var form_array = $('.tabulatr_filter_form[data-table="'+ this.id +'"]')
-      .find('input:visible,select:visible,input[type=hidden]').serializeArray();
+      .find('input:visible,select:visible,select.select2,input[type=hidden]').serializeArray();
     for(var i = 0; i < form_array.length; i++){
       if(hash[form_array[i].name] !== undefined){
         if(!Array.isArray(hash[form_array[i].name])){
@@ -298,19 +306,22 @@ Tabulatr.prototype = {
 
   updateInfoString: function(tableId, response){
     var count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
-    count_string = count_string.replace(/%\{current\}/, response.meta.count);
-    count_string = count_string.replace(/%\{total\}/, response.meta.total);
-    count_string = count_string.replace(/%\{per_page\}/,
-      response.meta.pagesize);
-    $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
+    if(count_string){
+      count_string = count_string.replace(/%\{current\}/, response.meta.count);
+      count_string = count_string.replace(/%\{total\}/, response.meta.total);
+      count_string = count_string.replace(/%\{per_page\}/,
+        response.meta.pagesize);
+      $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
+    }
   },
 
   prepareTableForInsert: function(tableId, append, dataCount, actualCount){
     if(!append){
       if(this.storePage){
-        $('#'+ tableId +' tbody tr').hide();
+        var selector = $('#'+ this.id).parents('.tabulatr-outer-wrapper').data('selector');
+        $('#'+ tableId +' '+ selector).hide();
       }else{
-        $('#'+ tableId +' tbody').html('');
+        $('#'+ tableId +' .content-wrapper').html('');
       }
     }
     if(dataCount === 0 || this.currentCount() + dataCount >= actualCount){
@@ -347,14 +358,16 @@ $(document).on('ready page:load', function(){
         $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
       }
     }
-    $($(this).parents('table').find('tbody tr')).remove();
+    var selector = $('#'+ tableId).parents('.tabulatr-outer-wrapper').data('selector');
+    $($('#'+ tableId).find(selector)).remove();
 
     $('.tabulatr_mark_all[data-table='+ tableName +']').prop('checked', false).prop('indeterminate', false);
     table_obj.updateTable({});
   });
 
 
-  $('.tabulatr_table').each(function(ix, el){
+  var tabulatr_container = $('.tabulatr-outer-wrapper').data('container');
+  $(tabulatr_container).each(function(ix, el){
     if($('.pagination[data-table="'+ $(el).attr('id') +'"]').length === 0){
       $('.pagination_trigger[data-table="'+ $(el).attr('id') +'"]').bind('inview', cbfn);
     }
@@ -438,8 +451,9 @@ $(document).on('ready page:load', function(){
     }
   });
 
-  $('.tabulatr_table').on('click', 'input.tabulatr-checkbox', function(){
-    var $table = $(this).closest('.tabulatr_table');
+  var tabulatr_container = $('.tabulatr-outer-wrapper').data('container');
+  $(tabulatr_container).on('click', 'input.tabulatr-checkbox', function(){
+    var $table = $(this).closest(tabulatr_container);
     var tableId = $table.attr('id');
     var $markAllCheckbox = $table.find('.tabulatr_mark_all');
     var table_obj;
@@ -507,7 +521,8 @@ $(document).on('ready page:load', function(){
     }
   });
 
-  if($('.tabulatr_table:not(".tabulatr_static_table")').length > 0){
+  var tabulatr_container = $('.tabulatr-outer-wrapper').data('container');
+  if($(tabulatr_container +':not(".tabulatr_static_table")').length > 0){
     if(typeof(Storage) !== undefined){
       var count = localStorage.tabulatr_page_display_count;
       if(count !== undefined){
@@ -517,12 +532,15 @@ $(document).on('ready page:load', function(){
       }
     }
     var tableObj, tableId, tabulatrTable;
-    $('.tabulatr_table:not(".tabulatr_static_table")').each(function(ix, el){
+    $(tabulatr_container +':not(".tabulatr_static_table")').each(function(ix, el){
       tableId = $(el).attr('id');
+      var spinner = HandlebarsTemplates['spinner']({table_id: tableId, spinner: $(el).parents('.tabulatr-outer-wrapper').data('spinner')});
+      $(el).parent().append(spinner);
       tabulatrTable = new Tabulatr(tableId);
-      if($(el).data('persistent')){
+      if($(el).parents('.tabulatr-outer-wrapper').data('persistent')){
         tabulatrTable.isAPersistedTable = true;
       }
+      $(el).attr('class', $(el).parents('.tabulatr-outer-wrapper').data('class'));
       if($('.pagination[data-table='+ tableId +']').length === 0){
         tabulatrTable.hasInfiniteScrolling = true;
       }

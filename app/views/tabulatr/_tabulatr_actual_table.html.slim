@@ -21,7 +21,7 @@
 
 
 .table-responsive
-  table class=table_options[:html_class] id=table_id data-path=table_options[:path] data-pagesize=table_options[:pagesize] data-persistent=table_options[:persistent].to_s
+  table.tabulatr_table id=table_id
     thead
       tr
        - columns.each do |column|
@@ -29,7 +29,7 @@
          - classes = [classes, "tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
          th data-tabulatr-column-name=column.full_name style=column.html_header_style class=classes
            = column.human_name
-    tbody
+    tbody.content-wrapper
     tfoot
 
 .column-definitions

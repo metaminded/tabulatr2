@@ -21,6 +21,13 @@
 
 .tabulatr-outer-wrapper {
 
+  @for $i from 1 through 12 {
+    .cs-col-xs-#{$i} {
+      @extend .col-xs-1;
+      width: $i*8%;
+    }
+  }
+
   .tabulatr-filter-col {
     display:none;
   }

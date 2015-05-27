@@ -36,7 +36,12 @@ class Tabulatr::Renderer
       html_class: '',
       pagination_position: :top,
       counter_position: :top,
-      persistent: true)
+      persistent: true,
+      table_wrapper: true,
+      data_selector: 'tbody tr',
+      template: Tabulatr.template,
+      container: '.tabulatr_table',
+      filter_wrapper: true)
     @klass = klass
     @view = view
     @table_options = {
@@ -52,7 +57,12 @@ class Tabulatr::Renderer
       html_class: 'table tabulatr_table '.concat(html_class),
       pagination_position: pagination_position,
       counter_position: counter_position,
-      persistent: paginate ? persistent : false
+      persistent: paginate ? persistent : false,
+      table_wrapper: table_wrapper,
+      data_selector: data_selector,
+      template: template,
+      container: container,
+      filter_wrapper: filter_wrapper
     }
     @classname = @klass.name.underscore
   end

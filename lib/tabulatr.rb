@@ -28,9 +28,11 @@ module Tabulatr
 
   mattr_accessor :spinner
   mattr_accessor :paginate
+  mattr_accessor :template
 
   self.spinner  = :standard
   self.paginate = false
+  self.template = 'table'
 end
 
 require 'tabulatr/engine'
