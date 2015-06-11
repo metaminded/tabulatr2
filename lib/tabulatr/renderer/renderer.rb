@@ -106,7 +106,7 @@ class Tabulatr::Renderer
   end
 
   def generate_id
-    "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{@view.controller.controller_name}_#{@view.controller.action_name}_#{@view.instance_variable_get(:@_tabulatr_table_index)}"
+    @_id ||= "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{@view.controller.controller_path.gsub(/\//, '_')}_#{@view.controller.action_name}_#{@view.instance_variable_get(:@_tabulatr_table_index)}"
   end
 
   def self.build_static_table(records, view, toptions={}, &block)
@@ -117,6 +117,25 @@ class Tabulatr::Renderer
 
   def self.build_table(klass, view, toptions={}, columns, filters, tabulatr_data_class, &block)
     new(klass, view, toptions).build_table(columns, filters, tabulatr_data_class, &block)
+  end
+
+  def self.build_filter(klass, view, tabulatr_data_class, filter)
+    if tabulatr_data_class.present?
+      tdc = tabulatr_data_class.constantize.new(klass)
+    else
+      tdc = "#{klass.name}TabulatrData".constantize.new(klass)
+    end
+    new(klass, view, {}).build_the_filters(tdc, filter)
+  end
+
+  def build_the_filters(tdc, filter)
+    found_filters = get_requested_filters(tdc.filters, filter)
+    formatted_name = Tabulatr::Utility.formatted_name(@klass.name)
+    @view.render(partial: '/tabulatr/tabulatr_custom_filters', locals: {
+        filters: found_filters,
+        renderer: self,
+        formatted_name: formatted_name
+    })
   end
 
   private
@@ -135,7 +154,7 @@ class Tabulatr::Renderer
 
   def get_requested_filters(available_filters, requested_filters)
     requested_filters.collect do |f|
-      result = available_filters.find{|filter| filter.name.to_sym == f.to_sym }
+      result = (available_filters || []).find{|filter| filter.name.to_sym == f.to_sym }
       result or raise "Can't find filter '#{f}'"
     end.flatten
   end

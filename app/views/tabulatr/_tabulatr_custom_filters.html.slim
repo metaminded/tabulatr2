@@ -1,0 +1,4 @@
+form.tabulatr_filter_form data-table=renderer.generate_id
+  - filters.each do |filter|
+    = render(partial: filter,
+        locals: { input_name: "#{formatted_name}_filter[#{filter.name}]", input_id: "#{formatted_name}_#{filter.name}" })

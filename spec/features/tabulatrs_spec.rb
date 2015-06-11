@@ -108,8 +108,14 @@ feature "Tabulatr" do
           Product.create!
         end
         visit one_item_per_page_with_pagination_products_path
+        find('a[data-tabulatr-reset]').click
         pages = page.all('.pagination li a[data-page]').map{|a| a['data-page'].to_i}
         expect(pages).to match_array([1,2,3,10,20])
+      end
+
+      scenario 'paginated tables have a reset link by default', js: true do
+        visit one_item_per_page_with_pagination_products_path
+        expect(page).to have_css('.pagination a[data-tabulatr-reset]')
       end
     end
     context 'pagination setting is false' do

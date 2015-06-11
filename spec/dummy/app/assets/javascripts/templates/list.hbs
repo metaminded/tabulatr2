@@ -1,0 +1,24 @@
+{{#each data}}
+<div class="panel panel-info" data-id="{{id}}">
+  <div class="panel-heading">
+    <h4 class="panel-title">
+      <a class="iconize collapsed" data-toggle="collapse" href="#product-{{id}}">
+        {{#if vendor:name}}
+          {{vendor:name}} |
+        {{/if}}
+        {{products:title}}
+      </a>
+    </h4>
+  </div>
+  <div class="panel-collapse collapse" id="product-{{id}}">
+    <div class="panel-body">
+      <p>
+        {{{products:edit_link}}}
+      </p>
+      {{#if products:price}}
+        <p>Price: {{products:price}}</p>
+      {{/if}}
+    </div>
+  </div>
+</div>
+{{/each}}

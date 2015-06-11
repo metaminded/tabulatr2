@@ -1,0 +1,9 @@
+.panel-group.tabulatr_table class="col-xs-12" id=table_id data-path=table_options[:path] data-pagesize=table_options[:pagesize] data-persistent=table_options[:persistent].to_s
+  .content-wrapper
+span.pagination_trigger data-table="#{table_id}"
+
+.column-definitions
+  - columns.each do |column|
+    - classes = column.sortable ? ['tabulatr-sortable'] : []
+    - classes = [classes, "tabulatr-column-#{column.coltype}", column.classes].flatten.compact.join(' ')
+    div data-tabulatr-column-name=column.full_name data-tabulatr-type=column.coltype style=column.html_cell_style class=classes

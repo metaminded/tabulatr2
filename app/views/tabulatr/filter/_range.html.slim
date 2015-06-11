@@ -1,0 +1,8 @@
+.control-group.form-group data-filter-column-name=name
+  label.control-label for=filter_name
+    = column.filter_label || column.human_name
+  .col-sm-5
+    input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}_from" name="#{iname}[from]"
+  span.col-sm-1.text-center —
+  .col-sm-5
+    input.tabulatr_filter.form-control type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"

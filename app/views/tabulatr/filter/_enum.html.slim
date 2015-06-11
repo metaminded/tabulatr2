@@ -1,0 +1,8 @@
+.control-group.form-group data-filter-column-name=name
+  label.control-label for=filter_name
+    = column.filter_label || column.human_name
+
+  select.form-control name=iname data-tabulatr-attribute=name
+    option= I18n.t('tabulatr.enum_filter.none')
+    - column.klass.try(column.name.to_s.pluralize.to_sym).each do |key, value|
+      option value=value = key

@@ -1,0 +1,11 @@
+.control-group.form-group data-filter-column-name=name
+
+  label.control-label for=filter_name
+    = column.filter_label || column.human_name
+
+  - column.klass.try(column.name.to_s.pluralize.to_sym).each do |key, value|
+    .row
+      .col-xs-2
+        = check_box_tag "#{iname}[]", value, true, {id: "check_box_#{key}"}
+      .col-xs-10
+        = label_tag "check_box_#{key}", key

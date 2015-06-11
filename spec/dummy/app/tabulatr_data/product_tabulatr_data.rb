@@ -41,4 +41,8 @@ class ProductTabulatrData < Tabulatr::Data
     end
     "haha!"
   end
+
+  filter :status do |relation, value|
+    relation
+  end
 end

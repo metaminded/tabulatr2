@@ -58,4 +58,8 @@ class ProductsController < ApplicationController
       raise e
     end
   end
+
+  def list
+    tabulatr_for Product
+  end
 end

@@ -7,7 +7,7 @@ describe Tabulatr::Renderer do
   end
 
   def double_view
-    view = double(controller: double(controller_name: 'products', action_name: 'index'), render: '')
+    view = double(controller: double(controller_path: 'products', action_name: 'index'), render: '')
     view.instance_variable_set('@_tabulatr_table_index', 0)
     view
   end

@@ -1,0 +1,11 @@
+.control-group.form-group data-filter-column-name=name
+
+  label.control-label for=filter_name
+    = column.filter_label || column.human_name
+
+  .col-xs-12
+    = select_tag(iname, options_for_select([ \
+        [t('tabulatr.boolean_filter.both'), ""],
+        [t('tabulatr.boolean_filter.no'), "false"],
+        [t('tabulatr.boolean_filter.yes'), "true"]] \
+      ), class: 'form-control no-chosen')

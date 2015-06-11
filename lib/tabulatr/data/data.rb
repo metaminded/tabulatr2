@@ -48,9 +48,9 @@ class Tabulatr::Data
     total = @relation.count
 
     # prepare the query
+    apply_sorting(sort_params params)
     apply_filters(filter_params params)
     apply_search(search_param params)
-    apply_sorting(sort_params params)
     join_required_tables(params)
 
     execute_batch_actions(batch_params(params), check_params(params))
