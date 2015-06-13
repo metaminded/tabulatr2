@@ -27,13 +27,13 @@ if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
     def self.tabulatr(relation, tabulatr_data_class = nil)
       tabulatr_data_class = "#{self.name}TabulatrData".constantize unless tabulatr_data_class
-      begin
+      # begin
         td = tabulatr_data_class.new(relation)
-      rescue NameError => e
-        puts e.message
-        # TODO: Better message
-        raise "No class `#{self.name}TabulatrData' defined. Explanation here."
-      end
+      # rescue NameError => e
+      #   puts e.message
+      #   # TODO: Better message
+      #   raise "No class `#{self.name}TabulatrData' defined. Explanation here."
+      # end
     end
   end
 end

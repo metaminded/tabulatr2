@@ -98,14 +98,14 @@ class Tabulatr::Renderer::Column
       if self.klass.respond_to?(:defined_enums) && self.klass.defined_enums.keys.include?(self.name.to_s)
         self.col_options.filter = :enum
       else
-        self.filter = :integer
+        self.col_options.filter = :integer
       end
-    when :enum then self.filter = :enum
-    when :float, :decimal then self.filter = :decimal
-    when :string, :text then self.filter = :like
-    when :date, :time, :datetime, :timestamp then self.filter = :date
-    when :boolean then self.filter = :checkbox
-    when nil then self.filter = :exact
+    when :enum then self.col_options.filter = :enum
+    when :float, :decimal then self.col_options.filter = :decimal
+    when :string, :text then self.col_options.filter = :like
+    when :date, :time, :datetime, :timestamp then self.col_options.filter = :date
+    when :boolean then self.col_options.filter = :checkbox
+    when nil then self.col_options.filter = :exact
     else raise "Unknown filter type for #{self.name}: »#{typ}«"
     end
   end
