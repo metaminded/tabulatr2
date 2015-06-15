@@ -30,17 +30,17 @@ module Tabulatr::Data::DSL
 
   def column(name, opts = {}, &block)
     @table_columns ||= []
-    table_name = main_class.table_name
-    opts = {sort_sql: opts[:sort_sql] || opts[:sql] || "#{main_class.quoted_table_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
+    sql_options = determine_sql(opts, main_class.quoted_table_name, name)
+    opts = {
+            sort_sql: sql_options[:sort_sql],
             filter: true,
             sortable: true,
-        filter_sql: opts[:filter_sql] || opts[:sql] || "#{main_class.quoted_table_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}"}.merge(opts)
-    col_options = Tabulatr::ParamsBuilder.new(opts)
+            filter_sql: sql_options[:filter_sql]}.merge(opts)
     table_column = Tabulatr::Renderer::Column.from(
         name: name,
         klass: @base,
-        col_options: col_options,
-        table_name: table_name.to_sym,
+        col_options: Tabulatr::ParamsBuilder.new(opts),
+        table_name: main_class.table_name.to_sym,
         output: block_given? ? block : ->(record){record.send(name)})
     @table_columns << table_column
   end
@@ -48,9 +48,10 @@ module Tabulatr::Data::DSL
   def association(assoc, name, opts = {}, &block)
     @table_columns ||= []
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
-    t_name = assoc_klass.try(:quoted_table_name)
-    opts = {sort_sql: opts[:sort_sql] || opts[:sql] || "#{t_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        filter_sql: opts[:filter_sql] || opts[:sql] || "#{t_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}"}.merge(opts)
+    sql_options = determine_sql(opts, assoc_klass.try(:quoted_table_name), name)
+    opts = {
+        sort_sql: sql_options[:sort_sql],
+        filter_sql: sql_options[:filter_sql]}.merge(opts)
     col_options = Tabulatr::ParamsBuilder.new(opts)
     table_column = Tabulatr::Renderer::Association.from(
         name: name,
@@ -130,6 +131,13 @@ module Tabulatr::Data::DSL
     else
       raise "Don't know which class should be target_class for `#{self.name}'."
     end
+  end
+
+  def determine_sql(options, table_name, column_name)
+    {
+      sort_sql: options[:sort_sql] || options[:sql] || "#{table_name}.#{ActiveRecord::Base.connection.quote_column_name(column_name)}",
+      filter_sql: options[:filter_sql] || options[:sql] || "#{table_name}.#{ActiveRecord::Base.connection.quote_column_name(column_name)}"
+    }
   end
 end
 

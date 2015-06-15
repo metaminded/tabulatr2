@@ -217,7 +217,7 @@ Tabulatr.prototype = {
 
   makeAction: function(action, data){
     this.currentData = data;
-    return unescape(action).replace(/{{([\w:]+)}}/g, this.replacer);
+    return decodeURI(action).replace(/{{([\w:]+)}}/g, this.replacer);
   },
 
   submitFilterForm: function(){
@@ -232,8 +232,7 @@ Tabulatr.prototype = {
   createParameterString: function(hash){
     var tableName = this.id.split('_')[0];
     if(hash === undefined){
-      hash = {};
-      hash.append = false;
+      hash = {append: false};
     }
     var pagesize = hash.pagesize;
     if(pagesize === undefined){
@@ -355,8 +354,8 @@ $(document).on('ready page:load', function(){
     params[name] = key;
     params.tabulatr_checked = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     var confirmation = true;
-    if(params.tabulatr_checked.checked_ids == ''){
-      confirmation = confirm(a.parents('ul').data('confirm-text'));
+    if(params.tabulatr_checked.checked_ids === ''){
+      confirmation = window.confirm(a.parents('ul').data('confirm-text'));
     }
     if(confirmation){
       $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false).prop('checked', false);

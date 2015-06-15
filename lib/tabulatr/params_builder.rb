@@ -22,18 +22,9 @@ module Tabulatr
       self.header_html ||= {}
       self.data_html[:style] ||= ''
       self.header_html[:style] ||= ''
-      if align.present?
-        self.header_html[:style].concat("text-align: #{align};")
-        self.data_html[:style].concat("text-align: #{align};")
-      end
-      if width.present?
-        self.header_html[:style].concat("width: #{width};")
-        self.data_html[:style].concat("width: #{width};")
-      end
-      if wrap.present?
-        self.header_html[:style].concat("white-space: #{wrap};")
-        self.data_html[:style].concat("white-space: #{wrap};")
-      end
+      apply_style_option('text-align', align)
+      apply_style_option('width', width)
+      apply_style_option('white-space', wrap)
     end
 
     def apply_params(params)
@@ -47,6 +38,13 @@ module Tabulatr
         end
       end
       style_options
+    end
+
+    def apply_style_option(attribute, value)
+      if value.present?
+        self.header_html[:style].concat("#{attribute}: #{value};")
+        self.data_html[:style].concat("#{attribute}: #{value};")
+      end
     end
   end
 end

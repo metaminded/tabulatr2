@@ -43,21 +43,16 @@ module Tabulatr::Data::Filtering
 
   def apply_filters(filter_params)
     return unless filter_params
-    assoc_filters = filter_params.delete :__association
-    apply_association_filters(assoc_filters) if assoc_filters.present?
+    apply_association_filters(filter_params.delete(:__association))
     filter_params.each do |param|
       name, value = param
       next unless value.present?
-
-      table_name, method_name = name.split(':').map(&:to_sym)
-      column = table_columns.find{|c| c.table_name == table_name && c.name == method_name}
-      column = filters.find{|f| f.name.to_sym == name.to_sym} if column.nil?
-      apply_condition(column, value)
+      apply_condition(find_column(name), value)
     end
   end
 
   def apply_association_filters(assoc_filters)
-    assoc_filters.each do |assoc_filter|
+    Array(assoc_filters).each do |assoc_filter|
       name, value = assoc_filter
       assoc, att = name.split(".").map(&:to_sym)
       table_name = table_name_for_association(assoc)
@@ -71,13 +66,8 @@ module Tabulatr::Data::Filtering
   def apply_condition(n,v)
     case n.filter
     when :checkbox then apply_boolean_condition(n, v)
-    when :decimal  then apply_string_condition("#{n.col_options.filter_sql} = ?", v.to_f)
-    when :integer  then apply_string_condition("#{n.col_options.filter_sql} = ?", v.to_i)
-    when :enum     then apply_string_condition("#{n.col_options.filter_sql} = ?", v.to_i)
+    when :decimal, :integer, :enum, :exact, Hash, Array  then apply_string_condition("#{n.col_options.filter_sql} = ?", v.to_f)
     when :enum_multiselect then apply_array_condition(n, v)
-    when :exact    then apply_string_condition("#{n.col_options.filter_sql} = ?", v)
-    when Hash      then apply_string_condition("#{n.col_options.filter_sql} = ?", v)
-    when Array     then apply_string_condition("#{n.col_options.filter_sql} = ?", v)
     when :like     then apply_like_condition(n, v[:like])
     when :date     then apply_date_condition(n, v[:date])
     when :range    then apply_range_condition(n, v)
@@ -92,32 +82,19 @@ module Tabulatr::Data::Filtering
 
   def apply_date_condition(n, cond)
     today = Date.today
+    yesterday = today - 1.day
     case cond[:simple]
     when 'none' then return
-    when 'today'
-      since = today
-      to = today.at_end_of_day
-    when 'yesterday'
-      since = today - 1.day
-      to = since.at_end_of_day
-    when 'this_week'
-      since = today.at_beginning_of_week.beginning_of_day
-      to = today.at_end_of_week.end_of_day
-    when 'last_7_days'
-      since = (today - 6.day).beginning_of_day
-      to = today.at_end_of_day
-    when 'this_month'
-      since = today.at_beginning_of_month.beginning_of_day
-      to = today.at_end_of_month.end_of_day
-    when 'last_30_days'
-      since = (today - 29.day).beginning_of_day
-      to = today.at_end_of_day
-    when 'from_to'
-      since = (Date.parse(cond[:from]) rescue nil) if cond[:from].present?
-      to = (Date.parse(cond[:to]) rescue nil) if cond[:to].present?
+    when 'today' then date_in_between(today, today.at_end_of_day, n)
+    when 'yesterday' then date_in_between(yesterday, yesterday.at_end_of_day, n)
+    when 'this_week' then date_in_between(today.at_beginning_of_week.beginning_of_day,
+                            today.at_end_of_week.end_of_day, n)
+    when 'last_7_days' then date_in_between((today - 6.day).beginning_of_day, today.at_end_of_day, n)
+    when 'this_month' then date_in_between(today.at_beginning_of_month.beginning_of_day,
+                              today.at_end_of_month.end_of_day, n)
+    when 'last_30_days' then date_in_between((today - 29.day).beginning_of_day, today.at_end_of_day, n)
+    when 'from_to' then date_in_between((Date.parse(cond[:from]) rescue nil), (Date.parse(cond[:to]) rescue nil), n)
     end
-    @relation = @relation.where("#{n.col_options.filter_sql} >= ?", since) if since.present?
-    @relation = @relation.where("#{n.col_options.filter_sql} <= ?", to) if to.present?
   end
 
   def apply_string_condition(replacement_string, value)
@@ -164,6 +141,21 @@ module Tabulatr::Data::Filtering
       @relation = @relation.where(search_result)
     else
       Tabulatr::UnexpectedSearchResultError.raise_error(search_result.class)
+    end
+  end
+
+  def date_in_between(from, to, column)
+    @relation = @relation.where("#{column.col_options.filter_sql} >= ?", from) if from.present?
+    @relation = @relation.where("#{column.col_options.filter_sql} <= ?", to) if to.present?
+  end
+
+  def find_column(name)
+    table_name, method_name = name.split(':').map(&:to_sym)
+    column = table_columns.find{|c| c.table_name == table_name && c.name == method_name}
+    if column.nil?
+      filters.find{|f| f.name.to_sym == name.to_sym}
+    else
+      column
     end
   end
 

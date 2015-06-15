@@ -58,21 +58,9 @@ class Tabulatr::Renderer::Column
 
   def value_for(record, view)
     val = principal_value(record, view)
-    if self.col_options.format.present? && val.respond_to?(:to_ary)
-      val.map do |v|
-        case self.col_options.format
-        when Symbol then view.send(col_options.format, v)
-        when String then col_options.format % v
-        when Proc   then col_options.format.(v)
-        else val
-        end
-      end
-    elsif col_options.format.present?
-      case col_options.format
-      when Symbol then view.send(col_options.format, val)
-      when String then col_options.format % val
-      when Proc   then col_options.format.(val)
-      else val
+    if self.col_options.format.present?
+      Array(val).map do |v|
+        format_value(v)
       end
     else
       val
@@ -94,12 +82,7 @@ class Tabulatr::Renderer::Column
   def determine_appropriate_filter!
     typ = self.klass.columns_hash[self.name.to_s].try(:type).try(:to_sym)
     case typ
-    when :integer
-      if self.klass.respond_to?(:defined_enums) && self.klass.defined_enums.keys.include?(self.name.to_s)
-        self.col_options.filter = :enum
-      else
-        self.col_options.filter = :integer
-      end
+    when :integer then self.col_options.filter = filter_type_for_integer
     when :enum then self.col_options.filter = :enum
     when :float, :decimal then self.col_options.filter = :decimal
     when :string, :text then self.col_options.filter = :like
@@ -107,6 +90,26 @@ class Tabulatr::Renderer::Column
     when :boolean then self.col_options.filter = :checkbox
     when nil then self.col_options.filter = :exact
     else raise "Unknown filter type for #{self.name}: »#{typ}«"
+    end
+  end
+
+
+  private
+
+  def filter_type_for_integer
+    if self.klass.respond_to?(:defined_enums) && self.klass.defined_enums.keys.include?(self.name.to_s)
+      :enum
+    else
+      :integer
+    end
+  end
+
+  def format_value(value)
+    case self.col_options.format
+    when Symbol then view.send(col_options.format, value)
+    when String then col_options.format % value
+    when Proc   then col_options.format.(value)
+    else value
     end
   end
 
