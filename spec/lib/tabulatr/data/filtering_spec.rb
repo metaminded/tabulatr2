@@ -169,21 +169,6 @@ describe Tabulatr::Data::Filtering do
     end
   end
 
-  describe '.apply_association_filters' do
-    before(:each) do
-      @dummy = DummyFilteringClass.new
-      @dummy.instance_variable_set('@relation', Product.all)
-    end
-
-    it 'applies given filters to the relation' do
-      fake_column = double(table_name: :vendors, name: :staff, filter: :integer)
-      allow(fake_column).to receive_message_chain('col_options.filter_sql') { 'vendors.staff'}
-      allow(@dummy).to receive(:table_columns).and_return([fake_column])
-      allow(@dummy).to receive(:table_name_for_association).with(:vendor).and_return('vendors')
-      expect{@dummy.apply_association_filters({'vendor.staff' => '10'})}.to_not raise_error
-    end
-  end
-
   describe '.apply_condition' do
     before(:each) do
       @dummy = DummyFilteringClass.new
