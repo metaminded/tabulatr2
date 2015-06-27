@@ -52,11 +52,10 @@ module Tabulatr::Data::DSL
     opts = {
         sort_sql: sql_options[:sort_sql],
         filter_sql: sql_options[:filter_sql]}.merge(opts)
-    col_options = Tabulatr::ParamsBuilder.new(opts)
     table_column = Tabulatr::Renderer::Association.from(
         name: name,
         klass: assoc_klass.try(:klass),
-        col_options: col_options,
+        col_options: Tabulatr::ParamsBuilder.new(opts),
         table_name: assoc,
         output: block_given? ? block : ->(record){a=record.send(assoc); a.try(:read_attribute, name) || a.try(name)})
     @table_columns << table_column
@@ -80,8 +79,7 @@ module Tabulatr::Data::DSL
     output = ->(r) {
       tdbb = Tabulatr::Data::ButtonBuilder.new
       self.instance_exec tdbb, r, &block
-      bb = tdbb.val
-      self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
+      self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: tdbb.val}, formats: [:html]
     }
     opts = {header: opts[:header] || '', filter: false, sortable: false}.merge(opts)
     table_column = Tabulatr::Renderer::Buttons.from(
@@ -134,10 +132,11 @@ module Tabulatr::Data::DSL
   end
 
   def determine_sql(options, table_name, column_name)
-    {
-      sort_sql: options[:sort_sql] || options[:sql] || "#{table_name}.#{ActiveRecord::Base.connection.quote_column_name(column_name)}",
-      filter_sql: options[:filter_sql] || options[:sql] || "#{table_name}.#{ActiveRecord::Base.connection.quote_column_name(column_name)}"
-    }
+    options_hash = {}
+    [:sort_sql, :filter_sql].each do |sym|
+      options_hash[sym] = options[sym] || options[:sql] || "#{table_name}.#{ActiveRecord::Base.connection.quote_column_name(column_name)}"
+    end
+    options_hash
   end
 end
 
