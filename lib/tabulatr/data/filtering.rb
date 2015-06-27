@@ -144,7 +144,8 @@ module Tabulatr::Data::Filtering
 
   def find_column(name)
     table_name, method_name = name.split(':').map(&:to_sym)
-    table_columns.find{|c| c.table_name == table_name && c.name == method_name} || filters.find{|f| f.name.to_sym == name.to_sym}
+    table_columns.find { |c| c.table_name == table_name && c.name == method_name } ||
+      filters.find { |f| f.name.to_sym == name.to_sym }
   end
 
 end
