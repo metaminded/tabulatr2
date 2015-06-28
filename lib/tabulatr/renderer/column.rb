@@ -80,7 +80,7 @@ class Tabulatr::Renderer::Column
   end
 
   def determine_appropriate_filter!
-    typ = self.klass.columns_hash[self.name.to_s].try(:type).try(:to_sym)
+    typ = self.klass.columns_hash[self.name.to_s].type.to_sym rescue nil
     case typ
     when :integer then self.col_options.filter = filter_type_for_integer
     when :enum then self.col_options.filter = :enum
