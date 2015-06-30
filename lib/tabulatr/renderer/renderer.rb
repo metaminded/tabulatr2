@@ -58,19 +58,8 @@ class Tabulatr::Renderer
   end
 
   def build_table(columns, filters, tabulatr_data_class, &block)
-    if tabulatr_data_class.present?
-      tdc = tabulatr_data_class.constantize.new(@klass)
-    else
-      tdc = "#{@klass.name}TabulatrData".constantize.new(@klass)
-    end
-    if block_given?
-      @columns = ColumnsFromBlock.process(@klass, tdc, &block).columns
-    elsif columns.any? || filters.any?
-      @columns = get_requested_columns(tdc.table_columns, columns)
-      @filters = get_requested_filters(tdc.filters, filters)
-    else
-      @columns = tdc.table_columns
-    end
+    tdc = get_data_class(tabulatr_data_class)
+    set_columns_and_filters(tdc, columns, filters, &block)
     @view.render(partial: '/tabulatr/tabulatr_table', locals: {
       columns: @columns,
       table_options: @table_options,
@@ -125,9 +114,29 @@ class Tabulatr::Renderer
 
   def get_requested_filters(available_filters, requested_filters)
     requested_filters.collect do |f|
-      result = available_filters.find{|filter| filter.name.to_sym == f.to_sym }
-      result or raise "Can't find filter '#{f}'"
+      available_filters.find("Can't find filter '#{f}'") do |filter|
+        filter.name.to_sym == f.to_sym
+      end
     end.flatten
+  end
+
+  def get_data_class(name = '')
+    if name.present?
+      name.constantize.new(@klass)
+    else
+      "#{@klass.name}TabulatrData".constantize.new(@klass)
+    end
+  end
+
+  def set_columns_and_filters(data_class, columns, filters, &block)
+    if block_given?
+      @columns = ColumnsFromBlock.process(@klass, data_class, &block).columns
+    elsif columns.any? || filters.any?
+      @columns = get_requested_columns(data_class.table_columns, columns)
+      @filters = get_requested_filters(data_class.filters, filters)
+    else
+      @columns = data_class.table_columns
+    end
   end
 
 end

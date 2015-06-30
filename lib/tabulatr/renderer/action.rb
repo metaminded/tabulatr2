@@ -23,7 +23,7 @@
 
 class Tabulatr::Renderer::Action < Tabulatr::Renderer::Column
   def human_name
-    header
+    col_options.header
   end
 
   def coltype() 'action' end

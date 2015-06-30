@@ -23,127 +23,78 @@
 
 module Tabulatr::Data::DSL
 
-  def target_class(name)
-    s = name.to_s
-    @target_class = s.camelize.constantize rescue "There's no class `#{s.camelize}' for `#{self.name}'"
-    @target_class_name = s.underscore
-  end
-
   def main_class
     target_class_name # to get auto setting @target_class
     @target_class
   end
 
-  def target_class_name
-    return @target_class_name if @target_class_name.present?
-    if (s = /(.+)TabulatrData\Z/.match(self.name))
-      # try whether it's a class
-      target_class s[1].underscore
-    else
-      raise "Don't know which class should be target_class for `#{self.name}'."
-    end
-  end
-
-  def column(name, header: nil, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
-    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter_label: nil, filter: true, sortable: true, format: nil, map: true, cell_style: {},
-    header_style: {},
-    &block)
+  def column(name, opts = {}, &block)
     @table_columns ||= []
-    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter_label: filter_label, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style,
-      header: header
-    }.merge(table_column_options)
-    table_name = main_class.table_name
+    sql_options = determine_sql(opts, main_class.quoted_table_name, name)
+    opts = {
+            sort_sql: sql_options[:sort_sql],
+            filter: true,
+            sortable: true,
+            filter_sql: sql_options[:filter_sql]}.merge(opts)
     table_column = Tabulatr::Renderer::Column.from(
-      table_column_options.merge(name: name,
+        name: name,
         klass: @base,
-        sort_sql: sort_sql || sql || "#{main_class.quoted_table_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        filter_sql: filter_sql || sql || "#{main_class.quoted_table_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        table_name: table_name.to_sym,
-        output: block_given? ? block : ->(record){record.send(name)}))
+        col_options: Tabulatr::ParamsBuilder.new(opts),
+        table_name: main_class.table_name.to_sym,
+        output: block_given? ? block : ->(record){record.send(name)})
     @table_columns << table_column
   end
 
-  def association(assoc, name, header: nil, sort_sql: nil, filter_sql: nil, sql: nil, table_column_options: {},
-    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter_label: nil, filter: true, sortable: true, format: nil, map: true, cell_style: {},
-    header_style: {},
-    &block)
+  def association(assoc, name, opts = {}, &block)
     @table_columns ||= []
-    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter_label: filter_label, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style,
-      header: header
-    }.merge(table_column_options)
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
-    t_name = assoc_klass.try(:quoted_table_name)
+    sql_options = determine_sql(opts, assoc_klass.try(:quoted_table_name), name)
+    opts = {
+        sort_sql: sql_options[:sort_sql],
+        filter_sql: sql_options[:filter_sql]}.merge(opts)
     table_column = Tabulatr::Renderer::Association.from(
-      table_column_options.merge(name: name, table_name: assoc,
+        name: name,
         klass: assoc_klass.try(:klass),
-        sort_sql: sort_sql || sql || "#{t_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        filter_sql: filter_sql || sql || "#{t_name}.#{ActiveRecord::Base.connection.quote_column_name(name)}",
-        output: block_given? ? block : ->(record){a=record.send(assoc); a.try(:read_attribute, name) || a.try(name)}))
+        col_options: Tabulatr::ParamsBuilder.new(opts),
+        table_name: assoc,
+        output: block_given? ? block : ->(record){a=record.send(assoc); a.try(:read_attribute, name) || a.try(name)})
     @table_columns << table_column
   end
 
-  def actions(header: nil, name: nil, table_column_options: {},
-    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter_label: nil, filter: true, sortable: true, format: nil, map: true, cell_style: {},
-    header_style: {},
-    &block)
+  def actions(opts = {}, &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
-    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter_label: filter_label, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style
-    }.merge(table_column_options)
     table_column = Tabulatr::Renderer::Action.from(
-      table_column_options.merge(
-        name: (name || '_actions'), table_name: main_class.table_name.to_sym,
-        klass: @base, header: header || '',
-        filter: false, sortable: false,
-        output: block))
+      name: (name || '_actions'),
+      table_name: main_class.table_name.to_sym,
+      klass: @base,
+      col_options: Tabulatr::ParamsBuilder.new({header: (opts[:header] || ''), filter: false, sortable: false}),
+      output: block)
     @table_columns << table_column
   end
 
-  def buttons(header: nil, name: nil, table_column_options: {},
-    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
-    header_style: {},
-    &block)
+  def buttons(opts = {}, &block)
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
-    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style
-    }.merge(table_column_options)
     output = ->(r) {
       tdbb = Tabulatr::Data::ButtonBuilder.new
       self.instance_exec tdbb, r, &block
-      bb = tdbb.val
-      self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
+      self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: tdbb.val}, formats: [:html]
     }
+    opts = {header: opts[:header] || '', filter: false, sortable: false}.merge(opts)
     table_column = Tabulatr::Renderer::Buttons.from(
-      table_column_options = table_column_options.merge(
-        name: (name || '_buttons'), table_name: main_class.table_name.to_sym,
-        klass: @base, header: header || '',
-        filter: false, sortable: false,
-        output: output))
+      name: (opts[:name] || '_buttons'),
+      table_name: main_class.table_name.to_sym,
+      klass: @base,
+      col_options: Tabulatr::ParamsBuilder.new(opts),
+      output: output)
     @table_columns << table_column
   end
 
-  def checkbox(table_column_options: {},
-    classes: nil, width: false, align: false, valign: false, wrap: nil, th_html: false,
-    filter_html: false, filter: true, sortable: true, format: nil, map: true, cell_style: {},
-    header_style: {})
+  def checkbox(opts = {})
     @table_columns ||= []
-    table_column_options = {classes: classes, width: width, align: align, valign: valign, wrap: wrap,
-      th_html: th_html, filter_html: filter_html, filter: filter, sortable: sortable,
-      format: format, map: map, cell_style: cell_style, header_style: header_style
-    }.merge(table_column_options)
-    box = Tabulatr::Renderer::Checkbox.from(table_column_options = table_column_options.merge(klass: @base, filter: false, sortable: false))
+    box = Tabulatr::Renderer::Checkbox.from(klass: @base,
+            col_options: Tabulatr::ParamsBuilder.new(opts.merge(filter: false, sortable: false)))
     @table_columns << box
   end
 
@@ -162,6 +113,31 @@ module Tabulatr::Data::DSL
     @filters << Tabulatr::Renderer::Filter.new(name, partial: partial, &block)
   end
 
+  private
+
+  def target_class(name)
+    s = name.to_s
+    @target_class = s.camelize.constantize rescue "There's no class `#{s.camelize}' for `#{self.name}'"
+    @target_class_name = s.underscore
+  end
+
+  def target_class_name
+    return @target_class_name if @target_class_name.present?
+    if (s = /(.+)TabulatrData\Z/.match(self.name))
+      # try whether it's a class
+      target_class s[1].underscore
+    else
+      raise "Don't know which class should be target_class for `#{self.name}'."
+    end
+  end
+
+  def determine_sql(options, table_name, column_name)
+    options_hash = {}
+    [:sort_sql, :filter_sql].each do |sym|
+      options_hash[sym] = options[sym] || options[:sql] || "#{table_name}.#{ActiveRecord::Base.connection.quote_column_name(column_name)}"
+    end
+    options_hash
+  end
 end
 
 Tabulatr::Data.send :extend, Tabulatr::Data::DSL

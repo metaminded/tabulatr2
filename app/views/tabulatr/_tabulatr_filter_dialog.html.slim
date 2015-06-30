@@ -44,7 +44,7 @@
                   - filter_name = "tabulatr_form_#{name}"
 
                   label.control-label for=filter_name
-                    = column.filter_label || column.human_name
+                    = column.col_options.filter_label || column.human_name
 
                   - if column.filter.is_a?(Hash) || column.filter.is_a?(Array) || column.filter.is_a?(String)
                     select.form-control.no-chosen id=name name=iname

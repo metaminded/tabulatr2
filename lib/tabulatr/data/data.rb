@@ -35,7 +35,7 @@ class Tabulatr::Data
     table_columns.map do |col|
       next if col.is_a? Tabulatr::Renderer::Checkbox
       col.klass = @base.reflect_on_association(col.table_name).try(:klass) || @base
-      col.determine_appropriate_filter! if col.filter === true
+      col.determine_appropriate_filter! if col.col_options.filter === true
     end
   end
 

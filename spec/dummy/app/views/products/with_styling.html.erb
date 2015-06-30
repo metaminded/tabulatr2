@@ -1,6 +1,6 @@
 <%= table_for Product, :paginate => true do |t|
   t.checkbox
-  t.column :title, sortable: true, width: '60px', align: 'left', valign: 'top', wrap: 'nowrap', cell_style: {:'background-color' => 'green'}, header_style: {color: 'orange'}
+  t.column :title, sortable: true, width: '60px', align: 'left', wrap: 'nowrap', data_html: {style: 'background-color: green;'}, header_html: {style: 'color: orange;'}
   t.column :price, filter: :range
   t.column :active, sortable: false
   t.column :vendor_product_name, header: 'Product by vendor'

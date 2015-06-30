@@ -36,7 +36,7 @@ class Tabulatr::Renderer
       if table_data
         @columns << fetch_column_from_table_data(klass.table_name.to_sym, name, opts, &block)
       else
-        @columns << Column.from(opts.merge(klass: klass, table_name: klass.table_name.to_sym, name: name), &block)
+        @columns << Column.from(klass: klass, table_name: klass.table_name.to_sym, name: name, col_options: Tabulatr::ParamsBuilder.new(opts), &block)
       end
     end
 
@@ -45,17 +45,17 @@ class Tabulatr::Renderer
         @columns << fetch_column_from_table_data(table_name, name, opts, &block)
       else
         assoc_klass = klass.reflect_on_association(table_name.to_sym)
-        @columns << Association.from(opts.merge(klass: assoc_klass.try(:klass),
-          name: name, table_name: table_name), &block)
+        @columns << Association.from(klass: assoc_klass.try(:klass),
+          name: name, table_name: table_name, col_options: Tabulatr::ParamsBuilder.new(opts), &block)
       end
     end
 
     def checkbox(opts={})
-      @columns << Checkbox.from(opts.merge(klass: klass, filter: false, sortable: false))
+      @columns << Checkbox.from(klass: klass, col_options: Tabulatr::ParamsBuilder.new(opts.merge(filter: false, sortable: false)))
     end
 
     def action(opts={}, &block)
-      @columns << Action.from(opts.merge(klass: klass, filter: false, sortable: false), &block)
+      @columns << Action.from(klass: klass, col_options: Tabulatr::ParamsBuilder.new(opts.merge(filter: false, sortable: false)), &block)
     end
 
     def buttons(opts={}, &block)
@@ -63,7 +63,8 @@ class Tabulatr::Renderer
         bb = self.instance_exec Tabulatr::Data::ButtonBuilder.new, r, &block
         self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: bb}, formats: [:html]
       }
-      @columns << Buttons.from(opts.merge(klass: klass, filter: false, sortable: false, output: output), &block)
+      opts = {filter: false, sortable: false}.merge(opts)
+      @columns << Buttons.from(klass: klass, col_options: Tabulatr::ParamsBuilder.new(opts), output: output, &block)
     end
 
     def filter(name, partial: nil, &block)
@@ -85,7 +86,9 @@ class Tabulatr::Renderer
 
     def fetch_column_from_table_data table_name, name, opts={}, &block
       column = table_data.table_columns.find{|tc| tc.table_name == table_name && tc.name == name}
-      column.update_options(opts, &block)
+      column.col_options.update(opts)
+      column.output = block if block_given?
+      column
     end
 
     def fetch_filter_from_table_data name

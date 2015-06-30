@@ -23,7 +23,7 @@
 
 class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
   def human_name
-    header || klass.model_name.human + ' ' + klass.human_attribute_name(name)
+    col_options.header || klass.model_name.human + ' ' + klass.human_attribute_name(name)
   end
 
   def coltype() 'association' end
@@ -31,9 +31,9 @@ class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
   def association?() true end
 
   def principal_value(record, view)
-    return super if output
+    return super if output || block
     v = record.send(table_name)
-    if v && v.respond_to?(:to_a) && map && name != :count
+    if v && v.respond_to?(:to_a) && name != :count
       v.map(&:"#{name}")
     else
       v.try(name)
