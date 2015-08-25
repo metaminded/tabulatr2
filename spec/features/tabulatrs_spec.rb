@@ -153,6 +153,11 @@ feature "Tabulatr" do
       expect(page).to have_selector('td[data-tabulatr-column-name="vendor:name"]', text: @vendor2.name)
     end
 
+    scenario "without filters", js: true do
+      visit without_filters_products_path
+      expect(page).to have_no_content('Filter')
+    end
+
     scenario "filters with range", js: true do
       n = names.length
       Product.create!([{title: 'foo', price: 5}, {title: 'bar', price: 17}])

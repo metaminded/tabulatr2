@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get :implicit_columns
       get :with_styling
       get :local_storage
+      get :without_filters
     end
   end
 

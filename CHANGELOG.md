@@ -1,3 +1,7 @@
+## UNRELEASED
+  * Rename `filter` option of `table_for` to `filters` to not conceal the
+    `table_option` also named `filter`.
+
 ## 0.9.20
   * Add `filter` to DSL to define custom filters
 

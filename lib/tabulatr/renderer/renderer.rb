@@ -131,11 +131,13 @@ class Tabulatr::Renderer
   def set_columns_and_filters(data_class, columns, filters, &block)
     if block_given?
       @columns = ColumnsFromBlock.process(@klass, data_class, &block).columns
-    elsif columns.any? || filters.any?
+    elsif columns.any?
       @columns = get_requested_columns(data_class.table_columns, columns)
-      @filters = get_requested_filters(data_class.filters, filters)
     else
       @columns = data_class.table_columns
+    end
+    if filters && filters.any?
+      @filters = get_requested_filters(data_class.filters, filters)
     end
   end
 

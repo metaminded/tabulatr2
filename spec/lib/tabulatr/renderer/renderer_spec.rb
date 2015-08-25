@@ -45,5 +45,13 @@ describe Tabulatr::Renderer do
       filters = renderer.instance_variable_get('@filters')
       expect(filters.map(&:name)).to match_array([:simple_filter])
     end
+
+    it 'renders no custom filters if `filters` option is false' do
+      allow_any_instance_of(Tabulatr::Data).to receive(:table_columns).and_return([])
+      renderer = Tabulatr::Renderer.new(Product, double_view)
+      renderer.build_table([], false, 'FakeRendererSpecTabulatrData')
+      filters = renderer.instance_variable_get('@filters')
+      expect(filters).to be_nil
+    end
   end
 end

@@ -53,4 +53,8 @@ class ProductsController < ApplicationController
       raise e
     end
   end
+
+  def without_filters
+    tabulatr_for Product
+  end
 end
