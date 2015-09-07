@@ -23,17 +23,12 @@
 
 # We monkey patch ActiveRecord::Base to add a function for finding using
 # the information of the params hash as created by a Tabulatr table
+
 if Object.const_defined? "ActiveRecord"
   class ActiveRecord::Base
     def self.tabulatr(relation, tabulatr_data_class = nil)
-      tabulatr_data_class = "#{self.name}TabulatrData".constantize unless tabulatr_data_class
-      # begin
-        td = tabulatr_data_class.new(relation)
-      # rescue NameError => e
-      #   puts e.message
-      #   # TODO: Better message
-      #   raise "No class `#{self.name}TabulatrData' defined. Explanation here."
-      # end
+      tabulatr_data_class ||= "#{self.name}TabulatrData".constantize
+      td = tabulatr_data_class.new(relation)
     end
   end
 end

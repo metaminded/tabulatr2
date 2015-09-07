@@ -65,7 +65,7 @@ module Tabulatr::Data::DSL
     raise 'give a block to action column' unless block_given?
     @table_columns ||= []
     table_column = Tabulatr::Renderer::Action.from(
-      name: (name || '_actions'),
+      name: '_actions',
       table_name: main_class.table_name.to_sym,
       klass: @base,
       col_options: Tabulatr::ParamsBuilder.new({header: (opts[:header] || ''), filter: false, sortable: false}),
