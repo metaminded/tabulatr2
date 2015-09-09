@@ -59,8 +59,12 @@ class Tabulatr::Renderer::Column
   def value_for(record, view)
     val = principal_value(record, view)
     if self.col_options.format.present?
-      Array(val).map do |v|
-        format_value(v)
+      if val.respond_to?(:to_ary)
+        val.map do |v|
+          format_value(v, view)
+        end
+      else
+        format_value(val, view)
       end
     else
       val
@@ -104,7 +108,7 @@ class Tabulatr::Renderer::Column
     end
   end
 
-  def format_value(value)
+  def format_value(value, view)
     case self.col_options.format
     when Symbol then view.send(col_options.format, value)
     when String then col_options.format % value
