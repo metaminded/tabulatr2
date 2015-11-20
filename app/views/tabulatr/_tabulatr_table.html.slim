@@ -27,7 +27,7 @@
   .tabulatr-filter-col data-table-id=table_id
     = render '/tabulatr/tabulatr_filter_dialog', opts
   .tabulatr-table-col.col-xs-12 data-table-id=table_id
-    .tabulatr-table-controls-wrapper.row data-table-id=table_id
+    .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-top data-table-id=table_id
       .tabulatr-filter-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
         = render '/tabulatr/tabulatr_filter_menu', opts
 
@@ -48,10 +48,12 @@
         = render '/tabulatr/tabulatr_info_string', opts
     = render '/tabulatr/tabulatr_actual_table', opts
 
-- if table_options[:counter_position].in?([:bottom, :both])
-  .tabulatr-info-string-wrapper data-table-id=table_id
-    = render '/tabulatr/tabulatr_info_string', opts
+    .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-bottom data-table-id=table_id
 
-- if table_options[:pagination_position].in?([:bottom, :both])
-  .tabulatr-paginator-wrapper.col-xs-12 data-table-id=table_id
-    = render '/tabulatr/tabulatr_paginator', opts
+      - if table_options[:counter_position].in?([:bottom, :both])
+        .tabulatr-info-string-wrapper.col-xs-12 data-table-id=table_id
+          = render '/tabulatr/tabulatr_info_string', opts
+
+      - if table_options[:pagination_position].in?([:bottom, :both])
+        .tabulatr-paginator-wrapper.col-xs-12 data-table-id=table_id
+          = render '/tabulatr/tabulatr_paginator', opts

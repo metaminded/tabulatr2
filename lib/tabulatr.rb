@@ -26,11 +26,27 @@ module Tabulatr
     yield self
   end
 
-  mattr_accessor :spinner
-  mattr_accessor :paginate
+  mattr_accessor :spinner, :paginate, :filter, :search, :paginate,
+    :pagesize, :sortable, :batch_actions, :footer_content, :path,
+    :order_by, :html_class, :pagination_position, :counter_position,
+    :persistent
 
+  self.filter = true                  # false for no filter row at all
+  self.search = true                  # show fuzzy search field
+  self.paginate = true                # true to show paginator
+  self.pagesize = 20                  # default pagesize
+  self.sortable = true                # true to allow sorting (can be specified for every sortable column)
+  self.batch_actions = false          # :name => value hash of batch action stuff
+  self.footer_content = false         # if given, add a <%= content_for <footer_content> %> before the </table>
+  self.path = '#'                     # where to send the AJAX-requests to
+  self.order_by = nil                 # default order
+  self.html_class = ''
+  self.pagination_position = :top
+  self.counter_position = :top
+  self.persistent = true
   self.spinner  = :standard
-  self.paginate = false
+
+
 end
 
 require 'tabulatr/engine'
