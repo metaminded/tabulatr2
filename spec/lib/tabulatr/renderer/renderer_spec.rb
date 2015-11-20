@@ -18,9 +18,9 @@ describe Tabulatr::Renderer do
       expect(renderer.instance_variable_get('@table_options')[:pagination_position]).to eq :top
     end
 
-    it 'sets persistent to false if not set explicitely' do
+    it 'sets persistent to true if not set explicitely' do
       renderer = Tabulatr::Renderer.new(Product, double_view)
-      expect(renderer.instance_variable_get('@table_options')[:persistent]).to eq false
+      expect(renderer.instance_variable_get('@table_options')[:persistent]).to eq true
     end
 
     it 'sets persistent to true if paginate is true' do
