@@ -32,6 +32,7 @@ module Tabulatr::Data::Pagination
     count = count.count if count.is_a?(Hash)
     page ||= 1
     pagesize, page = pagesize.to_i, page.to_i
+    pagesize = Tabulatr::pagesize if pagesize == 0
 
     pages = (count/pagesize.to_f).ceil
     {
