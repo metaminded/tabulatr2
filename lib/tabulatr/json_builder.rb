@@ -48,6 +48,7 @@ module Tabulatr::JsonBuilder
   def self.build_hash_from requested_attributes, id
     attrs = []
     id_included = false
+    requested_attributes ||= ''
     requested_attributes.split(',').each do |par|
       if par.include? ':'
         relation, action = par.split(':')
