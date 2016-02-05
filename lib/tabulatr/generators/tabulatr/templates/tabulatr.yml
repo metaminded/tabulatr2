@@ -21,6 +21,7 @@ en:
       'no': No
     enum_filter:
       none: ''
+    no_data_for_table: No Data
 
 de:
   tabulatr:
@@ -45,3 +46,4 @@ de:
       'no': Nein
     enum_filter:
       none: ''
+    no_data_for_table: Keine Daten
