@@ -165,7 +165,9 @@ $(document).on('ready page:load', function(){
       $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
     }
     if(typeof(Storage) !== undefined){
-      localStorage.tabulatr_page_display_count = $(this).data('items-per-page');
+      try {
+        localStorage.tabulatr_page_display_count = $(this).data('items-per-page');
+      } catch(e) {}
     }
     table_obj.updateTable({page: 1}, true);
   });
@@ -186,19 +188,24 @@ $(document).on('ready page:load', function(){
 
   if($('.tabulatr_table:not(".tabulatr_static_table")').length > 0){
     if(typeof(Storage) !== undefined){
-      var count = localStorage.tabulatr_page_display_count;
-      if(count !== undefined){
-        $('.tabulatr-per-page a').removeClass('active');
-        $('.tabulatr-per-page a[data-items-per-page='+ count +']').
-          addClass('active');
-      }
+      try {
+        var count = localStorage.tabulatr_page_display_count;
+        if(count !== undefined){
+          $('.tabulatr-per-page a').removeClass('active');
+          $('.tabulatr-per-page a[data-items-per-page='+ count +']').
+            addClass('active');
+        }
+      } catch(e) {}
     }
     var tableObj, tableId, tabulatrTable;
     $('.tabulatr_table:not(".tabulatr_static_table")').each(function(ix, el){
       tableId = $(el).attr('id');
       tabulatrTable = new Tabulatr(tableId);
       if($(el).data('persistent')){
-        tabulatrTable.isAPersistedTable = true;
+        try {
+          localStorage._tabulatr_test = 1;
+          tabulatrTable.isAPersistedTable = true;
+        } catch(e) {}
       }
       if($('.pagination[data-table='+ tableId +']').length === 0){
         tabulatrTable.hasInfiniteScrolling = true;

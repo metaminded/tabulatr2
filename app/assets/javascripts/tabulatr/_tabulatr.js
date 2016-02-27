@@ -50,7 +50,9 @@ Tabulatr.prototype = {
       tabulatrPagination.updatePagination(hash.page);
       if(this.isAPersistedTable){
         var data = this.createParameterString(hash, this.id);
-        localStorage[this.id] = JSON.stringify(data);
+        try {
+          localStorage[this.id] = JSON.stringify(data);
+        } catch(e) {}
       }
       return true;
     }
@@ -64,7 +66,9 @@ Tabulatr.prototype = {
     }else{
       data = this.createParameterString(hash, this.id);
       if(this.isAPersistedTable) {
-        localStorage[this.id] = JSON.stringify(data);
+        try {
+          localStorage[this.id] = JSON.stringify(data);
+        } catch(e) {}
       }
     }
     return data;
