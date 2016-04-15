@@ -25,7 +25,8 @@ class Tabulatr::Data
 
   def initialize(relation)
     @relation   = relation
-    @base       = relation.respond_to?(:klass) ? relation.klass : relation
+    @base       = self.class.main_class rescue nil
+    @base       ||= relation.respond_to?(:klass) ? relation.klass : relation
     @table_name = @base.table_name
     @search     = self.class.instance_variable_get('@search')     || HashWithIndifferentAccess.new
     @includes   = Set.new()

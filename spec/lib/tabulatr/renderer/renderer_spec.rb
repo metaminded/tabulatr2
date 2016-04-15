@@ -4,6 +4,7 @@ describe Tabulatr::Renderer do
 
   class FakeRendererSpecTabulatrData < Tabulatr::Data
     filter :simple_filter
+    target_class Product
   end
 
   def double_view
