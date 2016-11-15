@@ -168,6 +168,24 @@ class UserTabulatrData < Tabulatr::Data
 end
 ```
 
+### Accessing controller
+
+You may want to show actions and/or buttons depending on a condition,
+e.g., user's role. You can access controller helpers with
+`@controller`. Here is how to check, if you are
+using [Pundit](https://github.com/elabs/pundit) (or any other
+authorization gem):
+
+```ruby
+class UserTabulatrData < Tabulatr::Data
+  buttons do |b,r|
+    if @controller.policy(r).show?
+      b.button :eye, product_path(r), class: 'btn-success'
+    end
+  end
+end
+```
+
 ### Search
 
 The DSL provides you with a `search` method to define a custom fuzzy search method which is not bound
