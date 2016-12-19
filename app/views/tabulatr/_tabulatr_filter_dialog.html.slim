@@ -77,17 +77,17 @@
                       option value="last_7_days"= I18n.t("tabulatr.date_filter.last_7_days")
                       option value="this_month"= I18n.t("tabulatr.date_filter.this_month")
                       option value="last_30_days"= I18n.t("tabulatr.date_filter.last_30_days")
-                      option value="from_to"= I18n.t("tabulatr.date_filter.from_to")
+                      option value="from_to"= "#{I18n.t('tabulatr.date_filter.from')} - #{I18n.t('tabulatr.date_filter.to')}"
                     .row.from_to.hidden
                       .col-xs-6
                         .control-group
                           label.control-label for="#{formatted_name}_#{name}_filter_from"
-                            = "Von"
+                            = I18n.t("tabulatr.date_filter.from")
                           input.tabulatr_filter.form-control.date-picker.hidden.from_to type="text" id="#{formatted_name}_#{name}_filter_from" name="#{iname}[date][from]"
                       .col-xs-6
                         .control-group
                           label.control-label for="#{formatted_name}_#{name}_filter_from"
-                            = "Bis"
+                            = I18n.t("tabulatr.date_filter.to")
                           input.tabulatr_filter.form-control.date-picker.from_to.hidden type="text" id="#{formatted_name}_#{name}_filter_to" name="#{iname}[date][to]"
                   - elsif column.filter == :enum
                     select.form-control name=iname data-tabulatr-attribute=name
