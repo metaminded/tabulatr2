@@ -106,7 +106,7 @@ module Tabulatr::Data::Filtering
   end
 
   def apply_custom_filter(filter, value)
-    filter_result = filter.block.(@relation, value)
+    filter_result = self.instance_exec @relation, value, &filter.block
     handle_search_result(filter_result)
   end
 
