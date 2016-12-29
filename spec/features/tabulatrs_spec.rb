@@ -254,7 +254,8 @@ feature "Tabulatr" do
       within(".tabulatr_filter_form") do
         select("Cheap", from: "vendor_filter[product_price_range]")
       end
-      expect(page).to have_css(".tabulatr_table tbody tr", count: 0)
+#      wait_for_ajax
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 0, wait: 10)
     end
   end
 

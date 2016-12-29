@@ -28,7 +28,5 @@ Gem::Specification.new do |s|
   s.add_dependency('tilt', '~> 1.4', '>= 1.4.1')
   s.add_dependency('font-awesome-rails', '>= 4.0')
   s.add_development_dependency('rspec-rails', '~> 3.1.0')
-  s.add_development_dependency('capybara', '2.4.3')
-  s.add_development_dependency('mime-types', '~> 1.25.1')
-  s.add_development_dependency('nokogiri', '~> 1.6.8')
+  s.add_development_dependency('capybara', '~> 2.4.1')
 end
