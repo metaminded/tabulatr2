@@ -172,6 +172,19 @@ $(document).on('ready page:load', function(){
     table_obj.updateTable({page: 1}, true);
   });
 
+  $(document).on('change', '.tabulatr_count > select', function(event){
+    var table_obj = null;
+    var tableId = $(event.target).parent().data('table');
+    var tbl = $('table#' + tableId);
+    tbl.data('pagesize', event.target.value);
+    for(var i = 0; i < tabulatr_tables.length; i++){
+      if(tabulatr_tables[i].id === tableId){
+        table_obj = tabulatr_tables[i];
+      }
+    }
+    table_obj.resetTable();
+  });
+
   $(document).on('click', 'a[data-tabulatr-reset]',function(){
     var a = $(this);
     var tableObj;

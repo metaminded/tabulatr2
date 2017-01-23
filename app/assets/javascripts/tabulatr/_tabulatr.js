@@ -208,8 +208,23 @@ Tabulatr.prototype = {
     var count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
     count_string = count_string.replace(/%\{current\}/, response.meta.count);
     count_string = count_string.replace(/%\{total\}/, response.meta.total);
-    count_string = count_string.replace(/%\{per_page\}/,
-      response.meta.pagesize);
+    var ps = $('table#'+ tableId).data('pagesizes');
+    var pp;
+    if(ps){
+      select = $('<select>');
+      $('table#'+ tableId).data('pagesizes').forEach(function(size){
+        label = size==9999 ? 'All' : size;
+        o = $('<option value="' + size + '" label="' + label + '">' + label + '</option>');
+        if(size==response.meta.pagesize){
+          o.attr('selected', true); // FIXME use prop // mlt
+        }
+        select.append(o);
+      });
+      pp = select.prop('outerHTML');
+    } else {
+      pp = response.meta.pagesize;
+    }
+    count_string = count_string.replace(/%\{per_page\}/, pp);
     $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
   },
 
