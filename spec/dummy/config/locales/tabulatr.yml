@@ -14,7 +14,8 @@ en:
       last_7_days: Last 7 Days
       this_month: This Month
       last_30_days: Last 30 Days
-      from_to: From - To
+      from: From
+      to: To
     boolean_filter:
       both: All
       'yes': Yes
@@ -38,7 +39,8 @@ de:
       last_7_days: Letzte 7 Tage
       this_month: Dieser Monat
       last_30_days: Letzte 30 Tage
-      from_to: Von - Bis
+      from: Von
+      to: Bis
     boolean_filter:
       both: Alle
       'yes': Ja
