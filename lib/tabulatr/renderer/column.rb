@@ -46,7 +46,18 @@ class Tabulatr::Renderer::Column
   end
 
   def klassname() @_klassname ||= @klass.name.underscore end
-  def human_name() col_options.header || klass.human_attribute_name(name) end
+
+  def human_name()
+    h = col_options.header
+    if h && h.respond_to?(:call)
+      h.()
+    elsif h
+      h
+    else
+      klass.human_attribute_name(name)
+    end
+  end
+
   def sort_param() "#{klassname}_sort" end
   def full_name() [table_name, name].compact.join(":") end
   def coltype() 'column' end

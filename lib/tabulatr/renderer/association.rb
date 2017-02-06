@@ -23,7 +23,14 @@
 
 class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
   def human_name
-    col_options.header || klass.model_name.human + ' ' + klass.human_attribute_name(name)
+    h = col_options.header
+    if h && h.respond_to?(:call)
+      h.()
+    elsif h
+      h
+    else
+      klass.model_name.human + ' ' + klass.human_attribute_name(name)
+    end
   end
 
   def coltype() 'association' end
