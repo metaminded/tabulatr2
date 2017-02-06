@@ -228,15 +228,34 @@ feature "Tabulatr" do
       expect(page).to have_css(".tabulatr_table tbody tr", count: 2)
       click_link 'Filter'
       within(".tabulatr_filter_form") do
-        select("> 100 Euro", from: "vendor_filter[product_price_range]")
+        select("Expensive", from: "vendor_filter[product_price_range]")
       end
       expect(page).to have_css(".tabulatr_table tbody tr", count: 1)
       expect(page).to have_css('.tabulatr_table tbody td', text: @vendor2.name)
       within(".tabulatr_filter_form") do
-        select("<= 100 Euro", from: "vendor_filter[product_price_range]")
+        select("Cheap", from: "vendor_filter[product_price_range]")
       end
       expect(page).to have_css(".tabulatr_table tbody tr", count: 1)
       expect(page).to have_css('.tabulatr_table tbody td', text: @vendor1.name)
+    end
+
+    scenario 'custom split filters', js: true do
+      Product.create!([{title: 'foo', price: 7.5, vendor: @vendor1}, {title: 'bar', price: 90, vendor: @vendor1}])
+      Product.create!([{title: 'baz', price: 125, vendor: @vendor2}, {title: 'fubar', price: 133.3, vendor: @vendor2}, {title: 'fiz', price: 97, vendor: @vendor2}])
+      visit vendors_path + '?split=5'
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 2)
+      click_link 'Filter'
+      within(".tabulatr_filter_form") do
+        select("Expensive", from: "vendor_filter[product_price_range]")
+      end
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 2)
+      expect(page).to have_css('.tabulatr_table tbody td', text: @vendor1.name)
+      expect(page).to have_css('.tabulatr_table tbody td', text: @vendor2.name)
+      within(".tabulatr_filter_form") do
+        select("Cheap", from: "vendor_filter[product_price_range]")
+      end
+#      wait_for_ajax
+      expect(page).to have_css(".tabulatr_table tbody tr", count: 0, wait: 10)
     end
   end
 

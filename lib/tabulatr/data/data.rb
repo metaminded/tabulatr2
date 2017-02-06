@@ -43,7 +43,7 @@ class Tabulatr::Data
   def data_for_table(params, locals: {}, controller: nil, &block)
 
     @batch_actions = block if block_given?
-
+    @controller = controller
 
     # count
     total = @relation.count

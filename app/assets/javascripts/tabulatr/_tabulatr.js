@@ -75,6 +75,13 @@ Tabulatr.prototype = {
   },
 
   loadDataFromServer: function(hash){
+    var data = this.getDataForAjax(hash)
+    // deparse existing params http://stackoverflow.com/a/8649003/673826
+    var search = location.search.substring(1);
+    if (search.length){
+      var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+      data = $.extend(query, data);
+    }
     $.ajax({
       context: this,
       type: 'GET',
@@ -82,7 +89,7 @@ Tabulatr.prototype = {
       accepts: {
         json: 'application/json'
       },
-      data: this.getDataForAjax(hash),
+      data: data,
       success: this.handleResponse,
       complete: this.hideLoadingSpinner,
       error: this.handleError

@@ -15,7 +15,12 @@ end
 
 
 group :development, :test do
-  gem 'sqlite3', :require => 'sqlite3'
+  if defined?(JRUBY_VERSION)
+    gem 'activerecord-jdbc-adapter'
+    gem 'jdbc-sqlite3'
+  else
+    gem 'sqlite3'
+  end
   gem 'minitest'
   gem 'launchy'
   gem 'database_cleaner', '< 1.1.0'
