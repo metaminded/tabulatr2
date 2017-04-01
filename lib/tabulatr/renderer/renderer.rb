@@ -85,7 +85,8 @@ class Tabulatr::Renderer
   end
 
   def generate_id
-    "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{@view.controller.controller_name}_#{@view.controller.action_name}_#{@view.instance_variable_get(:@_tabulatr_table_index)}"
+    controller_path = @view.controller.class.name.underscore.gsub('/', '-')
+    "#{Tabulatr::Utility.formatted_name(@klass.name)}_table_#{controller_path}_#{@view.controller.action_name}_#{@view.instance_variable_get(:@_tabulatr_table_index)}"
   end
 
   def self.build_static_table(records, view, toptions={}, &block)
