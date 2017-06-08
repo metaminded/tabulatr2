@@ -22,7 +22,7 @@
 #++
 
 class ActionController::Base
-  before_filter do
+  before_action do
     @_tabulatr_table_index = 0
   end
 
