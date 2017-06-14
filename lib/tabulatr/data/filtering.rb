@@ -43,7 +43,8 @@ module Tabulatr::Data::Filtering
 
   def apply_filters(filter_params)
     return unless filter_params
-    filter_params.each do |param|
+    filter_params.permit!.to_hash.with_indifferent_access.each do |param|
+      puts param.inspect
       name, value = param
       next unless value.present?
 
