@@ -44,7 +44,6 @@ module Tabulatr::Data::Filtering
   def apply_filters(filter_params)
     return unless filter_params
     filter_params.permit!.to_hash.with_indifferent_access.each do |param|
-      puts param.inspect
       name, value = param
       next unless value.present?
 
@@ -53,14 +52,15 @@ module Tabulatr::Data::Filtering
   end
 
   def apply_condition(n,v)
+    # puts "FILTER: »#{n.filter.inspect}«, »#{n.filter.class}«"
     case n.filter
     when :checkbox then apply_boolean_condition(n, v)
     when :decimal  then apply_string_condition("#{n.col_options.filter_sql} = ?", v.to_f)
     when :integer, :enum  then apply_string_condition("#{n.col_options.filter_sql} = ?", v.to_i)
     when :enum_multiselect then apply_array_condition(n, v)
     when :exact, Hash, Array then apply_string_condition("#{n.col_options.filter_sql} = ?", v)
-    when :like     then apply_like_condition(n, v[:like])
-    when :date     then apply_date_condition(n, v[:date])
+    when :like     then apply_like_condition(n, v['like'])
+    when :date     then apply_date_condition(n, v['date'])
     when :range    then apply_range_condition(n, v)
     when :custom   then apply_custom_filter(n, v)
     else raise "Wrong filter type for #{n.name}: #{n.filter}"
@@ -74,7 +74,7 @@ module Tabulatr::Data::Filtering
   def apply_date_condition(n, cond)
     today = Date.today
     yesterday = today - 1.day
-    case cond[:simple]
+    case cond['simple']
     when 'none' then return
     when 'today' then date_in_between(today, today.at_end_of_day, n)
     when 'yesterday' then date_in_between(yesterday, yesterday.at_end_of_day, n)
@@ -84,7 +84,7 @@ module Tabulatr::Data::Filtering
     when 'this_month' then date_in_between(today.at_beginning_of_month.beginning_of_day,
                               today.at_end_of_month.end_of_day, n)
     when 'last_30_days' then date_in_between((today - 29.day).beginning_of_day, today.at_end_of_day, n)
-    when 'from_to' then date_in_between((Date.parse(cond[:from]) rescue nil), (Date.parse(cond[:to]) rescue nil), n)
+    when 'from_to' then date_in_between((Date.parse(cond['from']) rescue nil), (Date.parse(cond['to']) rescue nil), n)
     end
   end
 
