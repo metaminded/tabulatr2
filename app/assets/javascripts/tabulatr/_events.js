@@ -1,4 +1,4 @@
-$(document).on('ready page:load', function(){
+$(function(){
   tabulatr_tables = [];
 
   $('th.tabulatr-sortable').click(function(){
