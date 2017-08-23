@@ -157,6 +157,7 @@ Tabulatr.prototype = {
       tbody.append(tr);
     }
     this.updateInfoString(tableId, response);
+    $(document).trigger('tabulatr:loaded');
 
     if(this.isAPersistedTable){
       this.retrieveTableFromLocalStorage(response);
