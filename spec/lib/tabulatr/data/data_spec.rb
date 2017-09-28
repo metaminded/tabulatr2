@@ -17,7 +17,7 @@ describe Tabulatr::Data do
   it 'prefilters the result' do
 
     td = Tabulatr::Data.new(Product.where(price: 10))
-    td.data_for_table(example_params)
+    td.data_for_table(ActionController::Parameters.new(example_params))
     expect(td.instance_variable_get('@relation').to_sql).to match(/.+WHERE \"products\".\"price\" = 10.+/)
   end
 
@@ -25,7 +25,7 @@ describe Tabulatr::Data do
     Product.create([{title: 'foo', price: 5}, {title: 'bar', price: 10}, {title: 'fuzz', price: 7}])
 
     td = Tabulatr::Data.new(Product)
-    records = td.data_for_table(HashWithIndifferentAccess.new(example_params.merge(product_sort: 'title DESC')))
+    records = td.data_for_table(ActionController::Parameters.new(example_params.merge(product_sort: 'title DESC')))
     expect(records.count).to eql 3
     titles = ['fuzz', 'foo', 'bar']
     # raise records.inspect
@@ -43,7 +43,7 @@ describe Tabulatr::Data do
         Product.where(id: ids).destroy_all
       end
     })
-    td.data_for_table(HashWithIndifferentAccess.new(example_params.merge(product_batch: 'delete', 'tabulatr_checked' => {'checked_ids' => ''})))
+    td.data_for_table(ActionController::Parameters.new(example_params.merge(product_batch: 'delete', 'tabulatr_checked' => {'checked_ids' => ''})))
     expect(Product.where(active: true).count).to be 0
     expect(Product.count).to be 1
   end

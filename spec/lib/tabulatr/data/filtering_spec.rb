@@ -29,7 +29,7 @@ describe Tabulatr::Data::Filtering do
     it "filters for 'today'" do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at'}
-      @dummy.apply_date_condition(fake_obj, {simple: 'today'})
+      @dummy.apply_date_condition(fake_obj, {'simple'=>'today'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.count).to be 1
       expect(result[0].id).to be @today.id
@@ -38,7 +38,7 @@ describe Tabulatr::Data::Filtering do
     it "filters for 'yesterday'" do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at'}
-      @dummy.apply_date_condition(fake_obj, {simple: 'yesterday'})
+      @dummy.apply_date_condition(fake_obj, {'simple'=>'yesterday'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.count).to be 1
       expect(result[0].id).to be @yesterday.id
@@ -47,7 +47,7 @@ describe Tabulatr::Data::Filtering do
     it "filters for 'this week'" do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at'}
-      @dummy.apply_date_condition(fake_obj, {simple: 'this_week'})
+      @dummy.apply_date_condition(fake_obj, {'simple'=>'this_week'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.count).to be 4
       expect(result.map(&:id).sort).to eq [@yesterday.id, @today.id, @week_one.id, @week_two.id].sort
@@ -56,7 +56,7 @@ describe Tabulatr::Data::Filtering do
     it "filters for 'last 7 days'" do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at' }
-      @dummy.apply_date_condition(fake_obj, {simple: 'last_7_days'})
+      @dummy.apply_date_condition(fake_obj, {'simple'=>'last_7_days'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id).sort).to eq ([@last_seven_days.id, @yesterday.id, @today.id, @week_one.id].sort)
     end
@@ -64,7 +64,7 @@ describe Tabulatr::Data::Filtering do
     it "filters for 'this month'" do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at'}
-      @dummy.apply_date_condition(fake_obj, {simple: 'this_month'})
+      @dummy.apply_date_condition(fake_obj, {'simple'=>'this_month'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id).sort).to eq ([@today.id, @week_two.id, @this_month.id])
     end
@@ -72,7 +72,7 @@ describe Tabulatr::Data::Filtering do
     it "filters for 'last 30 days'" do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at'}
-      @dummy.apply_date_condition(fake_obj, {simple: 'last_30_days'})
+      @dummy.apply_date_condition(fake_obj, {'simple'=>'last_30_days'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id).sort).to eq ([
         @last_thirty_days.id, @yesterday.id, @last_seven_days.id, @today.id,
@@ -83,15 +83,15 @@ describe Tabulatr::Data::Filtering do
       fake_obj = double()
       allow(fake_obj).to receive_message_chain('col_options.filter_sql') { 'publish_at'}
       @dummy.apply_date_condition(fake_obj, {
-        simple: 'from_to', from: '31.12.2013 15:00',
-        to: '15.01.2014 00:00'})
+        'simple'=>'from_to', 'from'=>'31.12.2013 15:00',
+        'to'=>'15.01.2014 00:00'})
       result = @dummy.instance_variable_get('@relation')
       expect(result.map(&:id)).to eq ([@yesterday.id, @today.id, @week_two.id].sort)
     end
 
     it "exits early if condition is 'none'" do
       relation_before = @dummy.instance_variable_get('@relation')
-      @dummy.apply_date_condition(nil, {simple: 'none'})
+      @dummy.apply_date_condition(nil, {'simple'=>'none'})
       relation_after = @dummy.instance_variable_get('@relation')
       expect(relation_after).to eq relation_before
     end
