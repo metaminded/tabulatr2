@@ -12,7 +12,7 @@ describe Tabulatr::JsonBuilder do
     it "complains when a non given attribute other than id is requested" do
       attribute = {action: :bar}
       data = {title: 'test', price: '7.0 EUR'}
-      expect{Tabulatr::JsonBuilder.insert_attribute_in_hash(attribute, data)}.to raise_error
+      expect{Tabulatr::JsonBuilder.insert_attribute_in_hash(attribute, data)}.to raise_error(Tabulatr::RequestDataNotIncludedError)
     end
 
     # it 'accepts arguments without table name' do
