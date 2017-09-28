@@ -133,7 +133,7 @@ describe Tabulatr::Data::Filtering do
 
     it 'can not be called without a block variable' do
       @dummy.instance_variable_set('@search', ->{'hi'})
-      expect{@dummy.apply_search('test')}.to raise_error
+      expect{@dummy.apply_search('test')}.to raise_error(RuntimeError)
     end
 
     it 'accepts an array of searchable columns' do
