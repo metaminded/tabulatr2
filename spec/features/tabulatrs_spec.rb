@@ -108,6 +108,7 @@ feature "Tabulatr" do
           Product.create!
         end
         visit one_item_per_page_with_pagination_products_path
+        wait_for_ajax
         pages = page.all('.pagination li a[data-page]').map{|a| a['data-page'].to_i}
         expect(pages).to match_array([1,2,3,10,20])
       end

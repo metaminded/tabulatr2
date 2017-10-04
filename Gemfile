@@ -3,6 +3,8 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'jquery-rails'
+gem 'turbolinks'
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 group :development, :test do
   gem 'better_errors'

@@ -9,17 +9,10 @@ function Tabulatr(id){
   this.hasInfiniteScrolling = false;
 }
 
-var tabulatr_tables;
-
 var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
   if (isInView && visiblePartY !== 'top' && visiblePartY !== 'bottom') {
     var tableId = $(event.currentTarget).data('table');
-    var table_obj;
-    for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id === tableId){
-        table_obj = tabulatr_tables[i];
-      }
-    }
+    var table_obj = $('table#'+tableId).data('tabulatr');
     table_obj.updateTable({append: true});
   }
 };
