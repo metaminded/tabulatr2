@@ -39,6 +39,12 @@ class ActionController::Base
         render action: render_action || action_name
         nil
       }
+      format.pdf {
+        locals[:current_user] ||= current_user if respond_to?(:current_user)
+        records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
+        send_file records[:file],
+                  filename: records.include?(:filename) ? records[:filename] : nil
+      }
     end
   end
 end

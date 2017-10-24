@@ -54,7 +54,8 @@ class Tabulatr::Data
     apply_sorting(sort_params params)
     join_required_tables(params)
 
-    execute_batch_actions(batch_params(params), check_params(params))
+    batch_result = execute_batch_actions(batch_params(params), check_params(params))
+    return batch_result if batch_result.is_a? Hash
 
     pagination = compute_pagination(params[:page], params[:pagesize])
     apply_pagination(pagination.slice(:offset, :pagesize))
@@ -88,7 +89,8 @@ class Tabulatr::Data
     if batch_param.present? && @batch_actions.present?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       selected_ids = @relation.map(&:id) if selected_ids.empty?
-      @batch_actions.yield(Invoker.new(batch_param, selected_ids))
+      results = @batch_actions.yield(Invoker.new(batch_param, selected_ids))
+      return results.first if results.size > 0
     end
   end
 
