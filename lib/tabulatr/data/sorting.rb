@@ -40,6 +40,8 @@ module Tabulatr::Data::Sorting
         column = table_columns.find{|c| c.name == name}
       end
       sort_by(column, orientation)
+    elsif @default_order.present?
+      @relation = @relation.reorder(@default_order)
     else
       @relation = @relation.reorder("#{@table_name}.#{@base.primary_key} desc")
     end

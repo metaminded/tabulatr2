@@ -26,12 +26,12 @@ class ActionController::Base
     @_tabulatr_table_index = 0
   end
 
-  def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, locals: {}, &block)
+  def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, default_order: nil, locals: {}, &block)
     klass = relation.respond_to?(:klass) ? relation.klass : relation
     respond_to do |format|
       format.json {
         locals[:current_user] ||= current_user if respond_to?(:current_user)
-        records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
+        records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, default_order: default_order, &block)
         render json: records.to_tabulatr_json(serializer)
         records
       }
