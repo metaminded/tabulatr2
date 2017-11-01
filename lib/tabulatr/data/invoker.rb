@@ -25,11 +25,21 @@ class Tabulatr::Data::Invoker
   def initialize(batch_action, ids)
     @batch_action = batch_action.to_sym
     @ids = ids
+    @result = nil
   end
 
   def method_missing(name, *args, &block)
-    if @batch_action == name
-      yield(@ids)
+    @result ||= if @batch_action == name
+      s = yield(@ids)
+      if s.is_a?(Hash) && s[:data]
+        Tabulatr::Responses::RawResponse.new(s[:data])
+      elsif s.is_a?(Hash) && s[:file]
+        Tabulatr::Responses::FileResponse.new(s[:file], filename: s[:filename])
+      elsif s.is_a?(Hash) && s[:url]
+        Tabulatr::Responses::RedirectResponse.new(s[:url], ids: @ids)
+      else
+        s
+      end
     end
   end
 end

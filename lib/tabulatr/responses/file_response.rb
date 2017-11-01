@@ -1,9 +1,8 @@
 class Tabulatr::Responses::FileResponse < Tabulatr::Responses::DirectResponse
-  @attr_accessor :file
-  @attr_accessor :filename
+  attr_accessor :file, :options
 
-  def initialze(file, filename: nil)
+  def initialze(file, options: {})
     @file = file
-    @filename = filename
+    @options = options
   end
 end

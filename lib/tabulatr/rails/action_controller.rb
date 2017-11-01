@@ -28,23 +28,30 @@ class ActionController::Base
 
   def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, locals: {}, &block)
     klass = relation.respond_to?(:klass) ? relation.klass : relation
+    if params[batchactionwhatever]
+      locals[:current_user] ||= current_user if respond_to?(:current_user)
+      response = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
+      case response
+      when Tabulatr::Responses::RawResponse
+        return send_data response.data, response.options
+      when Tabulatr::Responses::FileResponse
+        return send_file response.file, response.options
+      when Tabulatr::Responses::RedirectResponse
+        return redirect_to response.url, ids: response.ids
+      else records = response
+      end
+    end
+
     respond_to do |format|
       format.json {
         locals[:current_user] ||= current_user if respond_to?(:current_user)
-        records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
+        records ||= klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
         render json: records.to_tabulatr_json(serializer)
         records
       }
       format.html {
         render action: render_action || action_name
         nil
-      }
-      format.pdf {
-        locals[:current_user] ||= current_user if respond_to?(:current_user)
-        response = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
-        if response.is_a? Tabulatr::Responses::FileResponse
-        send_file response.file,
-                  filename: response.filename
       }
     end
   end

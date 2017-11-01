@@ -89,7 +89,7 @@ class Tabulatr::Data
     if batch_param.present? && @batch_actions.present?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
       selected_ids = @relation.map(&:id) if selected_ids.empty?
-      return @batch_actions.yield(Invoker.new(batch_param, selected_ids))
+      @batch_actions.yield(Invoker.new(batch_param, selected_ids))
     end
   end
 
