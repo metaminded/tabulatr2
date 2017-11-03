@@ -1,4 +1,12 @@
-## UNRELEASED
+## 0.9.33
+
+  * allow batch actions to return files, data or redirects
+
+## 0.9.32
+
+   * define default order by giving `default_order: '<sql order>'` option to `tabulatr_for`
+
+## 0.9.21?
   * Rename `filter` option of `table_for` to `filters` to not conceal the
     `table_option` also named `filter`.
 
