@@ -40,10 +40,11 @@ class Tabulatr::Data
     end
   end
 
-  def data_for_table(params, locals: {}, controller: nil, &block)
+  def data_for_table(params, locals: {}, default_order: nil, controller: nil, &block)
 
     @batch_actions = block if block_given?
-    @controller = controller
+    @controller    = controller
+    @default_order = default_order
 
     # count
     total = @relation.count
