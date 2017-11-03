@@ -55,6 +55,7 @@ require 'tabulatr/data/data'
 require 'tabulatr/json_builder'
 require 'tabulatr/params_builder'
 require 'tabulatr/generators/railtie' if defined?(Rails)
+require 'tabulatr/responses/responses'
 
 #--
 # Mainly Monkey Patching...

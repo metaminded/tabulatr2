@@ -1,7 +1,7 @@
-class Tabulatr::Responses::FileResponse < Tabulatr::Responses::DirectResponse
+class Tabulatr::Responses::RawResponse < Tabulatr::Responses::DirectResponse
   attr_accessor :data, :options
 
-  def initialze(data, options: {})
+  def initialize(data, options={})
     @data = data
     @options = options
   end

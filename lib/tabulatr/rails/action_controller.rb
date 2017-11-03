@@ -28,8 +28,8 @@ class ActionController::Base
 
   def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, locals: {}, &block)
     klass = relation.respond_to?(:klass) ? relation.klass : relation
-    if params[batchactionwhatever]
-      locals[:current_user] ||= current_user if respond_to?(:current_user)
+    locals[:current_user] ||= current_user if respond_to?(:current_user)
+    if batch_params(klass, params).present?
       response = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
       case response
       when Tabulatr::Responses::RawResponse
@@ -44,7 +44,6 @@ class ActionController::Base
 
     respond_to do |format|
       format.json {
-        locals[:current_user] ||= current_user if respond_to?(:current_user)
         records ||= klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
         render json: records.to_tabulatr_json(serializer)
         records
@@ -55,4 +54,9 @@ class ActionController::Base
       }
     end
   end
+
+  def batch_params(klass, params)
+    params["#{Tabulatr::Utility.formatted_name(klass.name)}_batch"]
+  end
+
 end
