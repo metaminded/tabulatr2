@@ -55,7 +55,8 @@ class Tabulatr::Data
     apply_sorting(sort_params params)
     join_required_tables(params)
 
-    execute_batch_actions(batch_params(params), check_params(params))
+    batch_result = execute_batch_actions(batch_params(params), check_params(params))
+    return batch_result if batch_result.is_a? Tabulatr::Responses::DirectResponse
 
     pagination = compute_pagination(params[:page], params[:pagesize])
     apply_pagination(pagination.slice(:offset, :pagesize))

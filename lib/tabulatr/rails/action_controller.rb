@@ -28,17 +28,33 @@ class ActionController::Base
 
   def tabulatr_for(relation, tabulatr_data_class: nil, serializer: nil, render_action: nil, default_order: nil, locals: {}, &block)
     klass = relation.respond_to?(:klass) ? relation.klass : relation
+    locals[:current_user] ||= current_user if respond_to?(:current_user)
+    if batch_params(klass, params).present?
+      response = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
+      case response
+      when Tabulatr::Responses::RawResponse
+        return send_data response.data, response.options
+      when Tabulatr::Responses::FileResponse
+        return send_file response.file, response.options
+      when Tabulatr::Responses::RedirectResponse
+        return redirect_to response.url, ids: response.ids
+      else records = response
+      end
+    end
+
     respond_to do |format|
       format.json {
-        locals[:current_user] ||= current_user if respond_to?(:current_user)
-        records = klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, default_order: default_order, &block)
+        records ||= klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
         render json: records.to_tabulatr_json(serializer)
-        records
       }
       format.html {
         render action: render_action || action_name
-        nil
       }
     end
   end
+
+  def batch_params(klass, params)
+    params["#{Tabulatr::Utility.formatted_name(klass.name)}_batch"]
+  end
+
 end
