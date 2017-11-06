@@ -44,7 +44,7 @@ class ActionController::Base
 
     respond_to do |format|
       format.json {
-        records ||= klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, &block)
+        records ||= klass.tabulatr(relation, tabulatr_data_class).data_for_table(params, locals: locals, controller: self, default_order: default_order, &block)
         render json: records.to_tabulatr_json(serializer)
       }
       format.html {
