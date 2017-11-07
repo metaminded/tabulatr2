@@ -39,7 +39,7 @@ Tabulatr.prototype = {
   sendRequestWithoutAjax: function(hash) {
     var data = this.getDataForAjax(hash);
     var url;
-    if ($('table#'+ this.id).data('path') == '#') 
+    if ($('table#'+ this.id).data('path') == '#')
       url = $(location).attr("pathname") + ".pdf?" + $.param(data)
     else
       url = $('table#'+ this.id).data('path') + ".pdf?" + $.param(data);
@@ -146,10 +146,19 @@ Tabulatr.prototype = {
       response = JSON.parse(response);
 
     var tableId = response.meta.table_id;
-    var tbody = $('#'+ tableId +' tbody');
+    var table = $('#'+ tableId);
+    var tbody = table.find('tbody');
+    var ndpanel = $('#no-data-' + tableId);
 
     this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
 
+    if (ndpanel.length > 0 && response.data.length == 0) {
+      table.hide();
+      ndpanel.show();
+    } else {
+      table.show();
+      ndpanel.hide();
+    }
 
     // insert the actual data
     for(var i = 0; i < response.data.length; i++){
