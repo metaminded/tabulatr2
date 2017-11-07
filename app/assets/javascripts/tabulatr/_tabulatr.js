@@ -36,6 +36,16 @@ Tabulatr.prototype = {
     this.loadDataFromServer(hash);
   },
 
+  sendRequestWithoutAjax: function(hash) {
+    var data = this.getDataForAjax(hash);
+    var url;
+    if ($('table#'+ this.id).data('path') == '#') 
+      url = $(location).attr("pathname") + ".pdf?" + $.param(data)
+    else
+      url = $('table#'+ this.id).data('path') + ".pdf?" + $.param(data);
+    window.open(url);
+  },
+
   pageShouldBeStored: function(page, forceReload){
     return page !== undefined && !forceReload;
   },
@@ -67,7 +77,11 @@ Tabulatr.prototype = {
       data = this.createParameterString(hash, this.id);
       if(this.isAPersistedTable) {
         try {
-          localStorage[this.id] = JSON.stringify(data);
+          var storableData = jQuery.extend(true, {}, data);
+          var batch_key = this.id.split('_')[0] + '_batch';
+          if (batch_key in storableData)
+            delete storableData[batch_key];
+          localStorage[this.id] = JSON.stringify(storableData);
         } catch(e) {}
       }
     }
@@ -105,6 +119,9 @@ Tabulatr.prototype = {
   },
 
   handleResponse: function(response) {
+    if (typeof response === "string")
+      response = JSON.parse(response);
+
     this.insertTabulatrData(response);
     var tabulatrPagination = new TabulatrPagination(
       response.meta.pages, response.meta.table_id);
@@ -125,6 +142,9 @@ Tabulatr.prototype = {
   },
 
   insertTabulatrData: function(response){
+    if (typeof response === "string")
+      response = JSON.parse(response);
+
     var tableId = response.meta.table_id;
     var tbody = $('#'+ tableId +' tbody');
 

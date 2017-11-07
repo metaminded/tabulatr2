@@ -43,6 +43,7 @@ $(function(){
     var key = a.data('do-batch-action');
     var tableId = a.data('table-id');
     var params = {page: 1};
+    var use_ajax = !a.data('download');
     params[name] = key;
     params.tabulatr_checked = {checked_ids: jQuery.map($('#'+ tableId +' .tabulatr-checkbox:checked'), function(el){return $(el).val();}).join(',')};
     var confirmation = true;
@@ -58,7 +59,10 @@ $(function(){
           table_obj = tabulatr_tables[i];
         }
       }
-      table_obj.updateTable(params, true);
+      if (use_ajax)
+        table_obj.updateTable(params, true);
+      else
+        table_obj.sendRequestWithoutAjax(params);
     }
   });
 
