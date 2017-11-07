@@ -1,4 +1,4 @@
-$(function(){
+function tabulatrInitialize() {
   tabulatr_tables = [];
 
   $('th.tabulatr-sortable').click(function(){
@@ -229,7 +229,10 @@ $(function(){
     a.parents('.tabulatr-outer-wrapper').addClass('filtered');
   });
 
-});
+}
+
+$(tabulatrInitialize);
+$(document).on('page:load', tabulatrInitialize);
 
 $(document).on('click', '.pagination a[data-page]', function(){
   var a = $(this);
