@@ -36,13 +36,16 @@ Tabulatr.prototype = {
     this.loadDataFromServer(hash);
   },
 
-  sendRequestWithoutAjax: function(hash) {
+  sendRequestWithoutAjax: function(hash, extension) {
     var data = this.getDataForAjax(hash);
     var url;
     if ($('table#'+ this.id).data('path') == '#')
-      url = $(location).attr("pathname") + ".pdf?" + $.param(data)
+      url = $(location).attr("pathname");
     else
-      url = $('table#'+ this.id).data('path') + ".pdf?" + $.param(data);
+      url = $('table#'+ this.id).data('path');
+    if (!extension || extension.length == 0)
+      extension = 'txt';
+    url = url.replace(/\/+$/, "") + '.' + extension + '?' + $.param(data);
     window.open(url);
   },
 

@@ -62,7 +62,7 @@ function tabulatrInitialize() {
       if (use_ajax)
         table_obj.updateTable(params, true);
       else
-        table_obj.sendRequestWithoutAjax(params);
+        table_obj.sendRequestWithoutAjax(params, a.data('extension'));
     }
   });
 

@@ -32,9 +32,9 @@ class Tabulatr::Data::Invoker
     @result ||= if @batch_action == name
       s = yield(@ids)
       if s.is_a?(Hash) && s[:data]
-        Tabulatr::Responses::RawResponse.new(s[:data])
+        Tabulatr::Responses::RawResponse.new(s[:data], filename: s[:filename], type: s[:type])
       elsif s.is_a?(Hash) && s[:file]
-        Tabulatr::Responses::FileResponse.new(s[:file], filename: s[:filename])
+        Tabulatr::Responses::FileResponse.new(s[:file], filename: s[:filename], type: s[:type])
       elsif s.is_a?(Hash) && s[:url]
         Tabulatr::Responses::RedirectResponse.new(s[:url], ids: @ids)
       else

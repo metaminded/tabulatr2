@@ -28,14 +28,17 @@
     ul.dropdown-menu role="menu" aria-labelledby="dLabel" data-confirm-text=t('tabulatr.batch_confirm_text')
       - table_options[:batch_actions].each do |key, data|
         - if data.is_a?(String)
-          - label    = data
-          - download = false
+          - label     = data
+          - download  = false
+          - extension = nil
         - else
           - label    = data[:text]
           - download = !!data[:download]
+          - extension = data[:extension]
         li
           = link_to label, '#', class: "batch-action-inputs", data: { \
               "do-batch-action-name" => iname, \
               "do-batch-action" => key, \
               "table-id" => table_id, \
-              "download" => download }
+              "download" => download, \
+              "extension" => extension }
