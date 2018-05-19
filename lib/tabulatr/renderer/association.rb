@@ -39,7 +39,8 @@ class Tabulatr::Renderer::Association < Tabulatr::Renderer::Column
 
   def principal_value(record, view)
     return super if output || block
-    v = record.send(table_name)
+    assoc = table_name.to_s.split('-').map(&:to_sym)
+    v = assoc.reduce(record) { |cur,nxt| cur.try(:send, nxt) }
     if v && v.respond_to?(:to_a) && name != :count
       v.map(&:"#{name}")
     else

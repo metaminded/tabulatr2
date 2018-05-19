@@ -12,8 +12,9 @@ feature "Tabulatr" do
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
   before(:each) do
-    @vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
-    @vendor2 = Vendor.create!(:name => 'producer', :active => true)
+    @parent1 = Parent.create!(:name => "ABC", :active => true)
+    @vendor1 = Vendor.create!(:name => "ven d'or", :active => true, parent: @parent1)
+    @vendor2 = Vendor.create!(:name => 'producer', :active => true, parent: @parent1)
     @tag1 = Tag.create!(:title => 'foo')
     @tag2 = Tag.create!(:title => 'bar')
     @tag3 = Tag.create!(:title => 'fubar')

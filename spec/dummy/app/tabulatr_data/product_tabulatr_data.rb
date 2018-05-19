@@ -26,6 +26,7 @@ class ProductTabulatrData < Tabulatr::Data
   column :active, sortable: false
   column :updated_at, filter: :date do "#{record.updated_at.strftime('%H:%M %d.%m.%Y')}" end
   association :vendor, :name, filter: :exact
+  association %i[vendor parent], :name, filter: :exact, sortable: true, header: 'Parent'
   association :tags, :title do |r|
     "'#{r.tags.map(&:title).map(&:upcase).join(', ')}'"
   end
