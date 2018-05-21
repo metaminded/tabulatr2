@@ -144,11 +144,6 @@ class Tabulatr::Data
     # @relation = @relation.group("#{@table_name}.#{@base.primary_key}")
   end
 
-  def table_name_for_association(assoc)
-    @base.reflect_on_association(assoc.to_sym).table_name
-    # assoc.to_sym
-  end
-
 end
 
 require_relative './dsl'

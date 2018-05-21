@@ -6,7 +6,6 @@ describe Tabulatr::Data::Filtering do
 
     def table_columns; []; end
     def filters; []; end
-    def table_name_for_association(assoc); nil; end
   end
 
   describe '.apply_date_condition' do
