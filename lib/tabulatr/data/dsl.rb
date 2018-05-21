@@ -47,17 +47,23 @@ module Tabulatr::Data::DSL
 
   def association(assoc, name, opts = {}, &block)
     @table_columns ||= []
-    assoc_klass = main_class.reflect_on_association(assoc.to_sym)
+    unless assoc.is_a?(Array)
+      assoc = assoc.to_s.split('-').map(&:to_sym)
+    end
+    assoc_klass = assoc.reduce(main_class) { |c,a| c.reflect_on_association(a.to_sym).try(:klass) }
     sql_options = determine_sql(opts, assoc_klass.try(:quoted_table_name), name)
     opts = {
         sort_sql: sql_options[:sort_sql],
         filter_sql: sql_options[:filter_sql]}.merge(opts)
     table_column = Tabulatr::Renderer::Association.from(
         name: name,
-        klass: assoc_klass.try(:klass),
+        klass: assoc_klass,
         col_options: Tabulatr::ParamsBuilder.new(opts),
-        table_name: assoc,
-        output: block_given? ? block : ->(record){a=record.send(assoc); a.try(:read_attribute, name) || a.try(name)})
+        table_name: assoc.join('-').to_sym,
+        output: block_given? ? block : lambda do |record|
+          a = assoc.reduce(record) {|cur,nxt| cur.try(:send, nxt)}
+          a.try(:read_attribute, name) || a.try(name)
+        end)
     @table_columns << table_column
   end
 

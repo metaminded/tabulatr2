@@ -6,7 +6,7 @@ class CreateVendors < ActiveRecord::Migration
       t.boolean :active
       t.text :description
 
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end

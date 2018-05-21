@@ -29,7 +29,7 @@ class Tabulatr::Data
     @base       ||= relation.respond_to?(:klass) ? relation.klass : relation
     @table_name = @base.table_name
     @search     = self.class.instance_variable_get('@search')     || HashWithIndifferentAccess.new
-    @includes   = Set.new()
+    @includes   = Hash.new(Set.new())
     @cname      = @base.name.downcase
     @batch_actions = nil
     @row = self.class.instance_variable_get('@row')
@@ -89,7 +89,7 @@ class Tabulatr::Data
   def execute_batch_actions batch_param, selected_ids
     if batch_param.present? && @batch_actions.present?
       batch_param = batch_param.keys.first.to_sym if batch_param.is_a?(Hash)
-      selected_ids = @relation.map(&:id) if selected_ids.empty?
+      selected_ids = @relation.pluck(:id) if selected_ids.empty?
       @batch_actions.yield(Invoker.new(batch_param, selected_ids))
     end
   end
@@ -123,20 +123,25 @@ class Tabulatr::Data
 
   def join_required_tables(params)
     if params[:arguments].present?
-      tt = (params[:arguments].split(",").select{|s| s[':']}.map do |s|
-            s.split(':').first
-          end.uniq.map(&:to_sym))
-      tt.delete(@table_name.to_sym)
-      @includes = @includes + tt
+      tt = params[:arguments].split(",").select{|s| s[':']}.map do |s|
+            # assoc1-assoc12-assoc123:column3
+            a = s.split(':').first.split('-')
+            a.delete(@table_name.to_s)
+            a.map(&:to_sym) # [:assoc1, :assoc12, :assoc123]
+          end.uniq
+      @includes = tt.reject(&:empty?).inject(@includes) do |h1, arr|
+        h2 = arr.reverse.inject { |a, n| { n => a } }
+        if h2.is_a?(Hash)
+          h1.merge(h2) { |key, oldval, newval| [oldval, newval] }
+        else
+          h1.default << h2
+          h1
+        end
+      end
     end
     # @relation = @relation.includes(@includes.map(&:to_sym)).references(@includes.map(&:to_sym))
-    @relation = @relation.eager_load(@includes.map(&:to_sym))
+    @relation = @relation.eager_load(@includes, @includes.default.to_a)
     # @relation = @relation.group("#{@table_name}.#{@base.primary_key}")
-  end
-
-  def table_name_for_association(assoc)
-    @base.reflect_on_association(assoc.to_sym).table_name
-    # assoc.to_sym
   end
 
 end
