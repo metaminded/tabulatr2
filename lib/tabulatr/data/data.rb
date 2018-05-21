@@ -126,7 +126,7 @@ class Tabulatr::Data
       tt = params[:arguments].split(",").select{|s| s[':']}.map do |s|
             # assoc1-assoc12-assoc123:column3
             a = s.split(':').first.split('-')
-            a.shift if a[0].eql?(@table_name)
+            a.delete(@table_name.to_s)
             a.map(&:to_sym) # [:assoc1, :assoc12, :assoc123]
           end.uniq
       @includes = tt.reject(&:empty?).inject(@includes) do |h1, arr|
@@ -134,7 +134,7 @@ class Tabulatr::Data
         if h2.is_a?(Hash)
           h1.merge(h2) { |key, oldval, newval| [oldval, newval] }
         else
-          h1.default << h2 if not h1.keys.include?(h2)
+          h1.default << h2
           h1
         end
       end
