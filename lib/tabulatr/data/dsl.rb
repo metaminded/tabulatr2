@@ -48,7 +48,8 @@ module Tabulatr::Data::DSL
   def association(assoc, name, opts = {}, &block)
     @table_columns ||= []
     assoc_klass = main_class.reflect_on_association(assoc.to_sym)
-    sql_options = determine_sql(opts, assoc_klass.try(:quoted_table_name), name)
+    tname = assoc_klass.try(:quoted_table_name) || assoc_klass.try(:klass).try(:quoted_table_name)
+    sql_options = determine_sql(opts, tname, name)
     opts = {
         sort_sql: sql_options[:sort_sql],
         filter_sql: sql_options[:filter_sql]}.merge(opts)
