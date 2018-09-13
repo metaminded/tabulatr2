@@ -43,7 +43,7 @@ module Tabulatr::Data::Sorting
     elsif @default_order.present?
       @relation = @relation.reorder(@default_order)
     else
-      @relation = @relation.reorder("#{@table_name}.#{@base.primary_key} desc")
+      @relation = @relation.reorder(Arel.sql("#{@table_name}.#{@base.primary_key} desc"))
     end
   end
 
@@ -52,7 +52,7 @@ module Tabulatr::Data::Sorting
       if sort_sql.respond_to? :call
         @relation = sort_sql.call(@relation, orientation, "#{@table_name}.#{@base.primary_key}", @base)
       else
-        @relation = @relation.reorder("#{sort_sql} #{orientation}")
+        @relation = @relation.reorder(Arel.sql("#{sort_sql} #{orientation}"))
       end
   end
 
