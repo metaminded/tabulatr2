@@ -1,68 +1,62 @@
-function Tabulatr(id){
-  this.id = id;
-  this.name = '';
-  this.moreResults = true;
-  this.currentData = null;
-  this.locked = false;
-  this.isAPersistedTable = false;
-  this.initialRequest = true;
-  this.hasInfiniteScrolling = false;
-}
-
-var tabulatr_tables;
-
 var cbfn = function(event, isInView, visiblePartX, visiblePartY) {
   if (isInView && visiblePartY !== 'top' && visiblePartY !== 'bottom') {
-    var tableId = $(event.currentTarget).data('table');
-    var table_obj;
-    for(var i = 0; i < tabulatr_tables.length; i++){
-      if(tabulatr_tables[i].id === tableId){
-        table_obj = tabulatr_tables[i];
-      }
-    }
-    table_obj.updateTable({append: true});
+    const tableId = $(event.currentTarget).data('table');
+    TabulatrInstances.instance.table(tableId).updateTable({append: true});
   }
 };
 
-Tabulatr.prototype = {
-  constructor: Tabulatr,
+class TabulatrTable {
+  constructor(id) {
+    this.id = id;
+    this.name = id.split('_')[0];
+    this.moreResults = true;
+    this.currentData = null;
+    this.locked = false;
+    this.isAPersistedTable = false;
+    this.initialRequest = true;
+    this.hasInfiniteScrolling = false;
+  }
 
-  updateTable: function(hash, forceReload) {
-    var $table = $('#'+ this.id);
+  getDOMTable() {
+    return $('table#'+ this.id);
+  }
+
+  updateTable(hash, forceReload) {
+    const $table = $('#'+ this.id);
     this.storePage = this.pageShouldBeStored(hash.page, forceReload);
-    if((this.storePage && this.retrievePage($table, hash)) || this.locked){ return; }
+    if((this.storePage && this.retrievePage($table, hash)) || this.locked) { return; }
     this.locked = true;
     this.showLoadingSpinner();
     this.loadDataFromServer(hash);
-  },
+  }
 
-  sendRequestWithoutAjax: function(hash, extension) {
-    var data = this.getDataForAjax(hash);
-    var url;
-    if ($('table#'+ this.id).data('path') == '#')
-      url = $(location).attr("pathname");
-    else
-      url = $('table#'+ this.id).data('path');
+  sendRequestWithoutAjax(hash, extension) {
+    const data = this.getDataForAjax(hash);
     if (!extension || extension.length == 0)
       extension = 'txt';
-    url = url.replace(/\/+$/, "") + '.' + extension + '?' + $.param(data);
+    const url = (() => {
+      if (this.getDOMTable().data('path') == '#')
+	return $(location).attr("pathname");
+      else
+	return this.getDOMTable().data('path');
+    }).replace(/\/+$/, "") + '.' + extension + '?' + $.param(data);
     window.open(url);
-  },
+  }
 
-  pageShouldBeStored: function(page, forceReload){
+  pageShouldBeStored(page, forceReload) {
     return page !== undefined && !forceReload;
-  },
+  }
 
-  retrievePage: function(table, hash){
+  retrievePage(table, hash) {
     table.find('tbody tr').hide();
     if(table.find('tbody tr[data-page='+ hash.page +']').length > 0){
       table.find('tbody tr[data-page='+ hash.page +']').show();
 
-      var tabulatrPagination = new TabulatrPagination(
-        $('.pagination[data-table='+ this.id +'] a:last').data('page'), this.id);
+      const tabulatrPagination = new TabulatrPagination(
+        $('.pagination[data-table='+ this.id +'] a:last').data('page'), this);
       tabulatrPagination.updatePagination(hash.page);
       if(this.isAPersistedTable){
-        var data = this.createParameterString(hash, this.id);
+        const data = this.createParameterString(hash, this.id);
         try {
           localStorage[this.id] = JSON.stringify(data);
         } catch(e) {}
@@ -70,18 +64,18 @@ Tabulatr.prototype = {
       return true;
     }
     return false;
-  },
+  }
 
-  getDataForAjax: function(hash){
-    var data;
-    if(this.initialRequest && this.isAPersistedTable && localStorage[this.id]){
+  getDataForAjax(hash) {
+    let data;
+    if(this.initialRequest && this.isAPersistedTable && localStorage[this.id]) {
       data = JSON.parse(localStorage[this.id]);
-    }else{
+    } else {
       data = this.createParameterString(hash, this.id);
       if(this.isAPersistedTable) {
         try {
-          var storableData = jQuery.extend(true, {}, data);
-          var batch_key = this.id.split('_')[0] + '_batch';
+          const storableData = jQuery.extend(true, {}, data);
+          const batch_key = this.name + '_batch';
           if (batch_key in storableData)
             delete storableData[batch_key];
           localStorage[this.id] = JSON.stringify(storableData);
@@ -89,20 +83,20 @@ Tabulatr.prototype = {
       }
     }
     return data;
-  },
+  }
 
-  loadDataFromServer: function(hash){
-    var data = this.getDataForAjax(hash)
+  loadDataFromServer(hash) {
+    let data = this.getDataForAjax(hash)
     // deparse existing params http://stackoverflow.com/a/8649003/673826
-    var search = location.search.substring(1);
+    const search = location.search.substring(1);
     if (search.length){
-      var query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+      const query = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
       data = $.extend(query, data);
     }
     $.ajax({
       context: this,
       type: 'GET',
-      url: $('table#'+ this.id).data('path'),
+      url: this.getDOMTable().data('path'),
       accepts: {
         json: 'application/json'
       },
@@ -111,47 +105,47 @@ Tabulatr.prototype = {
       complete: this.hideLoadingSpinner,
       error: this.handleError
     });
-  },
+  }
 
-  checkIfCheckboxesAreMarked: function(){
+  checkIfCheckboxesAreMarked() {
     return $('tr[data-page] input[type=checkbox]:checked').length > 0;
-  },
+  }
 
-  currentCount: function(){
-    return $('#'+ this.id +' tbody tr.tabulatr-row').length;
-  },
+  currentCount() {
+    return this.getDOMTable().find('tbody tr.tabulatr-row').length;
+  }
 
-  handleResponse: function(response) {
+  handleResponse(response) {
     if (typeof response === "string")
       response = JSON.parse(response);
 
     this.insertTabulatrData(response);
-    var tabulatrPagination = new TabulatrPagination(
-      response.meta.pages, response.meta.table_id);
+    const tabulatrPagination = new TabulatrPagination(
+      response.meta.pages, TabulatrInstances.instance.table(response.meta.table_id));
     tabulatrPagination.updatePagination(response.meta.page);
     if($('.pagination[data-table='+ response.meta.table_id +']').length > 0){
       if(response.meta.page > response.meta.pages){
         this.updateTable({page: response.meta.pages});
       }
     }
-  },
+  }
 
-  handleError: function(){
+  handleError() {
     if(this.isAPersistedTable && this.initialRequest){
       this.initialRequest = false;
       this.locked = false;
-      this.resetTable();
+      TabulatrStorage.resetTable(this);
     }
-  },
+  }
 
-  insertTabulatrData: function(response){
+  insertTabulatrData(response) {
     if (typeof response === "string")
       response = JSON.parse(response);
 
-    var tableId = response.meta.table_id;
-    var table = $('#'+ tableId);
-    var tbody = table.find('tbody');
-    var ndpanel = $('#no-data-' + tableId);
+    const tableId = response.meta.table_id;
+    const table = $('#'+ tableId);
+    const tbody = table.find('tbody');
+    const ndpanel = $('#no-data-' + tableId);
 
     this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
 
@@ -164,10 +158,10 @@ Tabulatr.prototype = {
     }
 
     // insert the actual data
-    for(var i = 0; i < response.data.length; i++){
-      var data = response.data[i];
-      var id = data.id;
-      var tr = $('#'+ tableId +' tr.empty_row').clone();
+    for(let i = 0; i < response.data.length; i++){
+      const data = response.data[i];
+      const id = data.id;
+      const tr = $('#'+ tableId +' tr.empty_row').clone();
       tr.removeClass('empty_row');
       if(data._row_config.data){
         tr.data(data._row_config.data);
@@ -177,10 +171,10 @@ Tabulatr.prototype = {
       tr.attr('data-page', response.meta.page);
       tr.attr('data-id', id);
       tr.find('td').each(function(index,element) {
-        var td = $(element);
-        var coltype = td.data('tabulatr-type');
-        var name = td.data('tabulatr-column-name');
-        var cont = data[name];
+        const td = $(element);
+        const coltype = td.data('tabulatr-type');
+        const name = td.data('tabulatr-column-name');
+        const cont = data[name];
         if(coltype === 'checkbox') {
           cont = $("<input>").attr('type', 'checkbox').val(id).addClass('tabulatr-checkbox');
         }
@@ -191,112 +185,103 @@ Tabulatr.prototype = {
     this.updateInfoString(tableId, response);
 
     if(this.isAPersistedTable){
-      this.retrieveTableFromLocalStorage(response);
+      TabulatrStorage.retrieveTableFromLocalStorage(this, response);
     }
-  },
+  }
 
-
-  replacer: function(match, attribute){
+  replacer(match, attribute) {
     return this.currentData[attribute];
-  },
+  }
 
-
-  makeAction: function(action, data){
+  makeAction(action, data) {
     this.currentData = data;
     return decodeURI(action).replace(/{{([\w:]+)}}/g, this.replacer);
-  },
+  }
 
-  submitFilterForm: function(){
-    if(this.hasInfiniteScrolling){
+  submitFilterForm() {
+    if(this.hasInfiniteScrolling) {
       $('.pagination_trigger[data-table='+ this.id +']').unbind('inview', cbfn);
       $('.pagination_trigger[data-table='+ this.id +']').bind('inview', cbfn);
     }
     this.updateTable({page: 1, append: false}, true);
     return false;
-  },
+  }
 
-  createParameterString: function(hash){
-    var tableName = this.id.split('_')[0];
-    if(hash === undefined){
-      hash = {append: false};
-    }
+  createParameterString(hash) {
+    hash = hash || {append: false};
     hash = this.getPageParams(hash);
     hash.arguments = $.map($('#'+ this.id +' th'), function(n){
       return $(n).data('tabulatr-column-name');
     }).filter(function(n){return n; }).join();
     hash.table_id = this.id;
-    hash[tableName + '_search'] = $('input#'+ this.id +'_fuzzy_search_query').val();
+    hash[this.name + '_search'] = $('input#'+ this.id +'_fuzzy_search_query').val();
     return this.readParamsFromForm(hash);
-  },
+  }
 
-  localDate: function(value){
+  localDate(value) {
     return new Date(value).toLocaleString();
-  },
+  }
 
-  showLoadingSpinner: function(){
+  showLoadingSpinner() {
     $('.tabulatr-spinner-box[data-table="'+ this.id +'"]').show();
-  },
+  }
 
-  hideLoadingSpinner: function(){
+  hideLoadingSpinner() {
     this.initialRequest = false;
     this.locked = false;
     $('.tabulatr-spinner-box[data-table="'+ this.id +'"]').hide();
-  },
+  }
 
-  updateInfoString: function(tableId, response){
-    var count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
+  updateInfoString(tableId, response) {
+    let count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
     count_string = count_string.replace(/%\{current\}/, response.meta.count);
     count_string = count_string.replace(/%\{total\}/, response.meta.total);
     count_string = count_string.replace(/%\{per_page\}/,
       response.meta.pagesize);
     $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
-  },
+  }
 
-  readParamsFromForm: function(hash){
-    var form_array = $('.tabulatr_filter_form[data-table="'+ this.id +'"]')
+  readParamsFromForm(hash) {
+    const form_array = $('.tabulatr_filter_form[data-table="'+ this.id +'"]')
       .find('input:visible,select:visible,input[type=hidden]').serializeArray();
-    for(var i = 0; i < form_array.length; i++){
-      if(hash[form_array[i].name] !== undefined){
+    for(let i = 0; i < form_array.length; i++) {
+      if(hash[form_array[i].name] !== undefined) {
         if(!Array.isArray(hash[form_array[i].name])){
           hash[form_array[i].name] = [hash[form_array[i].name]];
         }
         hash[form_array[i].name].push(form_array[i].value);
-      }else{
+      } else {
         hash[form_array[i].name] = form_array[i].value;
       }
     }
     return hash;
-  },
+  }
 
-  getPageParams: function(hash){
-    var pagesize = hash.pagesize;
-    if(pagesize === undefined){
-      pagesize = $('table#'+ this.id).data('pagesize');
-    }
-    if(hash.page === undefined){
-      if(this.hasInfiniteScrolling){
-        hash.page = Math.floor($('#'+ this.id +' tbody tr[class!=empty_row]').length/pagesize) + 1;
+  getPageParams(hash) {
+    let pagesize = hash.pagesize || this.getDOMTable().data('pagesize');
+    if(hash.page === undefined) {
+      if(this.hasInfiniteScrolling) {
+        hash.page = Math.floor(this.getDOMTable().find('tbody tr[class!=empty_row]').length/pagesize) + 1;
       }
-      if(!isFinite(hash.page)){
+      if(!isFinite(hash.page)) {
         hash.page = 1;
       }
     }
     hash.pagesize = pagesize;
     return hash;
-  },
+  }
 
-  prepareTableForInsert: function(tableId, append, dataCount, actualCount){
-    if(!append){
-      if(this.storePage){
-        $('#'+ tableId +' tbody tr').hide();
-      }else{
-        $('#'+ tableId +' tbody').html('');
+  prepareTableForInsert(tableId, append, dataCount, actualCount) {
+    if(!append) {
+      if(this.storePage) {
+        this.getDOMTable().find('tbody tr').hide();
+      } else {
+        this.getDOMTable().find('tbody').html('');
       }
     }
-    if(dataCount === 0 || this.currentCount() + dataCount >= actualCount){
+    if(dataCount === 0 || this.currentCount() + dataCount >= actualCount) {
       this.moreResults = false;
       $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
     }
   }
-
-};
+}
