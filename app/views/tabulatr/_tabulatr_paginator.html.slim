@@ -19,6 +19,6 @@
 /  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 /  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-- if table_options[:paginate] == true || ((table_options[:paginate].is_a?(Fixnum)) && klass.count > table_options[:paginate])
+- if table_options[:paginate] == true || ((table_options[:paginate].is_a?(Integer)) && klass.count > table_options[:paginate])
     .pagination data-table=table_id
       ul.pagination data-table=table_id

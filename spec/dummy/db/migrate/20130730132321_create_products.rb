@@ -6,7 +6,7 @@ class CreateProducts < ActiveRecord::Migration
       t.decimal :price
       t.boolean :active
 
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
