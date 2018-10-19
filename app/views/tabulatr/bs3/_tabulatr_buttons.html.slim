@@ -1,0 +1,18 @@
+.btn-group
+  - buttons[:buttons].each do |button|
+    - o = (button[:options] || {}).merge(class: "btn btn-sm btn-default #{button[:options].try(:[], :class)}")
+    = link_to fa_icon(button[:icon]), button[:path], o
+  - if buttons[:submenu].present?
+    button.btn.btn-default.btn-sm.dropdown-toggle data-toggle='dropdown'
+      span.caret
+    ul.dropdown-menu role='menu'
+      - buttons[:submenu].each do |button|
+        - if button == :divider
+          li.divider role="presentation"
+        - else
+          li= link_to button[:path], button[:options] do
+            - if button[:icon].present?
+              => fa_icon(button[:icon])
+            - if button[:label].present?
+              = button[:label]
+
