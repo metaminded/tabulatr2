@@ -160,7 +160,6 @@ function tabulatrInitialize() {
         }
       } catch(e) {}
     }
-    var tableObj, tableId, tabulatrTable;
     $('.tabulatr_table:not(".tabulatr_static_table")').each(function(ix, el) {
       table_id = $(el).attr('id');
       table_instance = TabulatrInstances.instance.table(table_id);
@@ -190,10 +189,10 @@ $(document).on('click', '.pagination a[data-page]', function() {
      a.parent().hasClass('disabled')) {
     return false;
   }
-  const tableId = $(a).closest('.pagination').data('table');
-  $('.tabulatr_mark_all[data-table='+ tableId +']').prop('checked', false);
-  $('.tabulatr_mark_all[data-table='+ tableId +']').prop('indeterminate', false);
-  const tabulatr_instance = TabulatrInstances.instance.table(tableId);
+  const table_id = $(a).closest('.pagination').data('table');
+  const table_instance = TabulatrInstances.instance.table(table_id);
+  $('.tabulatr_mark_all[data-table='+ table_instance.id +']').prop('checked', false);
+  $('.tabulatr_mark_all[data-table='+ table_instance.id +']').prop('indeterminate', false);
   table_instance.updateTable({append: false, page: a.data('page')});
   return false;
 });

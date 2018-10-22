@@ -6,7 +6,7 @@ class TabulatrPagination {
 
   createPaginationListItem(page, active) {
     var $page = $('<li><a href="" data-page="'+ page +'">'+ page +'</a></li>');
-    if(active){
+    if(active) {
       $page.addClass('active');
     }
     return $page;
