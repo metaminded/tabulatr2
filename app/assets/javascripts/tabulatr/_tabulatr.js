@@ -15,16 +15,18 @@ class TabulatrTable {
     this.isAPersistedTable = false;
     this.initialRequest = true;
     this.hasInfiniteScrolling = false;
+    this.dom_table_cache = null;
   }
 
   getDOMTable() {
-    return $('table#'+ this.id);
+    if (!this.dom_table_cache)
+      this.dom_table_cache = $('table#' + this.id);
+    return this.dom_table_cache;
   }
 
   updateTable(hash, forceReload) {
-    const $table = $('#'+ this.id);
     this.storePage = this.pageShouldBeStored(hash.page, forceReload);
-    if((this.storePage && this.retrievePage($table, hash)) || this.locked) { return; }
+    if((this.storePage && this.retrievePage(hash)) || this.locked) { return; }
     this.locked = true;
     this.showLoadingSpinner();
     this.loadDataFromServer(hash);
@@ -47,7 +49,8 @@ class TabulatrTable {
     return page !== undefined && !forceReload;
   }
 
-  retrievePage(table, hash) {
+  retrievePage(hash) {
+    const table = this.getDOMTable();
     table.find('tbody tr').hide();
     if(table.find('tbody tr[data-page='+ hash.page +']').length > 0){
       table.find('tbody tr[data-page='+ hash.page +']').show();
@@ -142,12 +145,11 @@ class TabulatrTable {
     if (typeof response === "string")
       response = JSON.parse(response);
 
-    const tableId = response.meta.table_id;
-    const table = $('#'+ tableId);
+    const table = this.getDOMTable();
     const tbody = table.find('tbody');
-    const ndpanel = $('#no-data-' + tableId);
+    const ndpanel = $('#no-data-' + this.id);
 
-    this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
+    this.prepareTableForInsert(response.meta.append, response.data.length, response.meta.count);
 
     if (ndpanel.length > 0 && response.data.length == 0) {
       table.hide();
@@ -161,7 +163,7 @@ class TabulatrTable {
     for(let i = 0; i < response.data.length; i++){
       const data = response.data[i];
       const id = data.id;
-      const tr = $('#'+ tableId +' tr.empty_row').clone();
+      const tr = this.getDOMTable().find('tr.empty_row').clone();
       tr.removeClass('empty_row');
       if(data._row_config.data){
         tr.data(data._row_config.data);
@@ -182,7 +184,7 @@ class TabulatrTable {
       });
       tbody.append(tr);
     }
-    this.updateInfoString(tableId, response);
+    this.updateInfoString(response);
 
     if(this.isAPersistedTable){
       TabulatrStorage.retrieveTableFromLocalStorage(this, response);
@@ -232,13 +234,13 @@ class TabulatrTable {
     $('.tabulatr-spinner-box[data-table="'+ this.id +'"]').hide();
   }
 
-  updateInfoString(tableId, response) {
-    let count_string = $('.tabulatr_count[data-table='+ tableId +']').data('format-string');
+  updateInfoString(response) {
+    let count_string = $('.tabulatr_count[data-table='+ this.id +']').data('format-string');
     count_string = count_string.replace(/%\{current\}/, response.meta.count);
     count_string = count_string.replace(/%\{total\}/, response.meta.total);
     count_string = count_string.replace(/%\{per_page\}/,
       response.meta.pagesize);
-    $('.tabulatr_count[data-table='+ tableId +']').html(count_string);
+    $('.tabulatr_count[data-table='+ this.id +']').html(count_string);
   }
 
   readParamsFromForm(hash) {
@@ -271,7 +273,7 @@ class TabulatrTable {
     return hash;
   }
 
-  prepareTableForInsert(tableId, append, dataCount, actualCount) {
+  prepareTableForInsert(append, dataCount, actualCount) {
     if(!append) {
       if(this.storePage) {
         this.getDOMTable().find('tbody tr').hide();
@@ -281,7 +283,7 @@ class TabulatrTable {
     }
     if(dataCount === 0 || this.currentCount() + dataCount >= actualCount) {
       this.moreResults = false;
-      $('.pagination_trigger[data-table='+ tableId +']').unbind('inview');
+      $('.pagination_trigger[data-table='+ this.id +']').unbind('inview');
     }
   }
 }
