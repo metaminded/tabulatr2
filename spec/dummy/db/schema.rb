@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20141223164833) do
 
-  create_table "products", force: true do |t|
+  create_table "products", force: :cascade do |t|
     t.integer  "vendor_id"
     t.string   "title"
     t.decimal  "price"
@@ -21,24 +21,23 @@ ActiveRecord::Schema.define(version: 20141223164833) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "publish_at"
-    t.string   "type"
     t.integer  "status",     default: 0
   end
 
   add_index "products", ["vendor_id"], name: "index_products_on_vendor_id"
 
-  create_table "products_tags", id: false, force: true do |t|
+  create_table "products_tags", id: false, force: :cascade do |t|
     t.integer "tag_id"
     t.integer "product_id"
   end
 
-  create_table "tags", force: true do |t|
+  create_table "tags", force: :cascade do |t|
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "vendors", force: true do |t|
+  create_table "vendors", force: :cascade do |t|
     t.string   "name"
     t.string   "url"
     t.boolean  "active"

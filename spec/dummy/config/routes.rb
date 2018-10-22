@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       get :with_styling
       get :local_storage
       get :without_filters
+      get :two_tables
     end
   end
 
