@@ -25,35 +25,35 @@
 
 .row.tabulatr-outer-wrapper data-table-id=table_id
   .tabulatr-filter-col data-table-id=table_id
-    = render '/tabulatr/tabulatr_filter_dialog', opts
+    = render '/tabulatr/bs3/tabulatr_filter_dialog', opts
   .tabulatr-table-col.col-xs-12 data-table-id=table_id
     .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-top data-table-id=table_id
       .tabulatr-filter-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
-        = render '/tabulatr/tabulatr_filter_menu', opts
+        = render '/tabulatr/bs3/tabulatr_filter_menu', opts
 
       .tabulatr-batch-actions-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
-        = render '/tabulatr/tabulatr_batch_actions_menu', opts
+        = render '/tabulatr/bs3/tabulatr_batch_actions_menu', opts
 
       - if tabulatr_data.search?
         .tabulatr-fuzzy-search-field-wrapper.col-xs-6.col-sm-2 data-table-id=table_id
-          = render '/tabulatr/tabulatr_fuzzy_search_field', opts
+          = render '/tabulatr/bs3/tabulatr_fuzzy_search_field', opts
 
       - if table_options[:pagination_position].in?([:top, :both])
         .tabulatr-paginator-wrapper.col-xs-12.col-sm-8 data-table-id=table_id
-          = render '/tabulatr/tabulatr_paginator', opts
+          = render '/tabulatr/bs3/tabulatr_paginator', opts
 
 
     - if table_options[:counter_position].in?([:top, :both])
       .tabulatr-info-string-wrapper data-table-id=table_id
-        = render '/tabulatr/tabulatr_info_string', opts
-    = render '/tabulatr/tabulatr_actual_table', opts
+        = render '/tabulatr/bs3/tabulatr_info_string', opts
+    = render '/tabulatr/bs3/tabulatr_actual_table', opts
 
     .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-bottom data-table-id=table_id
 
       - if table_options[:counter_position].in?([:bottom, :both])
         .tabulatr-info-string-wrapper.col-xs-12 data-table-id=table_id
-          = render '/tabulatr/tabulatr_info_string', opts
+          = render '/tabulatr/bs3/tabulatr_info_string', opts
 
       - if table_options[:pagination_position].in?([:bottom, :both])
         .tabulatr-paginator-wrapper.col-xs-12 data-table-id=table_id
-          = render '/tabulatr/tabulatr_paginator', opts
+          = render '/tabulatr/bs3/tabulatr_paginator', opts

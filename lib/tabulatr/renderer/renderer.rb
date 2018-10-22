@@ -36,7 +36,9 @@ class Tabulatr::Renderer
       html_class:          Tabulatr.html_class,
       pagination_position: Tabulatr.pagination_position,
       counter_position:    Tabulatr.counter_position,
-      persistent:          Tabulatr.persistent)
+      persistent:          Tabulatr.persistent,
+      theme:               Tabulatr.theme
+    )
     @klass = klass
     @view = view
     @table_options = {
@@ -52,7 +54,8 @@ class Tabulatr::Renderer
       html_class: 'table tabulatr_table '.concat(html_class),
       pagination_position: pagination_position,
       counter_position: counter_position,
-      persistent: paginate ? persistent : false
+      persistent: paginate ? persistent : false,
+      theme: theme
     }
     @classname = @klass.name.underscore
   end
@@ -60,7 +63,7 @@ class Tabulatr::Renderer
   def build_table(columns, filters, tabulatr_data_class, &block)
     tdc = get_data_class(tabulatr_data_class)
     set_columns_and_filters(tdc, columns, filters, &block)
-    @view.render(partial: '/tabulatr/tabulatr_table', locals: {
+    @view.render(partial: "/tabulatr/#{@table_options[:theme]}/tabulatr_table", locals: {
       columns: @columns,
       table_options: @table_options,
       klass: @klass,
@@ -75,7 +78,7 @@ class Tabulatr::Renderer
   def build_static_table(records, &block)
     @columns = ColumnsFromBlock.process(@klass, &block).columns
 
-    @view.render(partial: '/tabulatr/tabulatr_static_table', locals: {
+    @view.render(partial: "/tabulatr/#{@table_options[:theme]}/tabulatr_static_table", locals: {
       columns: @columns,
       table_options: @table_options,
       klass: @klass,
