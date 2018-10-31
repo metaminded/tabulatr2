@@ -80,7 +80,7 @@ module Tabulatr::Data::DSL
     output = ->(r) {
       tdbb = Tabulatr::Data::ButtonBuilder.new
       self.instance_exec tdbb, r, &block
-      self.controller.render_to_string partial: '/tabulatr/tabulatr_buttons', locals: {buttons: tdbb.val}, formats: [:html]
+      self.controller.render_to_string partial: '/tabulatr/bs3/tabulatr_buttons', locals: {buttons: tdbb.val}, formats: [:html]
     }
     opts = {header: opts[:header] || '', filter: false, sortable: false}.merge(opts)
     table_column = Tabulatr::Renderer::Buttons.from(
