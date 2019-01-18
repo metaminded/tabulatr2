@@ -24,7 +24,7 @@ function tabulatrInitialize() {
         $('.pagination_trigger[data-table='+ tableId +']').bind('inview', cbfn);
       }
     }
-    $($(this).parents('table').find('tbody tr')).remove();
+    $($(this).parents('table').find('tbody.tabulatr-main-tbody tr')).remove();
 
     $('.tabulatr_mark_all[data-table='+ tableName +']').prop('checked', false).prop('indeterminate', false);
     table_obj.updateTable({});

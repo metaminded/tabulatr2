@@ -21,7 +21,7 @@
 
 
 .tabulatr-filter-popover title="Filter" data-table=table_id
-  form.form.tabulatr_filter_form data-table=table_id  data-remote="true" role='form'
+  form.form.tabulatr_filter_form data-table=table_id  data-remote="true" role="form"
     .panel.panel-default
       .panel-heading
         = t('tabulatr.filter')
@@ -31,7 +31,7 @@
           a.tabulatr-submit-table.btn.btn-primary.btn-xs
             = fa_icon 'arrow-right'
       .panel-body
-        .wech style='text-indent: -2000px; height: 0px'
+        .hidden
           = submit_tag "Anwenden"
         input name="#{formatted_name}_sort" type="hidden" value=table_options[:order_by]
         - if table_options[:filter] && columns.select(&:filter).present?
@@ -54,18 +54,18 @@
                         option
                         = options_for_select(column.filter)
                   - elsif column.filter == :range
-                    .col-sm-5
-                      input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}_from" name="#{iname}[from]"
-                    span.col-sm-1.text-center —
-                    .col-sm-5
-                      input.tabulatr_filter.form-control type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"
+                    .row
+                      .col-sm-5
+                        input.tabulatr_filter.form-control type="text" id="#{name}_from" data-tabulatr-attribute="#{name}_from" name="#{iname}[from]"
+                      span.col-sm-1.text-center —
+                      .col-sm-5
+                        input.tabulatr_filter.form-control type="text" id="#{name}_to" data-tabulatr-attribute="#{name}_to" name="#{iname}[to]"
                   - elsif column.filter == :checkbox
-                    .col-xs-12
-                      = select_tag(iname, options_for_select([ \
-                          [t('tabulatr.boolean_filter.both'), ""],
-                          [t('tabulatr.boolean_filter.no'), "false"],
-                          [t('tabulatr.boolean_filter.yes'), "true"]] \
-                        ), class: 'form-control no-chosen')
+                    = select_tag(iname, options_for_select([ \
+                        [t('tabulatr.boolean_filter.both'), ""],
+                        [t('tabulatr.boolean_filter.no'), "false"],
+                        [t('tabulatr.boolean_filter.yes'), "true"]] \
+                      ), class: 'form-control no-chosen')
                   - elsif [:exact, :integer, :decimal].member? column.filter
                     input.tabulatr_filter.form-control type="text" id="#{name}_exact" data-tabulatr-attribute="#{name}" name="#{iname}"
                   - elsif column.filter == :date

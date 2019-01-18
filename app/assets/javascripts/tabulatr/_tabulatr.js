@@ -54,9 +54,9 @@ Tabulatr.prototype = {
   },
 
   retrievePage: function(table, hash){
-    table.find('tbody tr').hide();
-    if(table.find('tbody tr[data-page='+ hash.page +']').length > 0){
-      table.find('tbody tr[data-page='+ hash.page +']').show();
+    table.find('tbody.tabulatr-main-tbody tr').hide();
+    if(table.find('tbody.tabulatr-main-tbody tr[data-page='+ hash.page +']').length > 0){
+      table.find('tbody.tabulatr-main-tbody tr[data-page='+ hash.page +']').show();
 
       var tabulatrPagination = new TabulatrPagination(
         $('.pagination[data-table='+ this.id +'] a:last').data('page'), this.id);
@@ -118,7 +118,7 @@ Tabulatr.prototype = {
   },
 
   currentCount: function(){
-    return $('#'+ this.id +' tbody tr.tabulatr-row').length;
+    return $('#'+ this.id +' tbody.tabulatr-main-tbody tr.tabulatr-row').length;
   },
 
   handleResponse: function(response) {
@@ -150,7 +150,7 @@ Tabulatr.prototype = {
 
     var tableId = response.meta.table_id;
     var table = $('#'+ tableId);
-    var tbody = table.find('tbody');
+    var tbody = table.find('tbody.tabulatr-main-tbody');
     var ndpanel = $('#no-data-' + tableId);
 
     this.prepareTableForInsert(tableId, response.meta.append, response.data.length, response.meta.count);
@@ -275,7 +275,7 @@ Tabulatr.prototype = {
     }
     if(hash.page === undefined){
       if(this.hasInfiniteScrolling){
-        hash.page = Math.floor($('#'+ this.id +' tbody tr[class!=empty_row]').length/pagesize) + 1;
+        hash.page = Math.floor($('#'+ this.id +' tbody.tabulatr-main-tbody tr[class!=empty_row]').length/pagesize) + 1;
       }
       if(!isFinite(hash.page)){
         hash.page = 1;
@@ -288,9 +288,9 @@ Tabulatr.prototype = {
   prepareTableForInsert: function(tableId, append, dataCount, actualCount){
     if(!append){
       if(this.storePage){
-        $('#'+ tableId +' tbody tr').hide();
+        $('#'+ tableId +' tbody.tabulatr-main-tbody tr').hide();
       }else{
-        $('#'+ tableId +' tbody').html('');
+        $('#'+ tableId +' tbody.tabulatr-main-tbody').html('');
       }
     }
     if(dataCount === 0 || this.currentCount() + dataCount >= actualCount){

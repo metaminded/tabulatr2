@@ -23,9 +23,9 @@
     klass: klass, classname: classname, table_id: table_id,
     formatted_name: formatted_name, filter: filter }
 
-.row.tabulatr-outer-wrapper data-table-id=table_id
+.tabulatr-outer-wrapper data-table-id=table_id
   .tabulatr-table-col.pull-left data-table-id=table_id
-    .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-top data-table-id=table_id
+    .row.tabulatr-table-controls-wrapper.tabulatr-table-controls-wrapper-top data-table-id=table_id
       .tabulatr-filter-menu-wrapper.pull-left data-table-id=table_id
         = render '/tabulatr/bs4/tabulatr_filter_menu', opts
 
@@ -49,7 +49,7 @@
 
     = render '/tabulatr/bs4/tabulatr_actual_table', opts
 
-    .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-bottom data-table-id=table_id
+    .tabulatr-table-controls-wrapper.tabulatr-table-controls-wrapper-bottom data-table-id=table_id
 
       - if table_options[:counter_position].in?([:bottom, :both])
         .tabulatr-info-string-wrapper.pull-left data-table-id=table_id

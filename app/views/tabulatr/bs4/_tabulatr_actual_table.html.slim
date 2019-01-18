@@ -29,7 +29,7 @@
          - classes = [classes, "tabulatr-column-#{column.coltype}", column.col_options.classes].flatten.compact.join(' ')
          = content_tag('th', column.col_options.header_html.merge(:'data-tabulatr-column-name' => column.full_name, class: classes)) do
              - column.human_name
-    tbody
+    tbody.tabulatr-main-tbody
     tfoot
       tr.empty_row
         - columns.each do |column|
