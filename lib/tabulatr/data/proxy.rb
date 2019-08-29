@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-class Data::Proxy < ActionView::Base
+class Tabulatr::Data::Proxy < ActionView::Base
 
   attr_accessor :record, :controller
 
