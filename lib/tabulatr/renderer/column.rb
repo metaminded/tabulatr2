@@ -108,6 +108,19 @@ class Tabulatr::Renderer::Column
     end
   end
 
+  def to_json
+    {
+      name:        "#{table_name}:#{name}",
+      # name:        name,
+      header:      human_name,
+      # klassname:   klassname,
+      # table_name:  table_name,
+      filter:      col_options.filter,
+      sortable:    col_options.sortable,
+      data_html:   col_options.data_html,
+      header_html: col_options.header_html,
+    }
+  end
 
   private
 

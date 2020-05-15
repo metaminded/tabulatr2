@@ -99,6 +99,10 @@ class Tabulatr::Renderer
     new(klass, view, toptions).build_table(columns, filters, tabulatr_data_class, &block)
   end
 
+  def columns_json(tabulatr_data_class_name=nil)
+    get_data_class(tabulatr_data_class_name).table_columns.map(&:to_json)
+  end
+
   private
 
   def get_requested_columns(available_columns, requested_columns)
