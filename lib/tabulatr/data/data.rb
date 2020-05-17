@@ -110,10 +110,10 @@ class Tabulatr::Data
   # Params
   #++
 
-  def filter_params(params) params["#{Tabulatr::Utility.formatted_name(@base.name)}_filter"] end
-  def search_param(params)  params["#{Tabulatr::Utility.formatted_name(@base.name)}_search"] end
-  def sort_params(params)   params["#{Tabulatr::Utility.formatted_name(@base.name)}_sort"] end
-  def batch_params(params)  params["#{Tabulatr::Utility.formatted_name(@base.name)}_batch"] end
+  def filter_params(params) params["#{Tabulatr::Utility.formatted_name(@base.name)}_filter"] || params["filter"] end
+  def search_param(params)  params["#{Tabulatr::Utility.formatted_name(@base.name)}_search"] || params["search"] end
+  def sort_params(params)   params["#{Tabulatr::Utility.formatted_name(@base.name)}_sort"]   || params["sort"] end
+  def batch_params(params)  params["#{Tabulatr::Utility.formatted_name(@base.name)}_batch"]  || params["batch"] end
   def check_params(params)
     tabulatr_checked = params["tabulatr_checked"]
     if tabulatr_checked.present?
