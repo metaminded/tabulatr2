@@ -1,3 +1,6 @@
+'use strict';
+
+//= require ./_instance
 //= require ./_tabulatr
 //= require ./_storage
 //= require ./_pagination

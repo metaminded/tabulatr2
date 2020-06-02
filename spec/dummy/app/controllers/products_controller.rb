@@ -1,5 +1,8 @@
 class ProductsController < ApplicationController
 
+  def show
+  end
+
   def simple_index
     tabulatr_for Product
   end
@@ -56,5 +59,8 @@ class ProductsController < ApplicationController
 
   def without_filters
     tabulatr_for Product
+  end
+
+  def two_tables
   end
 end
