@@ -86,6 +86,10 @@ function tabulatrInitialize() {
     $(this).parents('form.tabulatr_filter_form').submit();
   });
 
+  $('form.tabulatr_filter_form input').on('dp.change', function(){
+    $(this).parents('form.tabulatr_filter_form').submit();
+  });
+
   $('form.tabulatr_filter_form').submit(function(){
     var tableId = $(this).data('table');
     var table_obj;
