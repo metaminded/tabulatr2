@@ -14,6 +14,6 @@ describe Tabulatr::ParamsBuilder do
 
   it 'does not accept a param which is in the DEPRECATED_PARAMS array' do
     stub_const('Tabulatr::ParamsBuilder::DEPRECATED_PARAMS', [:deprecated_param])
-    expect{Tabulatr::ParamsBuilder.new(deprecated_param: 'test')}.to raise_error
+    expect{Tabulatr::ParamsBuilder.new(deprecated_param: 'test')}.to raise_error(NoMethodError)
   end
 end

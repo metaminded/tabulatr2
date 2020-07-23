@@ -3,7 +3,7 @@ class CreateTags < ActiveRecord::Migration
     create_table :tags do |t|
       t.string :title
 
-      t.timestamps
+      t.timestamps null: false
     end
 
     create_table :products_tags, id: false do |t|
