@@ -263,8 +263,8 @@ $(document).on('change', 'select[data-tabulatr-date-filter]', function() {
   var option = select.find('option:selected');
   var val = option.val();
   if (val === 'from_to') {
-    select.parents('.tabulatr-filter-row').find(".from_to").show().removeClass('hidden');
+    select.parents('.form-group').find(".from_to").show().removeClass('hidden');
   } else {
-    select.parents('.tabulatr-filter-row').find(".from_to").hide().val('');
+    select.parents('.form-group').find(".from_to").hide().val('');
   }
 });
