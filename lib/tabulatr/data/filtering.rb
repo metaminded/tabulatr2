@@ -84,7 +84,7 @@ module Tabulatr::Data::Filtering
     when 'this_month' then date_in_between(today.at_beginning_of_month.beginning_of_day,
                               today.at_end_of_month.end_of_day, n)
     when 'last_30_days' then date_in_between((today - 29.day).beginning_of_day, today.at_end_of_day, n)
-    when 'from_to' then date_in_between((Date.parse(cond['from']) rescue nil), (Date.parse(cond['to']) rescue nil), n)
+    when 'from_to' then date_in_between((Time.zone.parse(cond['from']) rescue nil), (Time.zone.parse(cond['to']) rescue nil), n)
     end
   end
 
