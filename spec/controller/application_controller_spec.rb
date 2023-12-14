@@ -23,6 +23,7 @@ describe ApplicationController, type: :controller do
 
       expect_any_instance_of(Tabulatr::Data).to receive(:data_for_table).with(
         {"pagesize"=>"20", "arguments"=>"products:title", "controller"=>"anonymous", "action"=>"index"},
+        {:default_order=>nil},
         {:locals=>{current_user: "Han Solo"}, controller: controller}
       ).and_return(fake_response)
       expect(fake_response).to receive(:to_tabulatr_json).and_return({})
