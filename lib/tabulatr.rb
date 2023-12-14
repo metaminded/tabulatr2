@@ -29,7 +29,7 @@ module Tabulatr
   mattr_accessor :spinner, :paginate, :filter, :search, :paginate,
     :pagesize, :sortable, :batch_actions, :footer_content, :path,
     :order_by, :html_class, :pagination_position, :counter_position,
-    :persistent
+    :persistent, :theme
 
   self.filter = true                  # false for no filter row at all
   self.search = true                  # show fuzzy search field
@@ -45,7 +45,7 @@ module Tabulatr
   self.counter_position = :top
   self.persistent = true
   self.spinner  = :standard
-
+  self.theme = :bs3
 
 end
 

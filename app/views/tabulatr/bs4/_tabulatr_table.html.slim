@@ -23,37 +23,38 @@
     klass: klass, classname: classname, table_id: table_id,
     formatted_name: formatted_name, filter: filter }
 
-.row.tabulatr-outer-wrapper data-table-id=table_id
-  .tabulatr-filter-col data-table-id=table_id
-    = render '/tabulatr/tabulatr_filter_dialog', opts
-  .tabulatr-table-col.col-xs-12 data-table-id=table_id
-    .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-top data-table-id=table_id
-      .tabulatr-filter-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
-        = render '/tabulatr/tabulatr_filter_menu', opts
+.tabulatr-outer-wrapper data-table-id=table_id
+  .tabulatr-table-col.pull-left data-table-id=table_id
+    .row.tabulatr-table-controls-wrapper.tabulatr-table-controls-wrapper-top data-table-id=table_id
+      .tabulatr-filter-menu-wrapper.pull-left data-table-id=table_id
+        = render '/tabulatr/bs4/tabulatr_filter_menu', opts
 
       .tabulatr-batch-actions-menu-wrapper.col-xs-3.col-sm-1 data-table-id=table_id
-        = render '/tabulatr/tabulatr_batch_actions_menu', opts
+        = render '/tabulatr/bs4/tabulatr_batch_actions_menu', opts
 
       - if tabulatr_data.search?
-        .tabulatr-fuzzy-search-field-wrapper.col-xs-6.col-sm-2 data-table-id=table_id
-          = render '/tabulatr/tabulatr_fuzzy_search_field', opts
+        .tabulatr-fuzzy-search-field-wrapper.pull-right data-table-id=table_id
+          = render '/tabulatr/bs4/tabulatr_fuzzy_search_field', opts
 
       - if table_options[:pagination_position].in?([:top, :both])
-        .tabulatr-paginator-wrapper.col-xs-12.col-sm-8 data-table-id=table_id
-          = render '/tabulatr/tabulatr_paginator', opts
-
+        .tabulatr-paginator-wrapper.pull-right data-table-id=table_id
+          = render '/tabulatr/bs4/tabulatr_paginator', opts
 
     - if table_options[:counter_position].in?([:top, :both])
       .tabulatr-info-string-wrapper data-table-id=table_id
-        = render '/tabulatr/tabulatr_info_string', opts
-    = render '/tabulatr/tabulatr_actual_table', opts
+        = render '/tabulatr/bs4/tabulatr_info_string', opts
+  
+    .tabulatr-filter-panel.collapse data-table-id=table_id id="tabulatr-filter-panel#{table_id}"
+      = render '/tabulatr/bs4/tabulatr_filter_dialog', opts
 
-    .tabulatr-table-controls-wrapper.row.tabulatr-table-controls-wrapper-bottom data-table-id=table_id
+    = render '/tabulatr/bs4/tabulatr_actual_table', opts
+
+    .tabulatr-table-controls-wrapper.tabulatr-table-controls-wrapper-bottom data-table-id=table_id
 
       - if table_options[:counter_position].in?([:bottom, :both])
-        .tabulatr-info-string-wrapper.col-xs-12 data-table-id=table_id
-          = render '/tabulatr/tabulatr_info_string', opts
+        .tabulatr-info-string-wrapper.pull-left data-table-id=table_id
+          = render '/tabulatr/bs4/tabulatr_info_string', opts
 
       - if table_options[:pagination_position].in?([:bottom, :both])
-        .tabulatr-paginator-wrapper.col-xs-12 data-table-id=table_id
-          = render '/tabulatr/tabulatr_paginator', opts
+        .tabulatr-paginator-wrapper.pull-right data-table-id=table_id
+          = render '/tabulatr/bs4/tabulatr_paginator', opts
