@@ -42,8 +42,13 @@ module Tabulatr::Data::Filtering
   end
 
   def apply_filters(filter_params)
-    return unless filter_params
-    filter_params.permit!.to_hash.with_indifferent_access.each do |param|
+    default_filters = table_columns.map do |col|
+      next if col.col_options.default_filter.nil?
+      ["#{col.table_name}:#{col.name}", col.col_options.default_filter]
+    end.compact.to_h
+    return unless filter_params || default_filters.present?
+    filters = default_filters.merge(filter_params&.permit! || {})
+    filters.to_hash.with_indifferent_access.each do |param|
       name, value = param
       next unless value.present?
 

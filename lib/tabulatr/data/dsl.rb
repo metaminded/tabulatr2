@@ -34,6 +34,7 @@ module Tabulatr::Data::DSL
     opts = {
             sort_sql: sql_options[:sort_sql],
             filter: true,
+            default_filter: nil,
             sortable: true,
             filter_sql: sql_options[:filter_sql]}.merge(opts)
     table_column = Tabulatr::Renderer::Column.from(
