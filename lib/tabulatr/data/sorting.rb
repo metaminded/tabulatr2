@@ -53,6 +53,7 @@ module Tabulatr::Data::Sorting
 
   def sort_by(column, orientation)
       sort_sql = column.col_options.sort_sql
+      orientation = 'asc' unless ['asc', 'desc'].member?(orientation.downcase)
       if sort_sql.respond_to? :call
         @relation = sort_sql.call(@relation, orientation, "#{@table_name}.#{@base.primary_key}", @base)
       else
