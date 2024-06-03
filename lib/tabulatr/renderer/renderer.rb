@@ -96,7 +96,7 @@ class Tabulatr::Renderer
   end
 
   def self.build_table(klass, view, toptions={}, columns, filters, tabulatr_data_class, &block)
-    new(klass, view, toptions).build_table(columns, filters, tabulatr_data_class, &block)
+    new(klass, view, **toptions).build_table(columns, filters, tabulatr_data_class, &block)
   end
 
   def columns_json(tabulatr_data_class_name=nil)

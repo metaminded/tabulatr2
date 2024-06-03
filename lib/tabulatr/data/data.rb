@@ -59,7 +59,7 @@ class Tabulatr::Data
     return batch_result if batch_result.is_a? Tabulatr::Responses::DirectResponse
 
     pagination = compute_pagination(params[:page], params[:pagesize])
-    apply_pagination(pagination.slice(:offset, :pagesize))
+    apply_pagination(**pagination.slice(:offset, :pagesize))
 
     # get the records
     found = apply_formats(locals: locals, controller: controller)
