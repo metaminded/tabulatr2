@@ -101,7 +101,7 @@ class Tabulatr::Renderer::Column
     when :enum then self.col_options.filter = :enum
     when :float, :decimal then self.col_options.filter = :decimal
     when :string, :text then self.col_options.filter = :like
-    when :date, :time, :datetime, :timestamp then self.col_options.filter = :date
+    when :date, :time, :datetime, :timestamp, :timestamptz then self.col_options.filter = :date
     when :boolean then self.col_options.filter = :checkbox
     when nil then self.col_options.filter = :exact
     else raise "Unknown filter type for #{self.name}: »#{typ}«"
