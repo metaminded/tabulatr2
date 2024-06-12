@@ -92,7 +92,7 @@ class Tabulatr::Renderer
   def self.build_static_table(records, view, toptions={}, &block)
     return '' unless records.present?
     klass = records.first.class
-    new(klass, view, toptions).build_static_table(records, &block)
+    new(klass, view, **toptions).build_static_table(records, &block)
   end
 
   def self.build_table(klass, view, toptions={}, columns, filters, tabulatr_data_class, &block)
