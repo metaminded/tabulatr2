@@ -139,6 +139,13 @@ class Tabulatr::Data
     # assoc.to_sym
   end
 
+  def filtered_data(params)
+    apply_filters(filter_params(params))
+    apply_search(search_param(params))
+    apply_sorting(sort_params(params))
+    join_required_tables(params)
+    @relation.distinct
+  end
 end
 
 require_relative './dsl'
