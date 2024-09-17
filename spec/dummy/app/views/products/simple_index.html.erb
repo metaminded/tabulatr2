@@ -1,4 +1,4 @@
-<%= table_for Product, paginate: true, persistent: false,
+<%= table_for Product, paginate: true, pagesize: 15, pagesizes: [10, 15, 20, 9999], persistent: false,
   batch_actions: {a: "Hallo", b: "Du da!"},
   columns: [:'_buttons', :title, :price, :active, :vendor_product_name, :updated_at, :status,
             {vendor: :name}, 'tags:title'] %>
