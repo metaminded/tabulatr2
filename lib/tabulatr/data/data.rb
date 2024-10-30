@@ -139,12 +139,16 @@ class Tabulatr::Data
     # assoc.to_sym
   end
 
-  def filtered_data(params)
+  def filtered_data(params, distinct: true)
     apply_filters(filter_params(params))
     apply_search(search_param(params))
     apply_sorting(sort_params(params))
     join_required_tables(params)
-    @relation.distinct
+    if distinct
+      @relation.distinct
+    else
+      @relation
+    end
   end
 end
 

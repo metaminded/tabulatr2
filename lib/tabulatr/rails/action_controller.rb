@@ -53,9 +53,9 @@ class ActionController::Base
     end
   end
 
-  def tabulatr_filtered_data_for(relation)
+  def tabulatr_filtered_data_for(relation, distinct: true)
     klass = relation.respond_to?(:klass) ? relation.klass : relation
-    klass.tabulatr(relation).filtered_data(params)
+    klass.tabulatr(relation).filtered_data(params, distinct: distinct)
   end
 
   def batch_params(klass, params)
