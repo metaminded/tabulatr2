@@ -27,7 +27,7 @@ module Tabulatr
   end
 
   mattr_accessor :spinner, :paginate, :filter, :search, :paginate,
-    :pagesize, :sortable, :batch_actions, :footer_content, :path,
+    :pagesize, :pagesizes, :sortable, :batch_actions, :footer_content, :path,
     :order_by, :html_class, :pagination_position, :counter_position,
     :persistent
 
@@ -35,6 +35,7 @@ module Tabulatr
   self.search = true                  # show fuzzy search field
   self.paginate = true                # true to show paginator
   self.pagesize = 20                  # default pagesize
+  self.pagesizes = [self.pagesize, 9999] # default pagesizes include all on one page
   self.sortable = true                # true to allow sorting (can be specified for every sortable column)
   self.batch_actions = false          # :name => value hash of batch action stuff
   self.footer_content = false         # if given, add a <%= content_for <footer_content> %> before the </table>
