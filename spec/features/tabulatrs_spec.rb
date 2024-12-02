@@ -12,11 +12,11 @@ feature "Tabulatr" do
   "officia", "deserunt", "mollit", "anim", "est", "laborum"]
 
   before(:each) do
-    @vendor1 = Vendor.create!(:name => "ven d'or", :active => true)
-    @vendor2 = Vendor.create!(:name => 'producer', :active => true)
-    @tag1 = Tag.create!(:title => 'foo')
-    @tag2 = Tag.create!(:title => 'bar')
-    @tag3 = Tag.create!(:title => 'fubar')
+    @vendor1 = Vendor.create!(name: "ven d'or", active: true)
+    @vendor2 = Vendor.create!(name: 'producer', active: true)
+    @tag1 = Tag.create!(title: 'foo')
+    @tag2 = Tag.create!(title: 'bar')
+    @tag3 = Tag.create!(title: 'fubar')
   end
 
   feature "General data" do
@@ -37,10 +37,11 @@ feature "Tabulatr" do
     end
 
     scenario "contains the actual data", js: true do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      product = Product.create!(title: names[0], active: true, price: 10.0)
       product.vendor = @vendor1
       product.save!
       visit simple_index_products_path
+      wait_for_ajax
       expect(page).to have_content("true")
       expect(page).to have_content("10.0")
       expect(product.vendor.name).to eq("ven d'or")
@@ -49,7 +50,7 @@ feature "Tabulatr" do
     end
 
     scenario "correctly contains the association data", js: true do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      product = Product.create!(title: names[0], active: true, price: 10.0)
       [@tag1, @tag2, @tag3].each_with_index do |tag, i|
         product.tags << tag
         product.save
@@ -60,8 +61,8 @@ feature "Tabulatr" do
 
     scenario "contains the actual data multiple times", js: true do
       9.times do |i|
-        product = Product.create!(:title => names[i], :active => i.even?, :price => 11.0+i,
-          :vendor => i.even? ? @vendor1 : @vendor2)
+        product = Product.create!(title: names[i], active: i.even?, price: 11.0+i,
+          vendor: i.even? ? @vendor1 : @vendor2)
         visit simple_index_products_path
         expect(page).to have_content(names[i])
         expect(page).to have_content((11.0+i).to_s)
@@ -70,8 +71,8 @@ feature "Tabulatr" do
 
     scenario "contains the further data on the further pages" do
       names[10..-1].each_with_index do |n,i|
-        product = Product.create!(:title => n, :active => i.even?, :price => 20.0+i,
-          :vendor => i.even? ? @vendor1 : @vendor2)
+        product = Product.create!(title: n, active: i.even?, price: 20.0+i,
+          vendor: i.even? ? @vendor1 : @vendor2)
         visit simple_index_products_path
         expect(page).to have_no_content(/\s+#{n}\s+/)
         expect(page).to have_no_content((30.0+i).to_s)
@@ -81,7 +82,7 @@ feature "Tabulatr" do
 
   feature 'has_many' do
     scenario 'displays the count when called with :count', js: true do
-      product = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      product = Product.create!(title: names[0], active: true, price: 10.0)
       [@tag1, @tag2, @tag3].each do |tag|
         product.tags << tag
       end
@@ -97,7 +98,7 @@ feature "Tabulatr" do
     context 'pagination setting is true' do
       scenario 'has pages', js: true do
         5.times do |i|
-          Product.create!(:title => "test #{i}")
+          Product.create!(title: "test #{i}")
         end
         visit one_item_per_page_with_pagination_products_path
         expect(page).to have_css('.pagination li a[data-page]', count: 5)
@@ -126,7 +127,7 @@ feature "Tabulatr" do
   feature "Filters" do
     scenario "filters with like", js: true do
       names.each do |n|
-        Product.create!(:title => n, :active => true, :price => 10.0)
+        Product.create!(title: n, active: true, price: 10.0)
       end
       visit simple_index_products_path
       click_link 'Filter'
@@ -136,7 +137,7 @@ feature "Tabulatr" do
       expect(page).to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'dolore')
 
       within(".tabulatr_filter_form") do
-        fill_in("product_filter[products:title][like]", :with => "loreem")
+        fill_in("product_filter[products:title][like]", with: "loreem")
       end
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'lorem')
       expect(page).not_to have_selector('td[data-tabulatr-column-name="products:title"]', text: 'labore')
@@ -165,18 +166,18 @@ feature "Tabulatr" do
 
       click_link 'Filter'
       within('.tabulatr_filter_form') do
-        fill_in("product_filter[products:price][from]", :with => 4)
+        fill_in("product_filter[products:price][from]", with: 4)
         wait_for_ajax
-        fill_in("product_filter[products:price][to]", :with => 10)
+        fill_in("product_filter[products:price][to]", with: 10)
         wait_for_ajax
       end
       expect(page).to have_no_css('.tabulatr-spinner-box')
       expect(page).to have_css(".tabulatr_table tbody tr", text: 'foo')
       expect(page).to have_no_css(".tabulatr_table tbody tr", text: 'bar')
       within('.tabulatr_filter_form') do
-        fill_in("product_filter[products:price][from]", :with => 12)
+        fill_in("product_filter[products:price][from]", with: 12)
         wait_for_ajax
-        fill_in("product_filter[products:price][to]", :with => 19)
+        fill_in("product_filter[products:price][to]", with: 19)
         wait_for_ajax
       end
       expect(page).to have_no_css('.tabulatr-spinner-box')
@@ -289,7 +290,7 @@ feature "Tabulatr" do
 
     scenario "contains the actual data", js: false do
       names.shuffle.each.with_index do |n,i|
-        p = Product.new(:title => n, :active => true, :price => 10.0 + i)
+        p = Product.new(title: n, active: true, price: 10.0 + i)
         p.vendor = [@vendor1, @vendor2].shuffle.first
         p.tags = [@tag1, @tag2, @tag3].shuffle[0..rand(3)]
         p.save!
@@ -323,9 +324,9 @@ feature "Tabulatr" do
 
 
     scenario 'executes the action when clicked' do
-      product1 = Product.create!(:title => names[0], :active => true, :price => 10.0)
-      product2 = Product.create!(:title => names[1], :active => true, :price => 10.0)
-      product3 = Product.create!(:title => names[2], :active => true, :price => 10.0)
+      product1 = Product.create!(title: names[0], active: true, price: 10.0)
+      product2 = Product.create!(title: names[1], active: true, price: 10.0)
+      product3 = Product.create!(title: names[2], active: true, price: 10.0)
       visit with_batch_actions_products_path
       expect(page).to have_css(".tabulatr_table tbody tr", count: 3)
       find(".tabulatr-checkbox[value='#{product1.id}']").trigger('click')
@@ -338,9 +339,9 @@ feature "Tabulatr" do
     end
 
     scenario 'executes the action for all items if nothing selected' do
-      product1 = Product.create!(:title => names[0], :active => true, :price => 10.0)
-      product2 = Product.create!(:title => names[1], :active => true, :price => 10.0)
-      product3 = Product.create!(:title => names[2], :active => false, :price => 10.0)
+      product1 = Product.create!(title: names[0], active: true, price: 10.0)
+      product2 = Product.create!(title: names[1], active: true, price: 10.0)
+      product3 = Product.create!(title: names[2], active: false, price: 10.0)
       visit with_batch_actions_products_path
       find('.tabulatr-batch-actions-menu-wrapper a').click
       within('.dropdown.open') do
@@ -352,7 +353,7 @@ feature "Tabulatr" do
 
   feature "Column options", js: true do
     scenario 'applys the given style' do
-      p = Product.create!(:title => names[0], :active => true, :price => 10.0)
+      p = Product.create!(title: names[0], active: true, price: 10.0)
       visit with_styling_products_path
       cell   = find(".tabulatr_table tbody td[data-tabulatr-column-name='products:title']")
       header = find(".tabulatr_table thead th[data-tabulatr-column-name='products:title']")
